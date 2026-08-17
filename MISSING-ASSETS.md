@@ -62,3 +62,17 @@ than a visual gap. All are currently absent.
 | Item | Resolution |
 |---|---|
 | **Vectorised logo files** — `docs/08 §1` listed the raster PNG as a critical blocker | Resolved 2026-08-17. `scripts/vectorise-logo.py` traces the supplied rasters to true vector outlines; `assets/brand/` now holds `logo-full.svg`, `logo-full-light.svg`, `logo-mark.svg`, `logo-mark-light.svg` and `favicon.svg`, all with transparent backgrounds and colours snapped to the `docs/01` tokens. `scripts/generate-brand-assets.mjs` derives every raster icon and the OG card from them. |
+
+---
+
+## Logged automatically by components
+
+Written by `reportMissingAsset()` when a component renders its empty state.
+Entries are appended, never removed — delete a row once the asset lands.
+
+<!-- BEGIN:auto-logged -->
+
+| Component | Needs | Blocks |
+|---|---|---|
+| `TrustBar` | clients with logoUsagePermitted: true, plus assets/clients/permissions.csv | home §2 — substituting CapabilityStrip |
+<!-- END:auto-logged -->
