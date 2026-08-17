@@ -62,15 +62,15 @@ export function CutCard({
       {...rest}
     >
       {/* Edge, then fill. Both clipped, the fill inset by 1px. */}
-      <span aria-hidden="true" className={cn('cut-card absolute inset-0 -z-10 bg-(--line)')}>
-        <span className={cn('cut-card absolute inset-px', surface.fill)} />
+      <span aria-hidden="true" className={cn('absolute inset-0 -z-10 bg-(--line) cut-card')}>
+        <span className={cn('absolute inset-px cut-card', surface.fill)} />
       </span>
 
       {/* The notch. A sibling, because the card's own clip would remove it. */}
       {interactive && (
         <span
           aria-hidden="true"
-          className="notch-fill absolute top-0 right-0 -z-10 size-notch bg-amber-500 opacity-0 transition-opacity duration-(--duration-card) ease-out group-hover:opacity-100"
+          className="absolute top-0 right-0 -z-10 size-notch bg-amber-500 opacity-0 transition-opacity duration-(--duration-card) ease-out notch-fill group-hover:opacity-100"
         />
       )}
 

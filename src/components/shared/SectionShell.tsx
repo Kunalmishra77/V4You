@@ -2,6 +2,8 @@ import type { ElementType, ReactNode } from 'react'
 
 import { cn } from '@/lib/utils'
 
+import { ScrollReveal } from './ScrollReveal'
+
 /**
  * SectionShell — docs/04 §7.
  *
@@ -36,6 +38,7 @@ export function SectionShell({
   as: Tag = 'section',
   density = 'default',
   bleed = false,
+  reveal = false,
   className,
   innerClassName,
   ...rest
@@ -47,14 +50,27 @@ export function SectionShell({
   density?: 'default' | 'tight'
   /** Skip the centred container — for full-bleed content like a marquee. */
   bleed?: boolean
+  /**
+   * Reveal the section's contents on scroll (docs/01 §5).
+   *
+   * This lives on SectionShell rather than being left to callers because it is
+   * how the "reveal whole sections, never individual cards" rule is enforced —
+   * there is no ergonomic way to reveal one card from here.
+   *
+   * The canvas itself does not fade, only what sits on it. Fading the
+   * background would put a visible seam between this section and its neighbour.
+   */
+  reveal?: boolean
   className?: string
   innerClassName?: string
 } & Record<string, unknown>) {
-  const content = bleed ? (
+  const inner = bleed ? (
     children
   ) : (
     <div className={cn('mx-auto w-full max-w-content px-gutter', innerClassName)}>{children}</div>
   )
+
+  const content = reveal ? <ScrollReveal>{inner}</ScrollReveal> : inner
 
   return (
     <Tag

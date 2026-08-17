@@ -37,7 +37,12 @@ const swatches = [
  * cap a step gets is part of what this sheet is proving.
  */
 const steps = [
-  { name: 'display', cls: 'text-display font-display', width: 'headline', sample: 'Build what’s next.' },
+  {
+    name: 'display',
+    cls: 'text-display font-display',
+    width: 'headline',
+    sample: 'Build what’s next.',
+  },
   {
     name: 'h1',
     cls: 'text-h1 font-display',
@@ -84,100 +89,104 @@ export default function DesignSystemPage() {
   return (
     <main>
       <div className="mx-auto w-full max-w-content px-gutter py-16">
-      <p className="flex items-center gap-3">
-        <span aria-hidden="true" className="cut-slash block size-4 bg-amber-500" />
-        <span className="font-mono text-label uppercase text-amber-ink">Build reference</span>
-      </p>
-      <h1 className="mt-4 max-w-headline text-h1 font-display">Design system</h1>
-      <p className="mt-5 max-w-measure text-body-lg text-slate-500">
-        Every value on this page is read from the token layer in <code>globals.css</code>. If a
-        swatch or a type step looks wrong here, the tokens are wrong — not the component using
-        them. Source of truth: <code>docs/01-design-system.md</code>.
-      </p>
+        <p className="flex items-center gap-3">
+          <span aria-hidden="true" className="block size-4 bg-amber-500 cut-slash" />
+          <span className="font-mono text-label text-amber-ink uppercase">Build reference</span>
+        </p>
+        <h1 className="mt-4 max-w-headline font-display text-h1">Design system</h1>
+        <p className="mt-5 max-w-measure text-body-lg text-slate-500">
+          Every value on this page is read from the token layer in <code>globals.css</code>. If a
+          swatch or a type step looks wrong here, the tokens are wrong — not the component using
+          them. Source of truth: <code>docs/01-design-system.md</code>.
+        </p>
 
-      <h2 className="mt-16 text-h2 font-display">Colour</h2>
-      <ul className="mt-8 grid gap-px border border-line-light bg-line-light sm:grid-cols-2 lg:grid-cols-3">
-        {swatches.map((s) => (
-          <li key={s.token} className="flex items-center gap-4 bg-white p-4">
-            <span
-              aria-hidden="true"
-              className="size-14 shrink-0 border border-line-light"
-              style={{ backgroundColor: s.hex }}
-            />
-            <span className="min-w-0">
-              <span className="block font-mono text-body-sm text-navy-900">{s.token}</span>
-              <span className="block font-mono text-label uppercase text-slate-500">{s.hex}</span>
-              <span className="mt-1 block text-body-sm text-slate-500">{s.note}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
+        <h2 className="mt-16 font-display text-h2">Colour</h2>
+        <ul className="mt-8 grid gap-px border border-line-light bg-line-light sm:grid-cols-2 lg:grid-cols-3">
+          {swatches.map((s) => (
+            <li key={s.token} className="flex items-center gap-4 bg-white p-4">
+              <span
+                aria-hidden="true"
+                className="size-14 shrink-0 border border-line-light"
+                style={{ backgroundColor: s.hex }}
+              />
+              <span className="min-w-0">
+                <span className="block font-mono text-body-sm text-navy-900">{s.token}</span>
+                <span className="block font-mono text-label text-slate-500 uppercase">{s.hex}</span>
+                <span className="mt-1 block text-body-sm text-slate-500">{s.note}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
 
-      <h2 className="mt-16 text-h2 font-display">Type scale</h2>
-      <dl className="mt-8 divide-y divide-line-light border-y border-line-light">
-        {steps.map((s) => (
-          <div key={s.name} className="grid gap-2 py-6 md:grid-cols-[8rem_1fr] md:gap-8">
-            <dt className="pt-1 font-mono text-label uppercase text-slate-500">{s.name}</dt>
-            <dd
-              className={`${s.cls} ${s.width === 'headline' ? 'max-w-headline' : 'max-w-measure'}`}
-            >
-              {s.sample}
-            </dd>
+        <h2 className="mt-16 font-display text-h2">Type scale</h2>
+        <dl className="mt-8 divide-y divide-line-light border-y border-line-light">
+          {steps.map((s) => (
+            <div key={s.name} className="grid gap-2 py-6 md:grid-cols-[8rem_1fr] md:gap-8">
+              <dt className="pt-1 font-mono text-label text-slate-500 uppercase">{s.name}</dt>
+              <dd
+                className={`${s.cls} ${s.width === 'headline' ? 'max-w-headline' : 'max-w-measure'}`}
+              >
+                {s.sample}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <h2 className="mt-16 font-display text-h2">The 45° cut</h2>
+        <p className="mt-4 max-w-measure text-body text-slate-500">
+          Three of its four uses are shown. The fourth is the hero diagram’s rotated core, which
+          arrives with that component.
+        </p>
+        <div className="mt-8 grid gap-8 sm:grid-cols-3">
+          <div>
+            <p className="font-mono text-label text-slate-500 uppercase">Card — 22px</p>
+            <div className="mt-3 border border-line-light bg-white p-6 cut-card">
+              <p className="font-display text-h3">Manual operations</p>
+              <p className="mt-2 text-body-sm text-slate-500">
+                Repetitive work absorbs expensive human time.
+              </p>
+            </div>
           </div>
-        ))}
-      </dl>
-
-      <h2 className="mt-16 text-h2 font-display">The 45° cut</h2>
-      <p className="mt-4 max-w-measure text-body text-slate-500">
-        Three of its four uses are shown. The fourth is the hero diagram’s rotated core, which
-        arrives with that component.
-      </p>
-      <div className="mt-8 grid gap-8 sm:grid-cols-3">
-        <div>
-          <p className="font-mono text-label uppercase text-slate-500">Card — 22px</p>
-          <div className="mt-3 cut-card border border-line-light bg-white p-6">
-            <p className="text-h3 font-display">Manual operations</p>
-            <p className="mt-2 text-body-sm text-slate-500">
-              Repetitive work absorbs expensive human time.
+          <div>
+            <p className="font-mono text-label text-slate-500 uppercase">
+              Button — 14px, two corners
+            </p>
+            <p className="mt-3">
+              <span className="inline-block bg-amber-500 px-6 py-3 font-display font-semibold text-navy-900 cut-button">
+                Book a transformation consultation
+              </span>
+            </p>
+          </div>
+          <div>
+            <p className="font-mono text-label text-slate-500 uppercase">Eyebrow glyph — 16px</p>
+            <p className="mt-3 flex items-center gap-3">
+              <span aria-hidden="true" className="block size-4 bg-amber-500 cut-slash" />
+              <span className="font-mono text-label text-amber-ink uppercase">
+                AI-first transformation
+              </span>
             </p>
           </div>
         </div>
-        <div>
-          <p className="font-mono text-label uppercase text-slate-500">Button — 14px, two corners</p>
-          <p className="mt-3">
-            <span className="cut-button inline-block bg-amber-500 px-6 py-3 font-display font-semibold text-navy-900">
-              Book a transformation consultation
+
+        <h2 className="mt-16 font-display text-h2">On navy</h2>
+        <div className="mt-8 bg-navy-900 p-8">
+          <p className="flex items-center gap-3">
+            <span aria-hidden="true" className="block size-4 bg-amber-500 cut-slash" />
+            <span className="font-mono text-label text-amber-500 uppercase">
+              Proof over promises
             </span>
           </p>
-        </div>
-        <div>
-          <p className="font-mono text-label uppercase text-slate-500">Eyebrow glyph — 16px</p>
-          <p className="mt-3 flex items-center gap-3">
-            <span aria-hidden="true" className="cut-slash block size-4 bg-amber-500" />
-            <span className="font-mono text-label uppercase text-amber-ink">
-              AI-first transformation
-            </span>
+          <p className="mt-4 max-w-headline font-display text-h2 text-bone">
+            Growth gets harder when your systems do not work together.
+          </p>
+          <p className="mt-4 max-w-measure text-body-lg text-slate-300">
+            On navy, amber is both a fill and a typeface colour — 7.72:1. On bone it is a fill, rule
+            or icon only.
           </p>
         </div>
       </div>
 
-      <h2 className="mt-16 text-h2 font-display">On navy</h2>
-      <div className="mt-8 bg-navy-900 p-8">
-        <p className="flex items-center gap-3">
-          <span aria-hidden="true" className="cut-slash block size-4 bg-amber-500" />
-          <span className="font-mono text-label uppercase text-amber-500">Proof over promises</span>
-        </p>
-        <p className="mt-4 max-w-headline text-h2 font-display text-bone">
-          Growth gets harder when your systems do not work together.
-        </p>
-        <p className="mt-4 max-w-measure text-body-lg text-slate-300">
-          On navy, amber is both a fill and a typeface colour — 7.72:1. On bone it is a fill,
-          rule or icon only.
-        </p>
-        </div>
-      </div>
-
-      <h2 className="mx-auto mt-16 w-full max-w-content px-gutter text-h2 font-display">
+      <h2 className="mx-auto mt-16 w-full max-w-content px-gutter font-display text-h2">
         Primitives on every canvas
       </h2>
       <p className="mx-auto mt-4 mb-10 w-full max-w-content px-gutter text-body text-slate-500">

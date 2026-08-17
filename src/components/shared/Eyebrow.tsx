@@ -28,7 +28,7 @@ export function Eyebrow({
 }) {
   return (
     <Tag className={cn('flex items-center gap-3 font-mono text-label uppercase', className)}>
-      <span aria-hidden="true" className="cut-slash block size-4 shrink-0 bg-(--accent-glyph)" />
+      <span aria-hidden="true" className="block size-4 shrink-0 bg-(--accent-glyph) cut-slash" />
       <span className="text-(--accent-text)">{children}</span>
     </Tag>
   )

@@ -312,7 +312,43 @@
    diagram's sparks are removed from the DOM by the component rather than
    merely paused.
    -------------------------------------------------------------------------- */
+/* --- Scroll reveal (docs/01 §5, docs/04 §ScrollReveal) ----------------------
+   Whole sections reveal, never individual cards.
+
+   The hidden state is server-rendered so there is no flash of visible content
+   being hidden after hydration. Two escape hatches keep that safe: the
+   reduced-motion rule below, and a <noscript> rule in the root layout — without
+   either, a visitor with JavaScript disabled would get a permanently invisible
+   page. Both live in the `a11y` layer so they win on layer order.
+   -------------------------------------------------------------------------- */
+@layer components {
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity var(--duration-reveal) var(--ease-reveal),
+      transform var(--duration-reveal) var(--ease-reveal);
+  }
+
+  [data-reveal='shown'] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @layer a11y {
+  .no-js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

@@ -99,12 +99,12 @@ function Shape({ variant }: { variant: Variant }) {
     <span
       aria-hidden="true"
       className={cn(
-        'cut-button absolute inset-0 -z-10 transition-colors duration-(--duration-button) ease-out',
+        'absolute inset-0 -z-10 transition-colors duration-(--duration-button) ease-out cut-button',
         fills[variant],
       )}
     >
       {isGhost(variant) && (
-        <span className="cut-button absolute inset-px bg-(--surface) transition-opacity duration-(--duration-button) ease-out group-hover:opacity-0" />
+        <span className="absolute inset-px bg-(--surface) transition-opacity duration-(--duration-button) ease-out cut-button group-hover:opacity-0" />
       )}
     </span>
   )

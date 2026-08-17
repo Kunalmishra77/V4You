@@ -23,13 +23,13 @@ export function Primitives() {
   return (
     <>
       {canvases.map(({ canvas, label }) => (
-        <SectionShell key={canvas} canvas={canvas} density="tight">
-          <p className="font-mono text-label uppercase text-(--ink-muted)">{label}</p>
+        <SectionShell key={canvas} canvas={canvas} density="tight" reveal>
+          <p className="font-mono text-label text-(--ink-muted) uppercase">{label}</p>
 
           <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)]">
             <div>
               <Eyebrow>AI-first transformation</Eyebrow>
-              <h3 className="mt-4 max-w-headline text-h2 font-display text-(--ink)">
+              <h3 className="mt-4 max-w-headline font-display text-h2 text-(--ink)">
                 One partner from opportunity to operating impact.
               </h3>
               <p className="mt-4 max-w-measure text-body-lg">
@@ -62,8 +62,8 @@ export function Primitives() {
               interactive
               className="p-6"
             >
-              <p className="font-mono text-label uppercase text-(--accent-text)">01</p>
-              <h4 className="mt-3 text-h3 font-display text-(--ink)">Disconnected systems</h4>
+              <p className="font-mono text-label text-(--accent-text) uppercase">01</p>
+              <h4 className="mt-3 font-display text-h3 text-(--ink)">Disconnected systems</h4>
               <p className="mt-2 text-body-sm">Important data is trapped across tools.</p>
               <p className="mt-5">
                 <a

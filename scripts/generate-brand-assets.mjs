@@ -168,7 +168,10 @@ async function main() {
   const PAD = 88
 
   const lockupHeight = 84
-  const [, , , lh] = lockupLight.match(/viewBox="([^"]+)"/)[1].split(' ').map(Number)
+  const [, , , lh] = lockupLight
+    .match(/viewBox="([^"]+)"/)[1]
+    .split(' ')
+    .map(Number)
   const lockupScale = lockupHeight / lh
   const lockupInner = lockupLight
     .replace(/^<svg[^>]*>/, '')
@@ -182,7 +185,13 @@ async function main() {
 
   const lines = headline
     .map((line, i) => {
-      const { d } = textPath(display, line, PAD, headlineTop + i * (headlineSize * 1.14), headlineSize)
+      const { d } = textPath(
+        display,
+        line,
+        PAD,
+        headlineTop + i * (headlineSize * 1.14),
+        headlineSize,
+      )
       return `<path d="${d}" fill="${BONE}"/>`
     })
     .join('')

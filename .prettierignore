@@ -1,0 +1,10 @@
+.next/
+node_modules/
+pnpm-lock.yaml
+public/
+assets/brand/*.svg
+
+# Markdown here is hand-formatted prose and reference tables. Prettier reflows
+# tables to their widest cell, which makes MISSING-ASSETS.md and the docs
+# unreadable in a plain editor.
+*.md
