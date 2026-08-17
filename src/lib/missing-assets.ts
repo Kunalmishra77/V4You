@@ -48,7 +48,9 @@ export function reportMissingAsset(asset: MissingAsset) {
 
     const updated = existing.includes(BEGIN)
       ? // Insert immediately above the closing marker so the table stays intact.
-        existing.replace(`\n${END}`, `${line}\n${END}`)
+        // The leading newline matters: without it the new row is welded onto the
+        // end of the previous one and the markdown table stops parsing.
+        existing.replace(`\n${END}`, `\n${line}\n${END}`)
       : existing.trimEnd() +
         '\n' +
         [

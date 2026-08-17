@@ -75,4 +75,5 @@ Entries are appended, never removed — delete a row once the asset lands.
 | Component | Needs | Blocks |
 |---|---|---|
 | `TrustBar` | clients with logoUsagePermitted: true, plus assets/clients/permissions.csv | home §2 — substituting CapabilityStrip |
+| `MetricStrip` | method and evidenceType on: Placeholder with no method attached | the metric strip is omitted entirely — a number without a method does not publish |
 <!-- END:auto-logged -->

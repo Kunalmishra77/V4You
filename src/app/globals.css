@@ -322,6 +322,31 @@
    page. Both live in the `a11y` layer so they win on layer order.
    -------------------------------------------------------------------------- */
 @layer components {
+  /* --- LogoMarquee (docs/04 section 14) ------------------------------------
+     The track is duplicated once in the DOM, so translating by exactly -50%
+     lands the copy where the original started and the loop is seamless.
+     Pauses on hover; stops entirely under reduced motion, which the a11y layer
+     below enforces by removing the animation rather than pausing it.
+     -------------------------------------------------------------------- */
+  .marquee-track {
+    animation: marquee-scroll 42s linear infinite;
+    will-change: transform;
+  }
+
+  .marquee:hover .marquee-track,
+  .marquee:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee-scroll {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
   [data-reveal] {
     opacity: 0;
     transform: translateY(22px);
@@ -340,6 +365,12 @@
   .no-js [data-reveal] {
     opacity: 1;
     transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
