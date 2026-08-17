@@ -1,0 +1,29 @@
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# Generated — run `pnpm payload generate:types`
+/src/types/payload-types.ts
+
+# Tooling
+.vercel/
+.turbo/
+coverage/
+playwright-report/
+test-results/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

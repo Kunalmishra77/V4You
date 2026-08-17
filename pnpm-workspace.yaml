@@ -1,0 +1,5 @@
+allowBuilds:
+  # sharp is used by scripts/generate-brand-assets.mjs and by next/image in
+  # production, so its native binary has to be built.
+  sharp: true
+  unrs-resolver: true
