@@ -27,3 +27,6 @@ test-results/
 # OS
 .DS_Store
 Thumbs.db
+
+# Playwright MCP scratch output
+.playwright-mcp/

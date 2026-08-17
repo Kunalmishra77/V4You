@@ -1,3 +1,226 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-/* The design token layer lands here at T-003. */
+/* An extra cascade layer after `utilities`. A later layer wins on layer order
+   regardless of specificity, which is how the reduced-motion safety net at the
+   bottom of this file overrides animation utilities without `!important` —
+   CLAUDE.md forbids it, and this is the standard alternative. */
+@layer theme, base, components, utilities, a11y;
+
+/* ==========================================================================
+   V4You Technologies — token layer
+   Source of truth: docs/01-design-system.md. Every value below is traceable to
+   a row in that document. No colour, size or duration is invented here.
+
+   Tailwind 4 is CSS-first: `@theme` replaces the `tailwind.config.ts` named in
+   docs/02. The acceptance criterion is unchanged — `bg-navy-900`,
+   `text-amber-ink` and the rest resolve as utilities.
+   ========================================================================== */
+
+@theme {
+  /* --- Colour (docs/01 §1) — sampled from the logo, not approximated -------- */
+  --color-navy-900: #0a1d3e; /* wordmark. Primary ink, dark canvas, headings */
+  --color-navy-800: #12294f; /* elevated surface on dark, card backgrounds */
+  --color-navy-700: #1c3a66; /* borders and dividers on dark */
+  --color-navy-600: #2a4c7d; /* hover borders, secondary strokes on dark */
+
+  --color-amber-500: #eda11a; /* logomark. The accent. Used sparingly. */
+  --color-amber-600: #c98611; /* amber hover / pressed */
+  --color-amber-ink: #7a4f06; /* amber-family TEXT on light backgrounds only */
+
+  --color-bone: #f6f5f1; /* logo background. Warm light canvas, not white */
+  --color-bone-2: #eeede7; /* alternate light section, input fills */
+  --color-white: #ffffff; /* card surfaces on bone */
+
+  --color-slate-500: #5b6b85; /* body text on light */
+  --color-slate-300: #93a4bf; /* body text on dark */
+
+  --color-line-light: #dedcd4; /* borders on light */
+  --color-line-dark: #1f3a63; /* borders on dark */
+
+  /* Semantic (docs/01 §1). All contrast-safe on their intended canvas. */
+  --color-success: #1b7f5a;
+  --color-warning: #8a5a08;
+  --color-error: #b0281f;
+  --color-focus: #eda11a;
+
+  /* --- Typography (docs/01 §3) --------------------------------------------- */
+  --font-display: var(--font-schibsted-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+
+  /* Nine scale steps, fluid via clamp(). Base 17px. */
+  --text-display: clamp(38px, 5.6vw, 70px);
+  --text-display--line-height: 1.06;
+  --text-display--letter-spacing: -0.032em;
+  --text-display--font-weight: 800;
+
+  --text-h1: clamp(34px, 4.6vw, 56px);
+  --text-h1--line-height: 1.08;
+  --text-h1--letter-spacing: -0.028em;
+  --text-h1--font-weight: 700;
+
+  --text-h2: clamp(30px, 4.1vw, 52px);
+  --text-h2--line-height: 1.1;
+  --text-h2--letter-spacing: -0.022em;
+  --text-h2--font-weight: 700;
+
+  --text-h3: clamp(19px, 1.8vw, 24px);
+  --text-h3--line-height: 1.28;
+  --text-h3--letter-spacing: -0.015em;
+  --text-h3--font-weight: 700;
+
+  --text-body-lg: clamp(16.5px, 1.35vw, 19px);
+  --text-body-lg--line-height: 1.6;
+  --text-body-lg--letter-spacing: 0;
+
+  --text-body: 17px;
+  --text-body--line-height: 1.62;
+  --text-body--letter-spacing: 0;
+
+  --text-body-sm: 14.5px;
+  --text-body-sm--line-height: 1.6;
+  --text-body-sm--letter-spacing: 0;
+
+  --text-label: 11.5px;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.16em;
+  --text-label--font-weight: 500;
+
+  --text-metric: clamp(28px, 3vw, 44px);
+  --text-metric--line-height: 1;
+  --text-metric--letter-spacing: -0.03em;
+  --text-metric--font-weight: 700;
+
+  /* Reading measures (docs/01 §3) */
+  --container-measure: 68ch; /* long-form body copy */
+  --container-headline: 20ch; /* headings */
+  --container-content: 1320px; /* max content width, docs/01 §4 */
+
+  /* --- Layout (docs/01 §4) ------------------------------------------------- */
+  /* The 8px base is expressed through these named steps and through using even
+     multiples of Tailwind's 4px unit. The unit itself is left at 4px so that
+     shadcn/ui primitives, which assume it, keep their intended proportions. */
+  --spacing-gutter: clamp(20px, 4vw, 48px);
+  --spacing-section: clamp(76px, 9vw, 132px);
+
+  /* Radius 0 everywhere. The brand's geometry is the 45° cut, not the curve —
+     so the shadcn radius scale is collapsed rather than left at its defaults. */
+  --radius-xs: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
+
+  /* --- Motion (docs/01 §5) ------------------------------------------------- */
+  --ease-reveal: cubic-bezier(0.2, 0.7, 0.3, 1);
+
+  --duration-reveal: 600ms;
+  --duration-card: 220ms;
+  --duration-button: 200ms;
+  --duration-menu: 200ms;
+  --duration-header: 250ms;
+}
+
+/* --- The 45° signature device (docs/01 §2) ---------------------------------
+   Four uses, and nowhere else: card corners, buttons, the eyebrow glyph, and
+   the hero core. Not on inputs, footers, tables, images or navigation.
+   Overuse turns a signature into a texture.
+   -------------------------------------------------------------------------- */
+@utility cut-card {
+  clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+}
+
+@utility cut-button {
+  clip-path: polygon(
+    0 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% 100%,
+    14px 100%,
+    0 calc(100% - 14px)
+  );
+}
+
+@utility cut-slash {
+  clip-path: polygon(0 100%, 100% 0, 100% 34%, 34% 100%);
+}
+
+@layer base {
+  /* Focus is visible everywhere, at the same 2px/3px offset, in amber.
+     `docs/06 §C1`: never `outline: none` without an equivalent replacement.
+
+     Elements carrying a clip-path must never own the focus ring — clip-path
+     clips the outline too, and the ring would be sliced off at the notch. The
+     Button and CutCard primitives put the clip on a child and keep the ring on
+     the unclipped host for exactly this reason. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  html {
+    /* Anchored sections clear the sticky header rather than hiding under it. */
+    scroll-padding-top: 96px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-bone);
+    color: var(--color-navy-900);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: 1.62;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-amber-500);
+    color: var(--color-navy-900);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    text-wrap: balance;
+  }
+
+  /* Long-form paragraphs avoid single-word last lines. */
+  p {
+    text-wrap: pretty;
+  }
+
+  /* docs/06 §C1: minimum 44 × 44px touch targets. Enforced on the primitives
+     rather than globally, so this is a floor for bare controls only. */
+  button,
+  [role='button'] {
+    touch-action: manipulation;
+  }
+}
+
+/* --- Reduced motion (docs/01 §5, docs/06 §C1) -------------------------------
+   Honoured globally: reveals become instant, the marquee stops, and the hero
+   diagram's sparks are removed from the DOM by the component rather than
+   merely paused.
+   -------------------------------------------------------------------------- */
+@layer a11y {
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms;
+      animation-iteration-count: 1;
+      transition-duration: 0.01ms;
+    }
+
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
