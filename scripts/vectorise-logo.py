@@ -5,10 +5,12 @@ Vectorise the client-supplied raster logos into brand SVGs.
 bitmap will not scale cleanly to a 34px header mark. This script resolves that by
 tracing the rasters to true vector outlines.
 
-    python scripts/vectorise-logo.py <logo.png> <favicon.png>
+    python scripts/vectorise-logo.py [logo.png] [favicon.png]
 
-Inputs are the client's originals; outputs land in `assets/brand/`. Run once — the
-generated SVGs are committed. Re-run only if the client supplies new artwork.
+With no arguments it reads `assets/brand/source/`, which keeps the whole brand
+pipeline reproducible from a clean checkout. Outputs land in `assets/brand/`.
+Run once — the generated SVGs are committed. Re-run only when the client supplies
+new artwork.
 
 Method
   1. Classify every pixel to the nearest of {background, slash, navy, amber}.
@@ -161,6 +163,16 @@ def main(logo_src: str, mark_src: str) -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        sys.exit("usage: python scripts/vectorise-logo.py <logo.png> <favicon.png>")
-    main(sys.argv[1], sys.argv[2])
+    if len(sys.argv) == 1:
+        source = OUT / "source"
+        args = (str(source / "logo-2048.png"), str(source / "favicon-2048.png"))
+    elif len(sys.argv) == 3:
+        args = (sys.argv[1], sys.argv[2])
+    else:
+        sys.exit("usage: python scripts/vectorise-logo.py [logo.png] [favicon.png]")
+
+    for path in args:
+        if not Path(path).exists():
+            sys.exit(f"missing input: {path}\nSee assets/brand/source/README.md.")
+
+    main(*args)

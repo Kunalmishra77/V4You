@@ -51,6 +51,7 @@ than a visual gap. All are currently absent.
 
 | Item | Why it matters |
 |---|---|
+| **Original logo rasters** — `Logo.png`, `fevicon.png` | **Lost, please re-supply if held.** The client's two 2048px uploads were traced to vector successfully and then deleted in error on 2026-08-17 by an overly broad cleanup glob, before the repository existed to protect them. Nothing is blocked: every asset the site serves derives from the committed SVGs, which are a first-generation trace of those exact files. `assets/brand/source/` now holds reconstructions rendered back out of those vectors, so the pipeline runs from a clean checkout. If the originals still exist anywhere, drop them into `assets/brand/source/` and re-run `pnpm assets:vectorise && pnpm assets:brand`. See `assets/brand/source/README.md`. |
 | **Production domain** | `og-default.png` and the site footer currently use `v4you.tech`, taken from `RESEND_FROM_EMAIL` in the client's own `.env.example`. Confirm before launch — it is baked into the OG card and every canonical URL. |
 
 ---

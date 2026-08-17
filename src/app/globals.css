@@ -102,6 +102,7 @@
      shadcn/ui primitives, which assume it, keep their intended proportions. */
   --spacing-gutter: clamp(20px, 4vw, 48px);
   --spacing-section: clamp(76px, 9vw, 132px);
+  --spacing-notch: 22px; /* the card corner cut, docs/01 §2 */
 
   /* Radius 0 everywhere. The brand's geometry is the 45° cut, not the curve —
      so the shadcn radius scale is collapsed rather than left at its defaults. */
@@ -148,6 +149,99 @@
   clip-path: polygon(0 100%, 100% 0, 100% 34%, 34% 100%);
 }
 
+/* The triangle that fills a card's notch on hover — the inverse of cut-card's
+   corner, drawn as a sibling because the card's own clip would remove it. */
+@utility notch-fill {
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+/* --- Surfaces (docs/01 §4) --------------------------------------------------
+   Each surface publishes the five values that depend on it, so a component
+   never has to know what it is sitting on:
+
+     --surface      the surface colour itself. Ghost buttons and clipped card
+                    fills paint with it, which is how a 1px edge can follow the
+                    45deg cut instead of being sliced open by it.
+     --ink          heading colour
+     --ink-muted    body colour, and the surface's own default `color`
+     --line         divider colour
+     --accent-text  amber-family TEXT colour
+     --accent-glyph the amber slash glyph's fill. Amber is allowed as a
+                    shape on light canvases where it is banned as text, so
+                    this is a separate token from --accent-text.
+
+   `--accent-text` is what makes rule 3 in CLAUDE.md structural. On dark
+   surfaces it is amber-500; on light ones it resolves to amber-ink (#7A4F06,
+   6.53:1). #EDA11A is 1.98:1 on bone, so there is deliberately no path by which
+   a component can put it there — the component asks for "the accent text
+   colour" and the surface answers correctly.
+
+   These set no `background-color`. SectionShell pairs one with a matching `bg-*`
+   utility; CutCard leaves it unset, because a clipped card paints its own fill
+   and a background on the host would square off the notch.
+   -------------------------------------------------------------------------- */
+@utility surface-navy {
+  --surface: var(--color-navy-900);
+  --ink: var(--color-bone);
+  --ink-muted: var(--color-slate-300);
+  --line: var(--color-line-dark);
+  --accent-text: var(--color-amber-500);
+  --accent-glyph: var(--color-amber-500);
+  color: var(--ink-muted);
+}
+
+@utility surface-navy-800 {
+  --surface: var(--color-navy-800);
+  --ink: var(--color-bone);
+  --ink-muted: var(--color-slate-300);
+  --line: var(--color-navy-700);
+  --accent-text: var(--color-amber-500);
+  --accent-glyph: var(--color-amber-500);
+  color: var(--ink-muted);
+}
+
+@utility surface-bone {
+  --surface: var(--color-bone);
+  --ink: var(--color-navy-900);
+  --ink-muted: var(--color-slate-500);
+  --line: var(--color-line-light);
+  --accent-text: var(--color-amber-ink);
+  --accent-glyph: var(--color-amber-500);
+  color: var(--ink-muted);
+}
+
+@utility surface-bone-2 {
+  --surface: var(--color-bone-2);
+  --ink: var(--color-navy-900);
+  --ink-muted: var(--color-slate-500);
+  --line: var(--color-line-light);
+  --accent-text: var(--color-amber-ink);
+  --accent-glyph: var(--color-amber-500);
+  color: var(--ink-muted);
+}
+
+@utility surface-white {
+  --surface: var(--color-white);
+  --ink: var(--color-navy-900);
+  --ink-muted: var(--color-slate-500);
+  --line: var(--color-line-light);
+  --accent-text: var(--color-amber-ink);
+  --accent-glyph: var(--color-amber-500);
+  color: var(--ink-muted);
+}
+
+/* The CTA band. Navy text and a navy button on amber — 7.72:1, the site's most
+   confident element (docs/04 §29). */
+@utility surface-amber {
+  --surface: var(--color-amber-500);
+  --ink: var(--color-navy-900);
+  --ink-muted: var(--color-navy-900);
+  --line: var(--color-amber-600);
+  --accent-text: var(--color-navy-900);
+  --accent-glyph: var(--color-navy-900);
+  color: var(--ink-muted);
+}
+
 @layer base {
   /* Focus is visible everywhere, at the same 2px/3px offset, in amber.
      `docs/06 §C1`: never `outline: none` without an equivalent replacement.
@@ -169,11 +263,20 @@
 
   body {
     background-color: var(--color-bone);
-    color: var(--color-navy-900);
     font-family: var(--font-body);
     font-size: var(--text-body);
     line-height: 1.62;
     text-rendering: optimizeLegibility;
+
+    /* Canvas defaults for anything not inside a SectionShell. Bone is the
+       document's own canvas, so these mirror `canvas-bone`. */
+    --surface: var(--color-bone);
+    --ink: var(--color-navy-900);
+    --ink-muted: var(--color-slate-500);
+    --line: var(--color-line-light);
+    --accent-text: var(--color-amber-ink);
+    --accent-glyph: var(--color-amber-500);
+    color: var(--ink);
   }
 
   ::selection {

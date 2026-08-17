@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 
+import { Primitives } from './primitives'
+
 /**
  * Living proof sheet for the design system: every colour, every one of the nine
  * type steps, and each use of the 45° cut, all read from the token layer.
@@ -78,9 +80,10 @@ const steps = [
   { name: 'metric', cls: 'text-metric font-display', width: 'headline', sample: '68%' },
 ] as const
 
-export default function TokenProofSheet() {
+export default function DesignSystemPage() {
   return (
-    <main className="mx-auto w-full max-w-content px-gutter py-16">
+    <main>
+      <div className="mx-auto w-full max-w-content px-gutter py-16">
       <p className="flex items-center gap-3">
         <span aria-hidden="true" className="cut-slash block size-4 bg-amber-500" />
         <span className="font-mono text-label uppercase text-amber-ink">Build reference</span>
@@ -171,7 +174,17 @@ export default function TokenProofSheet() {
           On navy, amber is both a fill and a typeface colour — 7.72:1. On bone it is a fill,
           rule or icon only.
         </p>
+        </div>
       </div>
+
+      <h2 className="mx-auto mt-16 w-full max-w-content px-gutter text-h2 font-display">
+        Primitives on every canvas
+      </h2>
+      <p className="mx-auto mt-4 mb-10 w-full max-w-content px-gutter text-body text-slate-500">
+        Button, Eyebrow, CutCard and SectionShell, rendered on all six surfaces. Nothing here is
+        told which surface it is on.
+      </p>
+      <Primitives />
     </main>
   )
 }
