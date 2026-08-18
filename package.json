@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "V4You Technologies — AI-first digital transformation and product engineering",
+  "description": "V4You Technologies \u2014 AI-first digital transformation and product engineering",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
