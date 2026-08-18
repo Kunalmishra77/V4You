@@ -59,197 +59,198 @@ export type SupportedTimezones =
   | 'Pacific/Guam'
   | 'Pacific/Noumea'
   | 'Pacific/Auckland'
-  | 'Pacific/Fiji';
+  | 'Pacific/Fiji'
 
 export interface Config {
   auth: {
-    users: UserAuthOperations;
-  };
-  blocks: {};
+    users: UserAuthOperations
+  }
+  blocks: {}
   collections: {
-    pages: Page;
-    services: Service;
-    industries: Industry;
-    faqs: Faq;
-    teamMembers: TeamMember;
-    clients: Client;
-    testimonials: Testimonial;
-    caseStudies: CaseStudy;
-    leads: Lead;
-    subscribers: Subscriber;
-    media: Media;
-    redirects: Redirect;
-    users: User;
-    solutions: Solution;
-    technologies: Technology;
-    resources: Resource;
-    jobs: Job;
-    assessmentRuns: AssessmentRun;
-    calculatorRuns: CalculatorRun;
-    'payload-kv': PayloadKv;
-    'payload-locked-documents': PayloadLockedDocument;
-    'payload-preferences': PayloadPreference;
-    'payload-migrations': PayloadMigration;
-  };
-  collectionsJoins: {};
+    pages: Page
+    services: Service
+    industries: Industry
+    faqs: Faq
+    teamMembers: TeamMember
+    clients: Client
+    testimonials: Testimonial
+    caseStudies: CaseStudy
+    leads: Lead
+    subscribers: Subscriber
+    media: Media
+    redirects: Redirect
+    users: User
+    solutions: Solution
+    technologies: Technology
+    resources: Resource
+    jobs: Job
+    assessmentRuns: AssessmentRun
+    calculatorRuns: CalculatorRun
+    'payload-kv': PayloadKv
+    'payload-locked-documents': PayloadLockedDocument
+    'payload-preferences': PayloadPreference
+    'payload-migrations': PayloadMigration
+  }
+  collectionsJoins: {}
   collectionsSelect: {
-    pages: PagesSelect<false> | PagesSelect<true>;
-    services: ServicesSelect<false> | ServicesSelect<true>;
-    industries: IndustriesSelect<false> | IndustriesSelect<true>;
-    faqs: FaqsSelect<false> | FaqsSelect<true>;
-    teamMembers: TeamMembersSelect<false> | TeamMembersSelect<true>;
-    clients: ClientsSelect<false> | ClientsSelect<true>;
-    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
-    caseStudies: CaseStudiesSelect<false> | CaseStudiesSelect<true>;
-    leads: LeadsSelect<false> | LeadsSelect<true>;
-    subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
-    redirects: RedirectsSelect<false> | RedirectsSelect<true>;
-    users: UsersSelect<false> | UsersSelect<true>;
-    solutions: SolutionsSelect<false> | SolutionsSelect<true>;
-    technologies: TechnologiesSelect<false> | TechnologiesSelect<true>;
-    resources: ResourcesSelect<false> | ResourcesSelect<true>;
-    jobs: JobsSelect<false> | JobsSelect<true>;
-    assessmentRuns: AssessmentRunsSelect<false> | AssessmentRunsSelect<true>;
-    calculatorRuns: CalculatorRunsSelect<false> | CalculatorRunsSelect<true>;
-    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
-    'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
-    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
-    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
-  };
+    pages: PagesSelect<false> | PagesSelect<true>
+    services: ServicesSelect<false> | ServicesSelect<true>
+    industries: IndustriesSelect<false> | IndustriesSelect<true>
+    faqs: FaqsSelect<false> | FaqsSelect<true>
+    teamMembers: TeamMembersSelect<false> | TeamMembersSelect<true>
+    clients: ClientsSelect<false> | ClientsSelect<true>
+    testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>
+    caseStudies: CaseStudiesSelect<false> | CaseStudiesSelect<true>
+    leads: LeadsSelect<false> | LeadsSelect<true>
+    subscribers: SubscribersSelect<false> | SubscribersSelect<true>
+    media: MediaSelect<false> | MediaSelect<true>
+    redirects: RedirectsSelect<false> | RedirectsSelect<true>
+    users: UsersSelect<false> | UsersSelect<true>
+    solutions: SolutionsSelect<false> | SolutionsSelect<true>
+    technologies: TechnologiesSelect<false> | TechnologiesSelect<true>
+    resources: ResourcesSelect<false> | ResourcesSelect<true>
+    jobs: JobsSelect<false> | JobsSelect<true>
+    assessmentRuns: AssessmentRunsSelect<false> | AssessmentRunsSelect<true>
+    calculatorRuns: CalculatorRunsSelect<false> | CalculatorRunsSelect<true>
+    'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>
+    'payload-locked-documents':
+      PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>
+    'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>
+    'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>
+  }
   db: {
-    defaultIDType: number;
-  };
-  fallbackLocale: null;
+    defaultIDType: number
+  }
+  fallbackLocale: null
   globals: {
-    navigation: Navigation;
-    siteSettings: SiteSetting;
-  };
+    navigation: Navigation
+    siteSettings: SiteSetting
+  }
   globalsSelect: {
-    navigation: NavigationSelect<false> | NavigationSelect<true>;
-    siteSettings: SiteSettingsSelect<false> | SiteSettingsSelect<true>;
-  };
-  locale: null;
+    navigation: NavigationSelect<false> | NavigationSelect<true>
+    siteSettings: SiteSettingsSelect<false> | SiteSettingsSelect<true>
+  }
+  locale: null
   widgets: {
-    collections: CollectionsWidget;
-  };
-  user: User;
+    collections: CollectionsWidget
+  }
+  user: User
   jobs: {
-    tasks: unknown;
-    workflows: unknown;
-  };
+    tasks: unknown
+    workflows: unknown
+  }
 }
 export interface UserAuthOperations {
   forgotPassword: {
-    email: string;
-    password: string;
-  };
+    email: string
+    password: string
+  }
   login: {
-    email: string;
-    password: string;
-  };
+    email: string
+    password: string
+  }
   registerFirstUser: {
-    email: string;
-    password: string;
-  };
+    email: string
+    password: string
+  }
   unlock: {
-    email: string;
-    password: string;
-  };
+    email: string
+    password: string
+  }
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
 export interface Page {
-  id: number;
+  id: number
   /**
    * The URL segment. Lowercase, hyphenated, and stable once published.
    */
-  slug: string;
-  title: string;
+  slug: string
+  title: string
   /**
    * Composed from the block library. No page gets bespoke layout code.
    */
   layout: (
     | {
-        eyebrow?: string | null;
-        headline: string;
-        body?: string | null;
+        eyebrow?: string | null
+        headline: string
+        body?: string | null
         primaryCta?: {
-          label?: string | null;
-          href?: string | null;
-        };
+          label?: string | null
+          href?: string | null
+        }
         secondaryCta?: {
-          label?: string | null;
-          href?: string | null;
-        };
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'heroPage';
+          label?: string | null
+          href?: string | null
+        }
+        id?: string | null
+        blockName?: string | null
+        blockType: 'heroPage'
       }
     | {
-        eyebrow?: string | null;
-        heading?: string | null;
+        eyebrow?: string | null
+        heading?: string | null
         body: {
           root: {
-            type: string;
+            type: string
             children: {
-              type: any;
-              version: number;
-              [k: string]: unknown;
-            }[];
-            direction: ('ltr' | 'rtl') | null;
-            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-            indent: number;
-            version: number;
-          };
-          [k: string]: unknown;
-        };
-        canvas?: ('bone' | 'bone-2' | 'white' | 'navy') | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'prose';
+              type: any
+              version: number
+              [k: string]: unknown
+            }[]
+            direction: ('ltr' | 'rtl') | null
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+            indent: number
+            version: number
+          }
+          [k: string]: unknown
+        }
+        canvas?: ('bone' | 'bone-2' | 'white' | 'navy') | null
+        id?: string | null
+        blockName?: string | null
+        blockType: 'prose'
       }
     | {
-        eyebrow?: string | null;
-        heading?: string | null;
+        eyebrow?: string | null
+        heading?: string | null
         panels?:
           | {
-              title: string;
+              title: string
               body: {
                 root: {
-                  type: string;
+                  type: string
                   children: {
-                    type: any;
-                    version: number;
-                    [k: string]: unknown;
-                  }[];
-                  direction: ('ltr' | 'rtl') | null;
-                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-                  indent: number;
-                  version: number;
-                };
-                [k: string]: unknown;
-              };
-              id?: string | null;
+                    type: any
+                    version: number
+                    [k: string]: unknown
+                  }[]
+                  direction: ('ltr' | 'rtl') | null
+                  format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+                  indent: number
+                  version: number
+                }
+                [k: string]: unknown
+              }
+              id?: string | null
             }[]
-          | null;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'numberedAccordion';
+          | null
+        id?: string | null
+        blockName?: string | null
+        blockType: 'numberedAccordion'
       }
     | {
-        eyebrow?: string | null;
-        heading: string;
-        body?: string | null;
-        ctaLabel: string;
-        ctaHref: string;
-        id?: string | null;
-        blockName?: string | null;
-        blockType: 'ctaBand';
+        eyebrow?: string | null
+        heading: string
+        body?: string | null
+        ctaLabel: string
+        ctaHref: string
+        id?: string | null
+        blockName?: string | null
+        blockType: 'ctaBand'
       }
-  )[];
+  )[]
   /**
    * Unique per page. No templated duplicates — docs/05.
    */
@@ -257,156 +258,156 @@ export interface Page {
     /**
      * Under about 60 characters. One keyword, one clear promise.
      */
-    title?: string | null;
+    title?: string | null
     /**
      * Roughly 150–160 characters, benefit-led.
      */
-    description?: string | null;
-    ogImage?: (number | null) | Media;
+    description?: string | null
+    ogImage?: (number | null) | Media
     /**
      * Excludes the page from search engines and the sitemap.
      */
-    noIndex?: boolean | null;
-  };
-  status: 'draft' | 'published';
-  publishedAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
+    noIndex?: boolean | null
+  }
+  status: 'draft' | 'published'
+  publishedAt?: string | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
-  id: number;
+  id: number
   /**
    * Describe what the image shows and why it is here. For a purely decorative image, type a single space — that records the decision instead of leaving it unmade.
    */
-  alt: string;
-  caption?: string | null;
-  credit?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
+  alt: string
+  caption?: string | null
+  credit?: string | null
+  updatedAt: string
+  createdAt: string
+  url?: string | null
+  thumbnailURL?: string | null
+  filename?: string | null
+  mimeType?: string | null
+  filesize?: number | null
+  width?: number | null
+  height?: number | null
+  focalX?: number | null
+  focalY?: number | null
   sizes?: {
     thumb?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
+      url?: string | null
+      width?: number | null
+      height?: number | null
+      mimeType?: string | null
+      filesize?: number | null
+      filename?: string | null
+    }
     card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
+      url?: string | null
+      width?: number | null
+      height?: number | null
+      mimeType?: string | null
+      filesize?: number | null
+      filename?: string | null
+    }
     hero?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
+      url?: string | null
+      width?: number | null
+      height?: number | null
+      mimeType?: string | null
+      filesize?: number | null
+      filename?: string | null
+    }
     og?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
+      url?: string | null
+      width?: number | null
+      height?: number | null
+      mimeType?: string | null
+      filesize?: number | null
+      filename?: string | null
+    }
+  }
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "services".
  */
 export interface Service {
-  id: number;
+  id: number
   /**
    * The URL segment. Lowercase, hyphenated, and stable once published.
    */
-  slug: string;
-  title: string;
+  slug: string
+  title: string
   /**
    * The shorter label used in menus.
    */
-  navLabel: string;
+  navLabel: string
   hero: {
-    eyebrow?: string | null;
-    headline: string;
-    body?: string | null;
+    eyebrow?: string | null
+    headline: string
+    body?: string | null
     primaryCta?: {
-      label?: string | null;
-      href?: string | null;
-    };
+      label?: string | null
+      href?: string | null
+    }
     secondaryCta?: {
-      label?: string | null;
-      href?: string | null;
-    };
-  };
+      label?: string | null
+      href?: string | null
+    }
+  }
   /**
    * The one-line promise. What changes for the business.
    */
-  outcomeStatement: string;
+  outcomeStatement: string
   problemsSolved: {
-    title: string;
-    description?: string | null;
-    id?: string | null;
-  }[];
+    title: string
+    description?: string | null
+    id?: string | null
+  }[]
   capabilities: {
-    title: string;
-    description?: string | null;
-    icon?: string | null;
-    id?: string | null;
-  }[];
+    title: string
+    description?: string | null
+    icon?: string | null
+    id?: string | null
+  }[]
   deliverables: {
-    item: string;
-    id?: string | null;
-  }[];
+    item: string
+    id?: string | null
+  }[]
   process: {
-    step: string;
-    title: string;
-    description?: string | null;
-    id?: string | null;
-  }[];
+    step: string
+    title: string
+    description?: string | null
+    id?: string | null
+  }[]
   /**
    * What drives cost and which engagement shapes are available. No figures — see the validation below.
    */
   pricingModel: {
     root: {
-      type: string;
+      type: string
       children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  faqs?: (number | Faq)[] | null;
-  industries?: (number | Industry)[] | null;
-  solutions?: (number | Solution)[] | null;
-  technologies?: (number | Technology)[] | null;
-  caseStudies?: (number | CaseStudy)[] | null;
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  }
+  faqs?: (number | Faq)[] | null
+  industries?: (number | Industry)[] | null
+  solutions?: (number | Solution)[] | null
+  technologies?: (number | Technology)[] | null
+  caseStudies?: (number | CaseStudy)[] | null
   /**
    * Unique per page. No templated duplicates — docs/05.
    */
@@ -414,117 +415,117 @@ export interface Service {
     /**
      * Under about 60 characters. One keyword, one clear promise.
      */
-    title?: string | null;
+    title?: string | null
     /**
      * Roughly 150–160 characters, benefit-led.
      */
-    description?: string | null;
-    ogImage?: (number | null) | Media;
+    description?: string | null
+    ogImage?: (number | null) | Media
     /**
      * Excludes the page from search engines and the sitemap.
      */
-    noIndex?: boolean | null;
-  };
+    noIndex?: boolean | null
+  }
   /**
    * Display order on the services hub.
    */
-  order?: number | null;
-  status: 'draft' | 'published';
-  updatedAt: string;
-  createdAt: string;
+  order?: number | null
+  status: 'draft' | 'published'
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faqs".
  */
 export interface Faq {
-  id: number;
-  question: string;
+  id: number
+  question: string
   answer: {
     root: {
-      type: string;
+      type: string
       children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
-  scope: 'global' | 'service' | 'industry' | 'solution' | 'technology';
-  order?: number | null;
-  updatedAt: string;
-  createdAt: string;
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  }
+  scope: 'global' | 'service' | 'industry' | 'solution' | 'technology'
+  order?: number | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "industries".
  */
 export interface Industry {
-  id: number;
+  id: number
   /**
    * The URL segment. Lowercase, hyphenated, and stable once published.
    */
-  slug: string;
-  title: string;
+  slug: string
+  title: string
   hero: {
-    eyebrow?: string | null;
-    headline: string;
-    body?: string | null;
-  };
+    eyebrow?: string | null
+    headline: string
+    body?: string | null
+  }
   /**
    * How this industry actually operates. Original to this page.
    */
-  context: string;
+  context: string
   challenges: {
-    title: string;
-    description?: string | null;
-    id?: string | null;
-  }[];
+    title: string
+    description?: string | null
+    id?: string | null
+  }[]
   useCases: {
-    title: string;
-    description?: string | null;
+    title: string
+    description?: string | null
     /**
      * A value area, not a figure. No ROI percentage without a case study behind it.
      */
-    outcome?: string | null;
-    id?: string | null;
-  }[];
+    outcome?: string | null
+    id?: string | null
+  }[]
   /**
    * The four-step reference flow shown beside the industry copy.
    */
   whereWeStart: {
-    step: string;
-    label: string;
-    tag?: string | null;
-    id?: string | null;
-  }[];
+    step: string
+    label: string
+    tag?: string | null
+    id?: string | null
+  }[]
   /**
    * Factual only. Describe what the regulation requires — never claim compliance or certification.
    */
   regulatoryNotes?: {
     root: {
-      type: string;
+      type: string
       children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  services?: (number | Service)[] | null;
-  solutions?: (number | Solution)[] | null;
-  caseStudies?: (number | CaseStudy)[] | null;
-  faqs?: (number | Faq)[] | null;
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  services?: (number | Service)[] | null
+  solutions?: (number | Solution)[] | null
+  caseStudies?: (number | CaseStudy)[] | null
+  faqs?: (number | Faq)[] | null
   /**
    * Unique per page. No templated duplicates — docs/05.
    */
@@ -532,133 +533,133 @@ export interface Industry {
     /**
      * Under about 60 characters. One keyword, one clear promise.
      */
-    title?: string | null;
+    title?: string | null
     /**
      * Roughly 150–160 characters, benefit-led.
      */
-    description?: string | null;
-    ogImage?: (number | null) | Media;
+    description?: string | null
+    ogImage?: (number | null) | Media
     /**
      * Excludes the page from search engines and the sitemap.
      */
-    noIndex?: boolean | null;
-  };
-  order?: number | null;
-  status: 'draft' | 'published';
-  updatedAt: string;
-  createdAt: string;
+    noIndex?: boolean | null
+  }
+  order?: number | null
+  status: 'draft' | 'published'
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "solutions".
  */
 export interface Solution {
-  id: number;
-  slug: string;
-  title: string;
-  order?: number | null;
-  updatedAt: string;
-  createdAt: string;
+  id: number
+  slug: string
+  title: string
+  order?: number | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "caseStudies".
  */
 export interface CaseStudy {
-  id: number;
+  id: number
   /**
    * The URL segment. Lowercase, hyphenated, and stable once published.
    */
-  slug: string;
-  client?: (number | null) | Client;
+  slug: string
+  client?: (number | null) | Client
   /**
    * May be an anonymised label, e.g. "Anonymised — logistics, India".
    */
-  clientDisplayName: string;
-  industry: number | Industry;
-  geography?: string | null;
-  engagementType?: string | null;
+  clientDisplayName: string
+  industry: number | Industry
+  geography?: string | null
+  engagementType?: string | null
   /**
    * Only "granted" and "anonymised only" are visible publicly. The other two are absent from the API entirely.
    */
-  permissionStatus: 'granted' | 'pending' | 'anonymised-only' | 'refused';
+  permissionStatus: 'granted' | 'pending' | 'anonymised-only' | 'refused'
   /**
    * Shown in place of the client name on an anonymised study.
    */
-  confidentialityLabel?: string | null;
+  confidentialityLabel?: string | null
   challenge: {
     root: {
-      type: string;
+      type: string
       children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  }
   /**
    * The KPIs agreed before delivery started, not chosen afterwards.
    */
   successDefinition: {
     root: {
-      type: string;
+      type: string
       children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  }
   approach: {
     root: {
-      type: string;
+      type: string
       children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  };
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  }
   architecture?: {
-    diagram?: (number | null) | Media;
-    description?: string | null;
-  };
+    diagram?: (number | null) | Media
+    description?: string | null
+  }
   /**
    * Every row states how it was measured. A number without a method is not publishable.
    */
   kpis: {
-    metric: string;
-    before: string;
-    after: string;
-    change: string;
+    metric: string
+    before: string
+    after: string
+    change: string
     /**
      * How this was measured, over what period, from what source.
      */
-    method: string;
+    method: string
     /**
      * Rendered as a badge beside the figure. This is what keeps the number defensible when a prospect asks where it came from.
      */
-    evidenceType: 'measured' | 'modelled' | 'estimated' | 'client-reported';
-    id?: string | null;
-  }[];
-  testimonial?: (number | null) | Testimonial;
-  services?: (number | Service)[] | null;
-  technologies?: (number | Technology)[] | null;
+    evidenceType: 'measured' | 'modelled' | 'estimated' | 'client-reported'
+    id?: string | null
+  }[]
+  testimonial?: (number | null) | Testimonial
+  services?: (number | Service)[] | null
+  technologies?: (number | Technology)[] | null
   /**
    * Unique per page. No templated duplicates — docs/05.
    */
@@ -666,1084 +667,1084 @@ export interface CaseStudy {
     /**
      * Under about 60 characters. One keyword, one clear promise.
      */
-    title?: string | null;
+    title?: string | null
     /**
      * Roughly 150–160 characters, benefit-led.
      */
-    description?: string | null;
-    ogImage?: (number | null) | Media;
+    description?: string | null
+    ogImage?: (number | null) | Media
     /**
      * Excludes the page from search engines and the sitemap.
      */
-    noIndex?: boolean | null;
-  };
-  featured?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
+    noIndex?: boolean | null
+  }
+  featured?: boolean | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clients".
  */
 export interface Client {
-  id: number;
-  name: string;
+  id: number
+  name: string
   /**
    * SVG preferred. PNG with transparency is acceptable.
    */
-  logo: number | Media;
+  logo: number | Media
   /**
    * Off until written permission exists. While this is off the logo is invisible to the public API — not merely hidden in the UI.
    */
-  logoUsagePermitted: boolean;
+  logoUsagePermitted: boolean
   /**
    * Who granted it, when, and where the evidence is filed.
    */
-  permissionEvidence?: string | null;
-  displayOrder?: number | null;
-  updatedAt: string;
-  createdAt: string;
+  permissionEvidence?: string | null
+  displayOrder?: number | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials".
  */
 export interface Testimonial {
-  id: number;
-  quote: string;
-  authorName: string;
-  authorRole: string;
-  company: string;
-  authorPhoto?: (number | null) | Media;
+  id: number
+  quote: string
+  authorName: string
+  authorRole: string
+  company: string
+  authorPhoto?: (number | null) | Media
   /**
    * Off until the person quoted has approved this exact wording. While off, the quote is invisible to the public API.
    */
-  permissionGranted: boolean;
-  caseStudy?: (number | null) | CaseStudy;
-  featured?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
+  permissionGranted: boolean
+  caseStudy?: (number | null) | CaseStudy
+  featured?: boolean | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "technologies".
  */
 export interface Technology {
-  id: number;
-  slug: string;
-  title: string;
-  group?: ('ai' | 'cloud' | 'web' | 'mobile' | 'data' | 'agentic') | null;
-  whatItIs?: string | null;
-  whenToUse?: string | null;
+  id: number
+  slug: string
+  title: string
+  group?: ('ai' | 'cloud' | 'web' | 'mobile' | 'data' | 'agentic') | null
+  whatItIs?: string | null
+  whenToUse?: string | null
   /**
    * Required before publication. docs/03: a technology page that cannot say when the technology is wrong is a keyword page, and the blueprint forbids those.
    */
-  whenNotToUse?: string | null;
-  updatedAt: string;
-  createdAt: string;
+  whenNotToUse?: string | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "teamMembers".
  */
 export interface TeamMember {
-  id: number;
-  name: string;
-  role: string;
-  bio?: string | null;
-  photo?: (number | null) | Media;
-  linkedin?: string | null;
-  isLeadership?: boolean | null;
-  order?: number | null;
-  updatedAt: string;
-  createdAt: string;
+  id: number
+  name: string
+  role: string
+  bio?: string | null
+  photo?: (number | null) | Media
+  linkedin?: string | null
+  isLeadership?: boolean | null
+  order?: number | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "leads".
  */
 export interface Lead {
-  id: number;
-  name: string;
-  email: string;
-  phone?: string | null;
-  company?: string | null;
-  role?: string | null;
-  budgetRange?: ('evaluating' | '<5L' | '5-25L' | '25L-1Cr' | '>1Cr') | null;
-  timeline?: ('now' | '1-3mo' | '3-6mo' | 'exploring') | null;
-  projectBrief?: string | null;
-  servicesInterested?: (number | Service)[] | null;
-  ndaRequested?: boolean | null;
+  id: number
+  name: string
+  email: string
+  phone?: string | null
+  company?: string | null
+  role?: string | null
+  budgetRange?: ('evaluating' | '<5L' | '5-25L' | '25L-1Cr' | '>1Cr') | null
+  timeline?: ('now' | '1-3mo' | '3-6mo' | 'exploring') | null
+  projectBrief?: string | null
+  servicesInterested?: (number | Service)[] | null
+  ndaRequested?: boolean | null
   /**
    * The page path the enquiry came from.
    */
-  source: string;
+  source: string
   utm?: {
-    source?: string | null;
-    medium?: string | null;
-    campaign?: string | null;
-    term?: string | null;
-    content?: string | null;
-  };
+    source?: string | null
+    medium?: string | null
+    campaign?: string | null
+    term?: string | null
+    content?: string | null
+  }
   /**
    * When this person agreed to be contacted. Never back-filled.
    */
-  consentAt: string;
+  consentAt: string
   /**
    * A failed sync is recorded here rather than swallowed — docs/07 T-055.
    */
-  crmSyncStatus?: ('pending' | 'synced' | 'failed') | null;
-  crmRecordId?: string | null;
-  updatedAt: string;
-  createdAt: string;
+  crmSyncStatus?: ('pending' | 'synced' | 'failed') | null
+  crmRecordId?: string | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "subscribers".
  */
 export interface Subscriber {
-  id: number;
-  email: string;
-  consentAt: string;
-  source?: string | null;
-  status: 'active' | 'unsubscribed';
-  unsubscribeToken: string;
-  updatedAt: string;
-  createdAt: string;
+  id: number
+  email: string
+  consentAt: string
+  source?: string | null
+  status: 'active' | 'unsubscribed'
+  unsubscribeToken: string
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
-  id: number;
-  from: string;
-  to: string;
-  type: '301' | '302';
-  updatedAt: string;
-  createdAt: string;
+  id: number
+  from: string
+  to: string
+  type: '301' | '302'
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: number;
-  name: string;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
+  id: number
+  name: string
+  updatedAt: string
+  createdAt: string
+  email: string
+  resetPasswordToken?: string | null
+  resetPasswordExpiration?: string | null
+  salt?: string | null
+  hash?: string | null
+  loginAttempts?: number | null
+  lockUntil?: string | null
   sessions?:
     | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
+        id: string
+        createdAt?: string | null
+        expiresAt: string
       }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
+    | null
+  password?: string | null
+  collection: 'users'
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "resources".
  */
 export interface Resource {
-  id: number;
-  slug: string;
-  title: string;
-  excerpt?: string | null;
-  gated?: boolean | null;
-  publishedAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
+  id: number
+  slug: string
+  title: string
+  excerpt?: string | null
+  gated?: boolean | null
+  publishedAt?: string | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobs".
  */
 export interface Job {
-  id: number;
-  title: string;
-  department?: string | null;
-  location?: string | null;
-  employmentType?: string | null;
+  id: number
+  title: string
+  department?: string | null
+  location?: string | null
+  employmentType?: string | null
   description?: {
     root: {
-      type: string;
+      type: string
       children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  status?: ('draft' | 'open' | 'closed') | null;
-  postedAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
+        type: any
+        version: number
+        [k: string]: unknown
+      }[]
+      direction: ('ltr' | 'rtl') | null
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | ''
+      indent: number
+      version: number
+    }
+    [k: string]: unknown
+  } | null
+  status?: ('draft' | 'open' | 'closed') | null
+  postedAt?: string | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "assessmentRuns".
  */
 export interface AssessmentRun {
-  id: number;
-  maturityBand?: string | null;
+  id: number
+  maturityBand?: string | null
   answers?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
+    | null
   scores?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
-  lead?: (number | null) | Lead;
-  completedAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
+    | null
+  lead?: (number | null) | Lead
+  completedAt?: string | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "calculatorRuns".
  */
 export interface CalculatorRun {
-  id: number;
-  calculatorType?: string | null;
+  id: number
+  calculatorType?: string | null
   inputs?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
+    | null
   /**
    * Always rendered alongside the output. docs/04 section 34: the result is labelled an estimate, never a guarantee.
    */
   assumptions?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
+    | null
   outputs?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
-  lead?: (number | null) | Lead;
-  updatedAt: string;
-  createdAt: string;
+    | null
+  lead?: (number | null) | Lead
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: number;
-  key: string;
+  id: number
+  key: string
   data:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
+    | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: number;
+  id: number
   document?:
     | ({
-        relationTo: 'pages';
-        value: number | Page;
+        relationTo: 'pages'
+        value: number | Page
       } | null)
     | ({
-        relationTo: 'services';
-        value: number | Service;
+        relationTo: 'services'
+        value: number | Service
       } | null)
     | ({
-        relationTo: 'industries';
-        value: number | Industry;
+        relationTo: 'industries'
+        value: number | Industry
       } | null)
     | ({
-        relationTo: 'faqs';
-        value: number | Faq;
+        relationTo: 'faqs'
+        value: number | Faq
       } | null)
     | ({
-        relationTo: 'teamMembers';
-        value: number | TeamMember;
+        relationTo: 'teamMembers'
+        value: number | TeamMember
       } | null)
     | ({
-        relationTo: 'clients';
-        value: number | Client;
+        relationTo: 'clients'
+        value: number | Client
       } | null)
     | ({
-        relationTo: 'testimonials';
-        value: number | Testimonial;
+        relationTo: 'testimonials'
+        value: number | Testimonial
       } | null)
     | ({
-        relationTo: 'caseStudies';
-        value: number | CaseStudy;
+        relationTo: 'caseStudies'
+        value: number | CaseStudy
       } | null)
     | ({
-        relationTo: 'leads';
-        value: number | Lead;
+        relationTo: 'leads'
+        value: number | Lead
       } | null)
     | ({
-        relationTo: 'subscribers';
-        value: number | Subscriber;
+        relationTo: 'subscribers'
+        value: number | Subscriber
       } | null)
     | ({
-        relationTo: 'media';
-        value: number | Media;
+        relationTo: 'media'
+        value: number | Media
       } | null)
     | ({
-        relationTo: 'redirects';
-        value: number | Redirect;
+        relationTo: 'redirects'
+        value: number | Redirect
       } | null)
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'users'
+        value: number | User
       } | null)
     | ({
-        relationTo: 'solutions';
-        value: number | Solution;
+        relationTo: 'solutions'
+        value: number | Solution
       } | null)
     | ({
-        relationTo: 'technologies';
-        value: number | Technology;
+        relationTo: 'technologies'
+        value: number | Technology
       } | null)
     | ({
-        relationTo: 'resources';
-        value: number | Resource;
+        relationTo: 'resources'
+        value: number | Resource
       } | null)
     | ({
-        relationTo: 'jobs';
-        value: number | Job;
+        relationTo: 'jobs'
+        value: number | Job
       } | null)
     | ({
-        relationTo: 'assessmentRuns';
-        value: number | AssessmentRun;
+        relationTo: 'assessmentRuns'
+        value: number | AssessmentRun
       } | null)
     | ({
-        relationTo: 'calculatorRuns';
-        value: number | CalculatorRun;
-      } | null);
-  globalSlug?: string | null;
+        relationTo: 'calculatorRuns'
+        value: number | CalculatorRun
+      } | null)
+  globalSlug?: string | null
   user: {
-    relationTo: 'users';
-    value: number | User;
-  };
-  updatedAt: string;
-  createdAt: string;
+    relationTo: 'users'
+    value: number | User
+  }
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: number;
+  id: number
   user: {
-    relationTo: 'users';
-    value: number | User;
-  };
-  key?: string | null;
+    relationTo: 'users'
+    value: number | User
+  }
+  key?: string | null
   value?:
     | {
-        [k: string]: unknown;
+        [k: string]: unknown
       }
     | unknown[]
     | string
     | number
     | boolean
-    | null;
-  updatedAt: string;
-  createdAt: string;
+    | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: number;
-  name?: string | null;
-  batch?: number | null;
-  updatedAt: string;
-  createdAt: string;
+  id: number
+  name?: string | null
+  batch?: number | null
+  updatedAt: string
+  createdAt: string
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
-  slug?: T;
-  title?: T;
+  slug?: T
+  title?: T
   layout?:
     | T
     | {
         heroPage?:
           | T
           | {
-              eyebrow?: T;
-              headline?: T;
-              body?: T;
+              eyebrow?: T
+              headline?: T
+              body?: T
               primaryCta?:
                 | T
                 | {
-                    label?: T;
-                    href?: T;
-                  };
+                    label?: T
+                    href?: T
+                  }
               secondaryCta?:
                 | T
                 | {
-                    label?: T;
-                    href?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
+                    label?: T
+                    href?: T
+                  }
+              id?: T
+              blockName?: T
+            }
         prose?:
           | T
           | {
-              eyebrow?: T;
-              heading?: T;
-              body?: T;
-              canvas?: T;
-              id?: T;
-              blockName?: T;
-            };
+              eyebrow?: T
+              heading?: T
+              body?: T
+              canvas?: T
+              id?: T
+              blockName?: T
+            }
         numberedAccordion?:
           | T
           | {
-              eyebrow?: T;
-              heading?: T;
+              eyebrow?: T
+              heading?: T
               panels?:
                 | T
                 | {
-                    title?: T;
-                    body?: T;
-                    id?: T;
-                  };
-              id?: T;
-              blockName?: T;
-            };
+                    title?: T
+                    body?: T
+                    id?: T
+                  }
+              id?: T
+              blockName?: T
+            }
         ctaBand?:
           | T
           | {
-              eyebrow?: T;
-              heading?: T;
-              body?: T;
-              ctaLabel?: T;
-              ctaHref?: T;
-              id?: T;
-              blockName?: T;
-            };
-      };
+              eyebrow?: T
+              heading?: T
+              body?: T
+              ctaLabel?: T
+              ctaHref?: T
+              id?: T
+              blockName?: T
+            }
+      }
   seo?:
     | T
     | {
-        title?: T;
-        description?: T;
-        ogImage?: T;
-        noIndex?: T;
-      };
-  status?: T;
-  publishedAt?: T;
-  updatedAt?: T;
-  createdAt?: T;
+        title?: T
+        description?: T
+        ogImage?: T
+        noIndex?: T
+      }
+  status?: T
+  publishedAt?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "services_select".
  */
 export interface ServicesSelect<T extends boolean = true> {
-  slug?: T;
-  title?: T;
-  navLabel?: T;
+  slug?: T
+  title?: T
+  navLabel?: T
   hero?:
     | T
     | {
-        eyebrow?: T;
-        headline?: T;
-        body?: T;
+        eyebrow?: T
+        headline?: T
+        body?: T
         primaryCta?:
           | T
           | {
-              label?: T;
-              href?: T;
-            };
+              label?: T
+              href?: T
+            }
         secondaryCta?:
           | T
           | {
-              label?: T;
-              href?: T;
-            };
-      };
-  outcomeStatement?: T;
+              label?: T
+              href?: T
+            }
+      }
+  outcomeStatement?: T
   problemsSolved?:
     | T
     | {
-        title?: T;
-        description?: T;
-        id?: T;
-      };
+        title?: T
+        description?: T
+        id?: T
+      }
   capabilities?:
     | T
     | {
-        title?: T;
-        description?: T;
-        icon?: T;
-        id?: T;
-      };
+        title?: T
+        description?: T
+        icon?: T
+        id?: T
+      }
   deliverables?:
     | T
     | {
-        item?: T;
-        id?: T;
-      };
+        item?: T
+        id?: T
+      }
   process?:
     | T
     | {
-        step?: T;
-        title?: T;
-        description?: T;
-        id?: T;
-      };
-  pricingModel?: T;
-  faqs?: T;
-  industries?: T;
-  solutions?: T;
-  technologies?: T;
-  caseStudies?: T;
+        step?: T
+        title?: T
+        description?: T
+        id?: T
+      }
+  pricingModel?: T
+  faqs?: T
+  industries?: T
+  solutions?: T
+  technologies?: T
+  caseStudies?: T
   seo?:
     | T
     | {
-        title?: T;
-        description?: T;
-        ogImage?: T;
-        noIndex?: T;
-      };
-  order?: T;
-  status?: T;
-  updatedAt?: T;
-  createdAt?: T;
+        title?: T
+        description?: T
+        ogImage?: T
+        noIndex?: T
+      }
+  order?: T
+  status?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "industries_select".
  */
 export interface IndustriesSelect<T extends boolean = true> {
-  slug?: T;
-  title?: T;
+  slug?: T
+  title?: T
   hero?:
     | T
     | {
-        eyebrow?: T;
-        headline?: T;
-        body?: T;
-      };
-  context?: T;
+        eyebrow?: T
+        headline?: T
+        body?: T
+      }
+  context?: T
   challenges?:
     | T
     | {
-        title?: T;
-        description?: T;
-        id?: T;
-      };
+        title?: T
+        description?: T
+        id?: T
+      }
   useCases?:
     | T
     | {
-        title?: T;
-        description?: T;
-        outcome?: T;
-        id?: T;
-      };
+        title?: T
+        description?: T
+        outcome?: T
+        id?: T
+      }
   whereWeStart?:
     | T
     | {
-        step?: T;
-        label?: T;
-        tag?: T;
-        id?: T;
-      };
-  regulatoryNotes?: T;
-  services?: T;
-  solutions?: T;
-  caseStudies?: T;
-  faqs?: T;
+        step?: T
+        label?: T
+        tag?: T
+        id?: T
+      }
+  regulatoryNotes?: T
+  services?: T
+  solutions?: T
+  caseStudies?: T
+  faqs?: T
   seo?:
     | T
     | {
-        title?: T;
-        description?: T;
-        ogImage?: T;
-        noIndex?: T;
-      };
-  order?: T;
-  status?: T;
-  updatedAt?: T;
-  createdAt?: T;
+        title?: T
+        description?: T
+        ogImage?: T
+        noIndex?: T
+      }
+  order?: T
+  status?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faqs_select".
  */
 export interface FaqsSelect<T extends boolean = true> {
-  question?: T;
-  answer?: T;
-  scope?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  question?: T
+  answer?: T
+  scope?: T
+  order?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "teamMembers_select".
  */
 export interface TeamMembersSelect<T extends boolean = true> {
-  name?: T;
-  role?: T;
-  bio?: T;
-  photo?: T;
-  linkedin?: T;
-  isLeadership?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  name?: T
+  role?: T
+  bio?: T
+  photo?: T
+  linkedin?: T
+  isLeadership?: T
+  order?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clients_select".
  */
 export interface ClientsSelect<T extends boolean = true> {
-  name?: T;
-  logo?: T;
-  logoUsagePermitted?: T;
-  permissionEvidence?: T;
-  displayOrder?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  name?: T
+  logo?: T
+  logoUsagePermitted?: T
+  permissionEvidence?: T
+  displayOrder?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "testimonials_select".
  */
 export interface TestimonialsSelect<T extends boolean = true> {
-  quote?: T;
-  authorName?: T;
-  authorRole?: T;
-  company?: T;
-  authorPhoto?: T;
-  permissionGranted?: T;
-  caseStudy?: T;
-  featured?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  quote?: T
+  authorName?: T
+  authorRole?: T
+  company?: T
+  authorPhoto?: T
+  permissionGranted?: T
+  caseStudy?: T
+  featured?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "caseStudies_select".
  */
 export interface CaseStudiesSelect<T extends boolean = true> {
-  slug?: T;
-  client?: T;
-  clientDisplayName?: T;
-  industry?: T;
-  geography?: T;
-  engagementType?: T;
-  permissionStatus?: T;
-  confidentialityLabel?: T;
-  challenge?: T;
-  successDefinition?: T;
-  approach?: T;
+  slug?: T
+  client?: T
+  clientDisplayName?: T
+  industry?: T
+  geography?: T
+  engagementType?: T
+  permissionStatus?: T
+  confidentialityLabel?: T
+  challenge?: T
+  successDefinition?: T
+  approach?: T
   architecture?:
     | T
     | {
-        diagram?: T;
-        description?: T;
-      };
+        diagram?: T
+        description?: T
+      }
   kpis?:
     | T
     | {
-        metric?: T;
-        before?: T;
-        after?: T;
-        change?: T;
-        method?: T;
-        evidenceType?: T;
-        id?: T;
-      };
-  testimonial?: T;
-  services?: T;
-  technologies?: T;
+        metric?: T
+        before?: T
+        after?: T
+        change?: T
+        method?: T
+        evidenceType?: T
+        id?: T
+      }
+  testimonial?: T
+  services?: T
+  technologies?: T
   seo?:
     | T
     | {
-        title?: T;
-        description?: T;
-        ogImage?: T;
-        noIndex?: T;
-      };
-  featured?: T;
-  updatedAt?: T;
-  createdAt?: T;
+        title?: T
+        description?: T
+        ogImage?: T
+        noIndex?: T
+      }
+  featured?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "leads_select".
  */
 export interface LeadsSelect<T extends boolean = true> {
-  name?: T;
-  email?: T;
-  phone?: T;
-  company?: T;
-  role?: T;
-  budgetRange?: T;
-  timeline?: T;
-  projectBrief?: T;
-  servicesInterested?: T;
-  ndaRequested?: T;
-  source?: T;
+  name?: T
+  email?: T
+  phone?: T
+  company?: T
+  role?: T
+  budgetRange?: T
+  timeline?: T
+  projectBrief?: T
+  servicesInterested?: T
+  ndaRequested?: T
+  source?: T
   utm?:
     | T
     | {
-        source?: T;
-        medium?: T;
-        campaign?: T;
-        term?: T;
-        content?: T;
-      };
-  consentAt?: T;
-  crmSyncStatus?: T;
-  crmRecordId?: T;
-  updatedAt?: T;
-  createdAt?: T;
+        source?: T
+        medium?: T
+        campaign?: T
+        term?: T
+        content?: T
+      }
+  consentAt?: T
+  crmSyncStatus?: T
+  crmRecordId?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "subscribers_select".
  */
 export interface SubscribersSelect<T extends boolean = true> {
-  email?: T;
-  consentAt?: T;
-  source?: T;
-  status?: T;
-  unsubscribeToken?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  email?: T
+  consentAt?: T
+  source?: T
+  status?: T
+  unsubscribeToken?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
-  caption?: T;
-  credit?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
+  alt?: T
+  caption?: T
+  credit?: T
+  updatedAt?: T
+  createdAt?: T
+  url?: T
+  thumbnailURL?: T
+  filename?: T
+  mimeType?: T
+  filesize?: T
+  width?: T
+  height?: T
+  focalX?: T
+  focalY?: T
   sizes?:
     | T
     | {
         thumb?:
           | T
           | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
+              url?: T
+              width?: T
+              height?: T
+              mimeType?: T
+              filesize?: T
+              filename?: T
+            }
         card?:
           | T
           | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
+              url?: T
+              width?: T
+              height?: T
+              mimeType?: T
+              filesize?: T
+              filename?: T
+            }
         hero?:
           | T
           | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
+              url?: T
+              width?: T
+              height?: T
+              mimeType?: T
+              filesize?: T
+              filename?: T
+            }
         og?:
           | T
           | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
+              url?: T
+              width?: T
+              height?: T
+              mimeType?: T
+              filesize?: T
+              filename?: T
+            }
+      }
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
-  from?: T;
-  to?: T;
-  type?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  from?: T
+  to?: T
+  type?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
-  name?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
+  name?: T
+  updatedAt?: T
+  createdAt?: T
+  email?: T
+  resetPasswordToken?: T
+  resetPasswordExpiration?: T
+  salt?: T
+  hash?: T
+  loginAttempts?: T
+  lockUntil?: T
   sessions?:
     | T
     | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
+        id?: T
+        createdAt?: T
+        expiresAt?: T
+      }
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "solutions_select".
  */
 export interface SolutionsSelect<T extends boolean = true> {
-  slug?: T;
-  title?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  slug?: T
+  title?: T
+  order?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "technologies_select".
  */
 export interface TechnologiesSelect<T extends boolean = true> {
-  slug?: T;
-  title?: T;
-  group?: T;
-  whatItIs?: T;
-  whenToUse?: T;
-  whenNotToUse?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  slug?: T
+  title?: T
+  group?: T
+  whatItIs?: T
+  whenToUse?: T
+  whenNotToUse?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "resources_select".
  */
 export interface ResourcesSelect<T extends boolean = true> {
-  slug?: T;
-  title?: T;
-  excerpt?: T;
-  gated?: T;
-  publishedAt?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  slug?: T
+  title?: T
+  excerpt?: T
+  gated?: T
+  publishedAt?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobs_select".
  */
 export interface JobsSelect<T extends boolean = true> {
-  title?: T;
-  department?: T;
-  location?: T;
-  employmentType?: T;
-  description?: T;
-  status?: T;
-  postedAt?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  title?: T
+  department?: T
+  location?: T
+  employmentType?: T
+  description?: T
+  status?: T
+  postedAt?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "assessmentRuns_select".
  */
 export interface AssessmentRunsSelect<T extends boolean = true> {
-  maturityBand?: T;
-  answers?: T;
-  scores?: T;
-  lead?: T;
-  completedAt?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  maturityBand?: T
+  answers?: T
+  scores?: T
+  lead?: T
+  completedAt?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "calculatorRuns_select".
  */
 export interface CalculatorRunsSelect<T extends boolean = true> {
-  calculatorType?: T;
-  inputs?: T;
-  assumptions?: T;
-  outputs?: T;
-  lead?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  calculatorType?: T
+  inputs?: T
+  assumptions?: T
+  outputs?: T
+  lead?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
-  key?: T;
-  data?: T;
+  key?: T
+  data?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
-  document?: T;
-  globalSlug?: T;
-  user?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  document?: T
+  globalSlug?: T
+  user?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-preferences_select".
  */
 export interface PayloadPreferencesSelect<T extends boolean = true> {
-  user?: T;
-  key?: T;
-  value?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  user?: T
+  key?: T
+  value?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-migrations_select".
  */
 export interface PayloadMigrationsSelect<T extends boolean = true> {
-  name?: T;
-  batch?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  name?: T
+  batch?: T
+  updatedAt?: T
+  createdAt?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "navigation".
  */
 export interface Navigation {
-  id: number;
+  id: number
   /**
    * Only turn this on if it carries something useful. A decorative announcement bar competes with the main CTA — blueprint §3.1.
    */
   utilityBar?: {
-    enabled?: boolean | null;
-    message?: string | null;
-    email?: string | null;
-    whatsapp?: string | null;
-  };
+    enabled?: boolean | null
+    message?: string | null
+    email?: string | null
+    whatsapp?: string | null
+  }
   megaMenus?:
     | {
-        label: string;
+        label: string
         /**
          * Where the top-level item itself goes. Optional.
          */
-        href?: string | null;
+        href?: string | null
         groups?:
           | {
-              heading: string;
-              supportingCopy?: string | null;
+              heading: string
+              supportingCopy?: string | null
               links?:
                 | {
-                    label: string;
-                    href: string;
-                    description?: string | null;
-                    id?: string | null;
+                    label: string
+                    href: string
+                    description?: string | null
+                    id?: string | null
                   }[]
-                | null;
-              id?: string | null;
+                | null
+              id?: string | null
             }[]
-          | null;
+          | null
         featuredPanel?: {
-          eyebrow?: string | null;
-          heading?: string | null;
-          body?: string | null;
-          ctaLabel?: string | null;
-          ctaHref?: string | null;
-        };
-        id?: string | null;
+          eyebrow?: string | null
+          heading?: string | null
+          body?: string | null
+          ctaLabel?: string | null
+          ctaHref?: string | null
+        }
+        id?: string | null
       }[]
-    | null;
+    | null
   /**
    * Top-level items with no mega menu, such as About.
    */
   primaryLinks?:
     | {
-        label: string;
-        href: string;
-        id?: string | null;
+        label: string
+        href: string
+        id?: string | null
       }[]
-    | null;
+    | null
   footerColumns?:
     | {
-        heading: string;
+        heading: string
         /**
          * When set, this column is omitted entirely unless the flag is on. Omitted, not rendered empty — docs/04 §4.
          */
@@ -1756,96 +1757,96 @@ export interface Navigation {
               | 'showSolutions'
               | 'showTechnologies'
             )
-          | null;
+          | null
         links?:
           | {
-              label: string;
-              href: string;
-              id?: string | null;
+              label: string
+              href: string
+              id?: string | null
             }[]
-          | null;
-        id?: string | null;
+          | null
+        id?: string | null
       }[]
-    | null;
+    | null
   stickyCta?: {
-    label?: string | null;
-    href?: string | null;
-    showOnMobile?: boolean | null;
-  };
-  updatedAt?: string | null;
-  createdAt?: string | null;
+    label?: string | null
+    href?: string | null
+    showOnMobile?: boolean | null
+  }
+  updatedAt?: string | null
+  createdAt?: string | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "siteSettings".
  */
 export interface SiteSetting {
-  id: number;
+  id: number
   brand?: {
-    logo?: (number | null) | Media;
-    logoMark?: (number | null) | Media;
-    favicon?: (number | null) | Media;
-  };
+    logo?: (number | null) | Media
+    logoMark?: (number | null) | Media
+    favicon?: (number | null) | Media
+  }
   /**
    * These appear in structured data. Leave a field blank rather than approximating it — the consumer omits the whole element, which is correct. A guess would be a machine-readable claim.
    */
   contact?: {
-    email?: string | null;
+    email?: string | null
     /**
      * Include the country code.
      */
-    phone?: string | null;
+    phone?: string | null
     /**
      * Full international format, no plus. WhatsAppButton does not render at all without this.
      */
-    whatsapp?: string | null;
+    whatsapp?: string | null
     addressLines?:
       | {
-          line: string;
-          id?: string | null;
+          line: string
+          id?: string | null
         }[]
-      | null;
+      | null
     /**
      * The registered name, for the footer, terms and Organization JSON-LD.
      */
-    legalEntityName?: string | null;
-  };
+    legalEntityName?: string | null
+  }
   socials?:
     | {
-        platform: string;
-        url: string;
-        id?: string | null;
+        platform: string
+        url: string
+        id?: string | null
       }[]
-    | null;
+    | null
   defaultSeo?: {
-    titleTemplate?: string | null;
-    description?: string | null;
-    ogImage?: (number | null) | Media;
-  };
+    titleTemplate?: string | null
+    description?: string | null
+    ogImage?: (number | null) | Media
+  }
   /**
    * The legal pages are drafts until this is approved. While unapproved they carry a visible draft banner and are excluded from search engines. Tick it only once someone qualified has actually read them.
    */
   legal?: {
-    approved?: boolean | null;
+    approved?: boolean | null
     /**
      * Who reviewed them. A name here is the accountability the checkbox implies.
      */
-    approvedBy?: string | null;
-    approvedOn?: string | null;
-  };
+    approvedBy?: string | null
+    approvedOn?: string | null
+  }
   /**
    * Lets Phase 2+ sections stay dark in production without a code change — docs/03 §4.
    */
   featureFlags?: {
-    showCaseStudies?: boolean | null;
-    showResources?: boolean | null;
-    showCareers?: boolean | null;
-    showAssessment?: boolean | null;
-    showSolutions?: boolean | null;
-    showTechnologies?: boolean | null;
-  };
-  updatedAt?: string | null;
-  createdAt?: string | null;
+    showCaseStudies?: boolean | null
+    showResources?: boolean | null
+    showCareers?: boolean | null
+    showAssessment?: boolean | null
+    showSolutions?: boolean | null
+    showTechnologies?: boolean | null
+  }
+  updatedAt?: string | null
+  createdAt?: string | null
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1855,73 +1856,73 @@ export interface NavigationSelect<T extends boolean = true> {
   utilityBar?:
     | T
     | {
-        enabled?: T;
-        message?: T;
-        email?: T;
-        whatsapp?: T;
-      };
+        enabled?: T
+        message?: T
+        email?: T
+        whatsapp?: T
+      }
   megaMenus?:
     | T
     | {
-        label?: T;
-        href?: T;
+        label?: T
+        href?: T
         groups?:
           | T
           | {
-              heading?: T;
-              supportingCopy?: T;
+              heading?: T
+              supportingCopy?: T
               links?:
                 | T
                 | {
-                    label?: T;
-                    href?: T;
-                    description?: T;
-                    id?: T;
-                  };
-              id?: T;
-            };
+                    label?: T
+                    href?: T
+                    description?: T
+                    id?: T
+                  }
+              id?: T
+            }
         featuredPanel?:
           | T
           | {
-              eyebrow?: T;
-              heading?: T;
-              body?: T;
-              ctaLabel?: T;
-              ctaHref?: T;
-            };
-        id?: T;
-      };
+              eyebrow?: T
+              heading?: T
+              body?: T
+              ctaLabel?: T
+              ctaHref?: T
+            }
+        id?: T
+      }
   primaryLinks?:
     | T
     | {
-        label?: T;
-        href?: T;
-        id?: T;
-      };
+        label?: T
+        href?: T
+        id?: T
+      }
   footerColumns?:
     | T
     | {
-        heading?: T;
-        requiresFlag?: T;
+        heading?: T
+        requiresFlag?: T
         links?:
           | T
           | {
-              label?: T;
-              href?: T;
-              id?: T;
-            };
-        id?: T;
-      };
+              label?: T
+              href?: T
+              id?: T
+            }
+        id?: T
+      }
   stickyCta?:
     | T
     | {
-        label?: T;
-        href?: T;
-        showOnMobile?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
+        label?: T
+        href?: T
+        showOnMobile?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1931,58 +1932,58 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   brand?:
     | T
     | {
-        logo?: T;
-        logoMark?: T;
-        favicon?: T;
-      };
+        logo?: T
+        logoMark?: T
+        favicon?: T
+      }
   contact?:
     | T
     | {
-        email?: T;
-        phone?: T;
-        whatsapp?: T;
+        email?: T
+        phone?: T
+        whatsapp?: T
         addressLines?:
           | T
           | {
-              line?: T;
-              id?: T;
-            };
-        legalEntityName?: T;
-      };
+              line?: T
+              id?: T
+            }
+        legalEntityName?: T
+      }
   socials?:
     | T
     | {
-        platform?: T;
-        url?: T;
-        id?: T;
-      };
+        platform?: T
+        url?: T
+        id?: T
+      }
   defaultSeo?:
     | T
     | {
-        titleTemplate?: T;
-        description?: T;
-        ogImage?: T;
-      };
+        titleTemplate?: T
+        description?: T
+        ogImage?: T
+      }
   legal?:
     | T
     | {
-        approved?: T;
-        approvedBy?: T;
-        approvedOn?: T;
-      };
+        approved?: T
+        approvedBy?: T
+        approvedOn?: T
+      }
   featureFlags?:
     | T
     | {
-        showCaseStudies?: T;
-        showResources?: T;
-        showCareers?: T;
-        showAssessment?: T;
-        showSolutions?: T;
-        showTechnologies?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
+        showCaseStudies?: T
+        showResources?: T
+        showCareers?: T
+        showAssessment?: T
+        showSolutions?: T
+        showTechnologies?: T
+      }
+  updatedAt?: T
+  createdAt?: T
+  globalType?: T
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1990,18 +1991,17 @@ export interface SiteSettingsSelect<T extends boolean = true> {
  */
 export interface CollectionsWidget {
   data?: {
-    [k: string]: unknown;
-  };
-  width: 'full';
+    [k: string]: unknown
+  }
+  width: 'full'
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {
-  [k: string]: unknown;
+  [k: string]: unknown
 }
-
 
 declare module 'payload' {
   export interface GeneratedTypes extends Config {}
