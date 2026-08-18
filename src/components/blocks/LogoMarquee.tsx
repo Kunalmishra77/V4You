@@ -1,5 +1,5 @@
 import { Eyebrow } from '@/components/shared/Eyebrow'
-import { SectionShell } from '@/components/shared/SectionShell'
+import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { technologyEcosystem } from '@/seed/home-proof'
 
 /**
@@ -21,11 +21,11 @@ import { technologyEcosystem } from '@/seed/home-proof'
  * `aria-hidden`, so a screen reader hears the list once. It pauses on hover and
  * stops entirely under reduced motion — CSS only, no client JavaScript.
  */
-export function LogoMarquee() {
+export function LogoMarquee({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
   const items = technologyEcosystem.groups.flatMap((group) => group.items)
 
   return (
-    <SectionShell canvas="bone" reveal>
+    <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>{technologyEcosystem.eyebrow}</Eyebrow>
         <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">

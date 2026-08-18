@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { Eyebrow } from '@/components/shared/Eyebrow'
-import { SectionShell } from '@/components/shared/SectionShell'
+import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { solutionMatrix } from '@/seed/home-proof'
 
 /**
@@ -15,9 +15,9 @@ import { solutionMatrix } from '@/seed/home-proof'
  * table stays a table; only its display changes, so the semantics survive the
  * breakpoint.
  */
-export function SolutionMatrix() {
+export function SolutionMatrix({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
   return (
-    <SectionShell canvas="bone" reveal>
+    <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>{solutionMatrix.eyebrow}</Eyebrow>
         <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">

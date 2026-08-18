@@ -2,7 +2,7 @@ import Link from 'next/link'
 
 import { CutCard } from '@/components/shared/CutCard'
 import { Eyebrow } from '@/components/shared/Eyebrow'
-import { SectionShell } from '@/components/shared/SectionShell'
+import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { serviceCards } from '@/seed/services'
 
 /**
@@ -23,13 +23,15 @@ export function ServiceCardGrid({
   heading = 'Choose the capability you need today.',
   body = 'Build the foundation you will need tomorrow. Every engagement can start narrow and widen once it has proven itself.',
   eyebrow = 'What we do',
+  canvas = 'bone',
 }: {
   heading?: string
   body?: string
   eyebrow?: string
+  canvas?: Canvas
 }) {
   return (
-    <SectionShell canvas="bone" reveal>
+    <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>{eyebrow}</Eyebrow>
         <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">{heading}</h2>

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 import { Eyebrow } from '@/components/shared/Eyebrow'
-import { SectionShell } from '@/components/shared/SectionShell'
+import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { industryTabs } from '@/seed/industries'
 
 import { Tabs, type TabItem } from './Tabs'
@@ -17,7 +17,7 @@ import { Tabs, type TabItem } from './Tabs'
  * list, and this is that in miniature — eleven links generated from eleven
  * records.
  */
-export function IndustryTabs() {
+export function IndustryTabs({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
   const items: TabItem[] = industryTabs.map((industry) => ({
     id: industry.slug,
     label: industry.label,
@@ -79,7 +79,7 @@ export function IndustryTabs() {
   }))
 
   return (
-    <SectionShell canvas="bone" reveal>
+    <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>Industries</Eyebrow>
         <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">

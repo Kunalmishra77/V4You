@@ -1,6 +1,6 @@
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
-import { SectionShell } from '@/components/shared/SectionShell'
+import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { capabilityShowcase } from '@/seed/home'
 
 import { Tabs, type TabItem } from './Tabs'
@@ -13,7 +13,7 @@ import { Tabs, type TabItem } from './Tabs'
  * makes the section an argument rather than a feature list: every capability
  * shown includes the point at which a person is still in control.
  */
-export function CapabilityTabs() {
+export function CapabilityTabs({ canvas = 'navy' }: { canvas?: Canvas } = {}) {
   const items: TabItem[] = capabilityShowcase.tabs.map((tab) => ({
     id: tab.id,
     label: tab.label,
@@ -52,7 +52,7 @@ export function CapabilityTabs() {
   }))
 
   return (
-    <SectionShell canvas="navy" reveal>
+    <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>{capabilityShowcase.eyebrow}</Eyebrow>
         <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">

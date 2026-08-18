@@ -1,5 +1,5 @@
 import { Eyebrow } from '@/components/shared/Eyebrow'
-import { SectionShell } from '@/components/shared/SectionShell'
+import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { pillarSection } from '@/seed/home'
 
 /**
@@ -12,9 +12,9 @@ import { pillarSection } from '@/seed/home'
  * These are ordered — the four are a sequence, unlike ProblemCards — so the
  * numbers stay in the accessible name rather than being hidden.
  */
-export function PillarCards() {
+export function PillarCards({ canvas = 'navy' }: { canvas?: Canvas } = {}) {
   return (
-    <SectionShell canvas="navy" reveal>
+    <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>{pillarSection.eyebrow}</Eyebrow>
         <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">

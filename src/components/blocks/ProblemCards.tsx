@@ -1,7 +1,7 @@
 import { Button } from '@/components/shared/Button'
 import { CutCard } from '@/components/shared/CutCard'
 import { Eyebrow } from '@/components/shared/Eyebrow'
-import { SectionShell } from '@/components/shared/SectionShell'
+import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { problemSection } from '@/seed/home'
 
 /**
@@ -16,9 +16,9 @@ import { problemSection } from '@/seed/home'
  * without a destination reads as a glitch, and docs/15.4 in the blueprint asks
  * hover states to reveal affordance rather than create motion.
  */
-export function ProblemCards() {
+export function ProblemCards({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
   return (
-    <SectionShell canvas="bone" reveal>
+    <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>{problemSection.eyebrow}</Eyebrow>
         <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
