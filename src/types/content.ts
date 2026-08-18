@@ -96,4 +96,13 @@ export type SiteSettings = {
     ogImage: string
   }
   featureFlags: FeatureFlags
+  /**
+   * The legal pages stay in draft — banner shown, noindexed — until this is
+   * approved. A gate rather than a reminder.
+   */
+  legal: {
+    approved: boolean
+    approvedBy?: string
+    approvedOn?: string
+  }
 }

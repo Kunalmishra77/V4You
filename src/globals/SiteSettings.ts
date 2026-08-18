@@ -77,6 +77,36 @@ export const SiteSettings: GlobalConfig = {
       ],
     },
     {
+      name: 'legal',
+      type: 'group',
+      admin: {
+        description:
+          'The legal pages are drafts until this is approved. While unapproved they carry a visible draft banner and are excluded from search engines. Tick it only once someone qualified has actually read them.',
+      },
+      fields: [
+        {
+          name: 'approved',
+          type: 'checkbox',
+          defaultValue: false,
+          label: 'Legal pages reviewed and approved for publication',
+        },
+        {
+          name: 'approvedBy',
+          type: 'text',
+          admin: {
+            description:
+              'Who reviewed them. A name here is the accountability the checkbox implies.',
+            condition: (data) => Boolean(data?.legal?.approved),
+          },
+        },
+        {
+          name: 'approvedOn',
+          type: 'date',
+          admin: { condition: (data) => Boolean(data?.legal?.approved) },
+        },
+      ],
+    },
+    {
       name: 'featureFlags',
       type: 'group',
       admin: {

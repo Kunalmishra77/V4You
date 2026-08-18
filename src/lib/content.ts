@@ -120,6 +120,11 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
         description: settings.defaultSeo?.description ?? siteSettingsSeed.defaultSeo.description,
         ogImage: siteSettingsSeed.defaultSeo.ogImage,
       },
+      legal: {
+        approved: Boolean(settings.legal?.approved),
+        approvedBy: opt(settings.legal?.approvedBy),
+        approvedOn: opt(settings.legal?.approvedOn),
+      },
       featureFlags: {
         showCaseStudies: Boolean(settings.featureFlags?.showCaseStudies),
         showResources: Boolean(settings.featureFlags?.showResources),

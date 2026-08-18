@@ -28,6 +28,11 @@ export const siteSettingsSeed: SiteSettings = {
     ogImage: '/og-default.png',
   },
 
+  legal: {
+    // Off until someone qualified has read the drafts. See src/seed/legal.ts.
+    approved: false,
+  },
+
   featureFlags: {
     showCaseStudies: false,
     showResources: false,

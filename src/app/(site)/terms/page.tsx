@@ -1,24 +1,41 @@
 import type { Metadata } from 'next'
 
-import { PagePlaceholder } from '@/components/shared/PagePlaceholder'
+import { LegalDocument } from '@/components/blocks/LegalDocument'
+import { getSiteSettings } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
+import { legalLastUpdated, termsOfUse } from '@/seed/legal'
 
-export const metadata: Metadata = buildMetadata({
-  title: 'Terms of service — V4You Technologies',
-  description: 'Requires client-supplied legal copy — docs/08 §6 forbids drafting it here.',
-  path: '/terms',
-})
+/**
+ * Terms of use — T-067.
+ *
+ * Drafted from a technical audit of what this site actually does, at the
+ * client's instruction and against the advice in docs/08 §6. It stays
+ * noindexed and carries a visible draft banner until `siteSettings.legal
+ * .approved` is set — see src/seed/legal.ts for what that decision involves.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
 
-export default function Page() {
+  return buildMetadata({
+    title: 'Terms of use — V4You Technologies',
+    description: termsOfUse.metaDescription,
+    path: '/terms',
+    // An unreviewed legal page should not be indexed. It is still reachable
+    // and linked, so it can be reviewed; it simply is not advertised.
+    noIndex: !settings.legal.approved,
+  })
+}
+
+export default async function Page() {
+  const settings = await getSiteSettings()
+
   return (
-    <PagePlaceholder
-      title="Terms of service"
-      ticket="T-067"
-      breadcrumbs={[
-        { name: 'Home', path: '/' },
-        { name: 'Terms', path: '/terms' },
-      ]}
-      summary="Requires client-supplied legal copy — docs/08 §6 forbids drafting it here."
+    <LegalDocument
+      document={termsOfUse}
+      path="/terms"
+      lastUpdated={legalLastUpdated}
+      approved={settings.legal.approved}
+      approvedBy={settings.legal.approvedBy}
     />
   )
 }

@@ -1,24 +1,41 @@
 import type { Metadata } from 'next'
 
-import { PagePlaceholder } from '@/components/shared/PagePlaceholder'
+import { LegalDocument } from '@/components/blocks/LegalDocument'
+import { getSiteSettings } from '@/lib/content'
 import { buildMetadata } from '@/lib/seo'
+import { legalLastUpdated, cookiePolicy } from '@/seed/legal'
 
-export const metadata: Metadata = buildMetadata({
-  title: 'Cookie policy — V4You Technologies',
-  description: 'Requires client-supplied legal copy, and must match what actually loads.',
-  path: '/cookie-policy',
-})
+/**
+ * Cookie policy — T-067.
+ *
+ * Drafted from a technical audit of what this site actually does, at the
+ * client's instruction and against the advice in docs/08 §6. It stays
+ * noindexed and carries a visible draft banner until `siteSettings.legal
+ * .approved` is set — see src/seed/legal.ts for what that decision involves.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings()
 
-export default function Page() {
+  return buildMetadata({
+    title: 'Cookie policy — V4You Technologies',
+    description: cookiePolicy.metaDescription,
+    path: '/cookie-policy',
+    // An unreviewed legal page should not be indexed. It is still reachable
+    // and linked, so it can be reviewed; it simply is not advertised.
+    noIndex: !settings.legal.approved,
+  })
+}
+
+export default async function Page() {
+  const settings = await getSiteSettings()
+
   return (
-    <PagePlaceholder
-      title="Cookie policy"
-      ticket="T-067"
-      breadcrumbs={[
-        { name: 'Home', path: '/' },
-        { name: 'Cookie policy', path: '/cookie-policy' },
-      ]}
-      summary="Requires client-supplied legal copy, and must match what actually loads."
+    <LegalDocument
+      document={cookiePolicy}
+      path="/cookie-policy"
+      lastUpdated={legalLastUpdated}
+      approved={settings.legal.approved}
+      approvedBy={settings.legal.approvedBy}
     />
   )
 }

@@ -1823,6 +1823,17 @@ export interface SiteSetting {
     ogImage?: (number | null) | Media;
   };
   /**
+   * The legal pages are drafts until this is approved. While unapproved they carry a visible draft banner and are excluded from search engines. Tick it only once someone qualified has actually read them.
+   */
+  legal?: {
+    approved?: boolean | null;
+    /**
+     * Who reviewed them. A name here is the accountability the checkbox implies.
+     */
+    approvedBy?: string | null;
+    approvedOn?: string | null;
+  };
+  /**
    * Lets Phase 2+ sections stay dark in production without a code change — docs/03 §4.
    */
   featureFlags?: {
@@ -1951,6 +1962,13 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         titleTemplate?: T;
         description?: T;
         ogImage?: T;
+      };
+  legal?:
+    | T
+    | {
+        approved?: T;
+        approvedBy?: T;
+        approvedOn?: T;
       };
   featureFlags?:
     | T
