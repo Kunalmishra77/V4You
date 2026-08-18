@@ -17,6 +17,17 @@ const nextConfig: NextConfig = {
 
   experimental: {
     /**
+     * This app has three root layouts — (site), (dev) and Payload's (payload) —
+     * so there is no single layout Next can compose a global 404 from. Without
+     * this flag an unmatched URL fell through to Next's built-in error
+     * document: no `lang` attribute, no `<main>` landmark, no header or footer,
+     * and none of the links a person who has just failed to find something
+     * actually needs. The axe scan caught it by reporting violations against
+     * markup that was not ours.
+     */
+    globalNotFound: true,
+
+    /**
      * Static generation runs one worker per core by default. On a machine with
      * 8GB of RAM that is seven concurrent React renderers, and the build dies
      * with exit code 1 and no error message — the signature of an OOM kill

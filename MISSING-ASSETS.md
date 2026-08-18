@@ -84,4 +84,5 @@ Entries are appended, never removed — delete a row once the asset lands.
 | `ContactPage` | siteSettings.contact — email, phone, address, legal entity name | the contact details column and the ContactPoint JSON-LD; the form is the only route in |
 | `AboutPage — leadership grid` | teamMembers with isLeadership, plus assets/team/{name}.jpg and team.csv | the leadership section is omitted entirely — no avatar placeholders (docs/05 §2) |
 | `AboutPage — story timeline` | founding year and origin, the first capability, and expansion milestones (blueprint §10) | the story section renders a visibly labelled placeholder and must not go live as is |
+| `BookConsultationPage` | NEXT_PUBLIC_CAL_LINK — a Cal.com booking link and whose calendar it points at | the calendar embed; the form-only variant renders instead |
 <!-- END:auto-logged -->

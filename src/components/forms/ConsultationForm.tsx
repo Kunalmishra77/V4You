@@ -296,26 +296,45 @@ export function ConsultationForm({ source = '/contact' }: { source?: string }) {
           </span>
         </label>
 
-        <Field name="consent" label="" error={errors.consent}>
-          {({ id, describedBy, invalid }) => (
-            <label className="flex items-start gap-3 text-body-sm">
-              <input
-                id={id}
-                type="checkbox"
-                name="consent"
-                aria-describedby={describedBy}
-                aria-invalid={invalid}
-                className="mt-1 size-4 shrink-0 accent-amber-500"
-              />
-              <span>
-                I agree that V4You can store these details and contact me about this enquiry.
-                <span className="ml-1 text-(--accent-text)" aria-hidden="true">
-                  *
-                </span>
+        {/*
+          Deliberately not routed through <Field>. That component renders its
+          own <label for="…">, and wrapping the input in a second label as well
+          gave this checkbox two accessible names — the first of which was the
+          word "Optional", because Field appends it when `required` is unset.
+
+          A screen reader therefore announced a legally required consent
+          checkbox as optional, which is not merely wrong but the opposite of
+          true. Found by axe's form-field-multiple-labels check.
+
+          One wrapping label, one accessible name, and the error rendered
+          alongside rather than through the wrapper.
+        */}
+        <div className="flex flex-col gap-2">
+          <label className="flex items-start gap-3 text-body-sm">
+            <input
+              id="field-consent"
+              type="checkbox"
+              name="consent"
+              required
+              aria-describedby={errors.consent ? 'field-consent-error' : undefined}
+              aria-invalid={Boolean(errors.consent)}
+              className="mt-1 size-4 shrink-0 accent-amber-500"
+            />
+            <span>
+              I agree that V4You can store these details and contact me about this enquiry.
+              <span className="ml-1 text-(--accent-text)" aria-hidden="true">
+                *
               </span>
-            </label>
+            </span>
+          </label>
+
+          {errors.consent && (
+            <p id="field-consent-error" className="flex gap-2 text-body-sm text-error">
+              <span aria-hidden="true">✕</span>
+              <span>{errors.consent}</span>
+            </p>
           )}
-        </Field>
+        </div>
       </div>
 
       {/* Required by docs/04 §30 — three steps and the response time. */}

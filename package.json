@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "V4You Technologies \u2014 AI-first digital transformation and product engineering",
+  "description": "V4You Technologies — AI-first digital transformation and product engineering",
   "scripts": {
     "dev": "next dev",
     "build": "cross-env NODE_OPTIONS=--max-old-space-size=3072 next build",
@@ -18,7 +18,8 @@
     "payload": "payload",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
-    "seed": "payload run src/seed/seed.ts"
+    "seed": "payload run src/seed/seed.ts",
+    "a11y": "node scripts/a11y-scan.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
@@ -43,11 +44,13 @@
     "@types/node": "^20.19.43",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "axe-core": "^4.13.0",
     "cross-env": "^10.1.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.1",
     "eslint-config-prettier": "^10.1.8",
     "opentype.js": "^2.0.0",
+    "playwright": "^1.62.1",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "sharp": "^0.35.3",
