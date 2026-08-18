@@ -26,6 +26,10 @@ Last updated: 2026-08-17
 | **Leadership photos and bios** — `assets/team/` + `team.csv` | About page team grid (T-065) | Omit: replaced by a line directing to `/contact`. No avatar placeholders. |
 | **Legal copy** — privacy policy, terms, cookie policy | T-067 | Not drafted. `docs/08 §6` forbids generating these. Pages will not be published without client-supplied text. |
 | **Cal.com booking link** | `/book-consultation` (T-066) | Form-only variant renders. |
+| **Resend** — API key + verified sending domain | T-054, the consultation form | Form works. Both emails are composed and logged to the console in development instead of sent. Nobody is notified of a new lead, and the applicant gets no confirmation — the lead is still saved. Domain verification takes ~24h, so start it early. |
+| **Cloudflare Turnstile** — site key + secret | T-053 | Spam check is skipped. Honeypot and rate limiting still apply. Deliberate: a missing secret is an infrastructure gap, and refusing every enquiry until someone notices is worse than accepting a few. |
+| **Upstash Redis** — REST URL + token | T-053 | Rate limiting is skipped, same reasoning as above. |
+| **CRM** — provider, API key, webhook URL | T-055 | Every lead sits at `crmSyncStatus: pending`, which is distinct from `failed`. There is a difference between "the CRM refused this" and "there is no CRM yet". Confirm which CRM sales actually uses. |
 
 ## Blocks a claim only
 
@@ -53,6 +57,7 @@ than a visual gap. All are currently absent.
 | Item | Why it matters |
 |---|---|
 | **Original logo rasters** — `Logo.png`, `fevicon.png` | **Lost, please re-supply if held.** The client's two 2048px uploads were traced to vector successfully and then deleted in error on 2026-08-17 by an overly broad cleanup glob, before the repository existed to protect them. Nothing is blocked: every asset the site serves derives from the committed SVGs, which are a first-generation trace of those exact files. `assets/brand/source/` now holds reconstructions rendered back out of those vectors, so the pipeline runs from a clean checkout. If the originals still exist anywhere, drop them into `assets/brand/source/` and re-run `pnpm assets:vectorise && pnpm assets:brand`. See `assets/brand/source/README.md`. |
+| **Response time commitment** — "We reply within one business day" | This is on the consultation form, in the confirmation email, and on /thank-you, because docs/05 §23 lists it as required microcopy. It is also an operational promise, and blueprint §13.3 marks the response window as needing verification. **Confirm you can keep it**, or tell me the real figure and I will change all three places. A promise the site makes and the business misses costs more than a slower promise kept. |
 | **Production domain** | `og-default.png` and the site footer currently use `v4you.tech`, taken from `RESEND_FROM_EMAIL` in the client's own `.env.example`. Confirm before launch — it is baked into the OG card and every canonical URL. |
 
 ---
@@ -76,4 +81,5 @@ Entries are appended, never removed — delete a row once the asset lands.
 |---|---|---|
 | `TrustBar` | clients with logoUsagePermitted: true, plus assets/clients/permissions.csv | home §2 — substituting CapabilityStrip |
 | `MetricStrip` | method and evidenceType on: Placeholder with no method attached | the metric strip is omitted entirely — a number without a method does not publish |
+| `ContactPage` | siteSettings.contact — email, phone, address, legal entity name | the contact details column and the ContactPoint JSON-LD; the form is the only route in |
 <!-- END:auto-logged -->

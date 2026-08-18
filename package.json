@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "V4You Technologies \u2014 AI-first digital transformation and product engineering",
+  "description": "V4You Technologies — AI-first digital transformation and product engineering",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -24,6 +24,8 @@
     "@payloadcms/db-postgres": "3.88.0",
     "@payloadcms/next": "3.88.0",
     "@payloadcms/richtext-lexical": "3.88.0",
+    "@upstash/ratelimit": "^2.0.8",
+    "@upstash/redis": "^1.38.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "graphql": "16.11.0",
@@ -31,8 +33,10 @@
     "payload": "3.88.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "resend": "^6.20.0",
     "server-only": "^0.0.1",
-    "tailwind-merge": "^3.6.0"
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
