@@ -10,8 +10,8 @@ import { IndustryTabs } from '@/components/blocks/IndustryTabs'
 import { LogoMarquee } from '@/components/blocks/LogoMarquee'
 import { NumberedAccordion } from '@/components/blocks/NumberedAccordion'
 import { PillarCards } from '@/components/blocks/PillarCards'
+import { PinnedSequence } from '@/components/blocks/PinnedSequence'
 import { ProblemCards } from '@/components/blocks/ProblemCards'
-import { ProcessTimeline } from '@/components/blocks/ProcessTimeline'
 import { ServiceCardGrid } from '@/components/blocks/ServiceCardGrid'
 import { SolutionMatrix } from '@/components/blocks/SolutionMatrix'
 import { TestimonialSlider } from '@/components/blocks/TestimonialSlider'
@@ -23,7 +23,7 @@ import { SectionShell } from '@/components/shared/SectionShell'
 import { getSiteSettings } from '@/lib/content'
 import { buildMetadata, faqSchema, organizationSchema, websiteSchema } from '@/lib/seo'
 import { homeHero } from '@/seed/home'
-import { homeFaqs, trustPanels } from '@/seed/home-proof'
+import { homeFaqs, processTimeline, trustPanels } from '@/seed/home-proof'
 
 /**
  * Home — T-058, docs/05 §1.
@@ -123,8 +123,24 @@ export default async function HomePage() {
       {/* 8 — bone-2 (docs/05 says bone; see the rhythm note above) */}
       <IndustryTabs canvas="bone-2" />
 
-      {/* 9 — bone (docs/05 says bone-2) */}
-      <ProcessTimeline canvas="bone" />
+      {/*
+        9 — bone (docs/05 says bone-2).
+
+        The delivery model as a pinned sequence rather than a six-up grid. Six
+        stages laid out as cards are six things to scan and nothing to read;
+        given a column each, in order, against a heading that stays put, they
+        are a sequence — which is what they are. ProcessTimeline still exists
+        and is still the right block on the service and services pages, where
+        the stages are a supporting detail rather than the argument.
+      */}
+      <PinnedSequence
+        eyebrow={processTimeline.eyebrow}
+        heading={processTimeline.heading}
+        body={processTimeline.body}
+        steps={processTimeline.steps}
+        cta={processTimeline.cta}
+        canvas="bone"
+      />
 
       {/* 10 — navy. Explains itself while no study is cleared for publication. */}
       <SectionShell canvas="navy" reveal>

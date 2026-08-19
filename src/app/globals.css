@@ -466,7 +466,14 @@
 
   .swap > [data-swap-in] {
     position: absolute;
-    inset: 0;
+    /* Pinned to the top and the two sides, never the bottom. `inset: 0` would
+       stretch the copy across the descender padding above and leave it sitting
+       lower than the label it replaces, so the swap lands misaligned by a
+       couple of pixels — small enough to look like a font bug rather than a
+       positioning one. */
+    top: 0;
+    left: 0;
+    right: 0;
     transform: translateY(100%);
   }
 

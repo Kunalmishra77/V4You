@@ -111,6 +111,33 @@ function Shape({ variant }: { variant: Variant }) {
 }
 
 /**
+ * The label, and the masked swap on hover: the text leaves upward while an
+ * identical copy arrives from below, both clipped by the span around them.
+ *
+ * Only string labels swap. A label built from elements would have to be
+ * duplicated wholesale to be animated, and duplicating arbitrary children is
+ * how you end up with two of something focusable, or two of something with the
+ * same id. Anything that is not a plain string renders once and does not move —
+ * the button still has its lift and its colour change.
+ *
+ * The copy is `aria-hidden`, so the accessible name stays single. Under reduced
+ * motion the a11y layer removes it from the box entirely rather than leaving it
+ * stacked on top of the real label with no transition to move it away.
+ */
+function Label({ children }: { children: ReactNode }) {
+  if (typeof children !== 'string') return <span>{children}</span>
+
+  return (
+    <span className="swap">
+      <span data-swap-out="">{children}</span>
+      <span data-swap-in="" aria-hidden="true">
+        {children}
+      </span>
+    </span>
+  )
+}
+
+/**
  * Renders an `<a>` when `href` is present and a `<button>` otherwise — never a
  * `<div>` with an onClick. Internal hrefs route through `next/link`.
  */
@@ -122,7 +149,7 @@ export function Button(props: ButtonProps) {
     <>
       <Shape variant={resolved} />
       {icon}
-      <span>{children}</span>
+      <Label>{children}</Label>
     </>
   )
 

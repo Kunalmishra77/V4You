@@ -50,68 +50,107 @@ export function MotionProvider() {
 
     registerGsap()
 
-    const ctx = gsap.context(() => {
-      // --- Headings ---------------------------------------------------------
-      // `autoSplit` re-splits when the font finishes loading or the element
-      // changes width. Without it a heading split against the fallback font
-      // keeps those line breaks after the real face arrives, and the masks end
-      // up in the wrong places.
-      SplitText.create('[data-split]', {
-        type: 'lines',
-        mask: 'lines',
-        linesClass: 'split-line',
-        autoSplit: true,
-        onSplit(self) {
-          // Returning the tween hands it to SplitText, which reverts it before
-          // re-splitting. Skipping that leaves the old lines mid-tween and the
-          // new ones inherit a transform nothing will ever clear.
-          return gsap.from(self.lines, {
-            yPercent: 110,
-            duration: DURATION.line,
-            ease: EASE.expo,
-            stagger: STAGGER.line,
-            scrollTrigger: {
-              trigger: self.elements[0],
-              start: TRIGGER_START,
-              once: true,
-            },
-          })
-        },
+    // Every statement below runs inside the same effect that renders the whole
+    // public site. An unhandled throw here does not degrade the animation — it
+    // reaches React's error boundary and replaces the entire page with the
+    // error screen. That happened once already, on the five routes that have no
+    // animated heading at all, and it is not a class of bug worth risking
+    // twice: no visual enhancement is worth a blank page.
+    let ctx: ReturnType<typeof gsap.context> | undefined
+    try {
+      ctx = gsap.context(() => {
+        // --- Headings ---------------------------------------------------------
+        // `autoSplit` re-splits when the font finishes loading or the element
+        // changes width. Without it a heading split against the fallback font
+        // keeps those line breaks after the real face arrives, and the masks end
+        // up in the wrong places.
+        // A heading inside a sticky column cannot be its own ScrollTrigger.
+        // ScrollTrigger measures the trigger's position once and converts it to a
+        // scroll offset; a sticky element's position is a function of the scroll
+        // it is being used to measure, so the offset it produces is wrong and the
+        // trigger can simply never fire. The heading then sits at its `from`
+        // state — below its own mask — permanently invisible.
+        //
+        // Walk up to the first sticky ancestor and trigger off that element's
+        // parent instead, which is in normal flow and starts at the same place
+        // the sticky column does.
+        const triggerFor = (el: Element): Element => {
+          let node = el.parentElement
+          while (node && node !== document.body) {
+            if (getComputedStyle(node).position === 'sticky') return node.parentElement ?? node
+            node = node.parentElement
+          }
+          return el
+        }
+
+        SplitText.create('[data-split]', {
+          type: 'lines',
+          mask: 'lines',
+          linesClass: 'split-line',
+          autoSplit: true,
+          onSplit(self) {
+            // SplitText calls this even when the selector matched nothing, so a
+            // page with no animated heading arrives here with an empty
+            // `elements`. Reading a trigger off `elements[0]` then throws.
+            const target = self.elements[0]
+            if (!target || !self.lines.length) return
+
+            // Returning the tween hands it to SplitText, which reverts it before
+            // re-splitting. Skipping that leaves the old lines mid-tween and the
+            // new ones inherit a transform nothing will ever clear.
+            return gsap.from(self.lines, {
+              yPercent: 110,
+              duration: DURATION.line,
+              ease: EASE.expo,
+              stagger: STAGGER.line,
+              scrollTrigger: {
+                trigger: triggerFor(target),
+                start: TRIGGER_START,
+                once: true,
+              },
+            })
+          },
+        })
+
+        // --- Sections ---------------------------------------------------------
+        // `batch` groups elements that cross the trigger line in the same frame
+        // into one callback, so a row of cards animates as a row rather than as
+        // however many separate triggers happened to fire.
+        ScrollTrigger.batch('[data-reveal]', {
+          start: TRIGGER_START,
+          once: true,
+          onEnter(batch) {
+            for (const el of batch) el.setAttribute('data-reveal', 'shown')
+
+            // A section marked as a group does not move itself — its children do.
+            const children = batch.flatMap((el) =>
+              el.hasAttribute('data-reveal-group')
+                ? gsap.utils.toArray<HTMLElement>('[data-reveal-child]', el)
+                : [],
+            )
+            if (!children.length) return
+
+            gsap.fromTo(
+              children,
+              { opacity: 0, y: 18 },
+              {
+                opacity: 1,
+                y: 0,
+                duration: DURATION.reveal,
+                ease: EASE.reveal,
+                stagger: STAGGER.step,
+                clearProps: 'opacity,transform',
+              },
+            )
+          },
+        })
       })
-
-      // --- Sections ---------------------------------------------------------
-      // `batch` groups elements that cross the trigger line in the same frame
-      // into one callback, so a row of cards animates as a row rather than as
-      // however many separate triggers happened to fire.
-      ScrollTrigger.batch('[data-reveal]', {
-        start: TRIGGER_START,
-        once: true,
-        onEnter(batch) {
-          for (const el of batch) el.setAttribute('data-reveal', 'shown')
-
-          // A section marked as a group does not move itself — its children do.
-          const children = batch.flatMap((el) =>
-            el.hasAttribute('data-reveal-group')
-              ? gsap.utils.toArray<HTMLElement>('[data-reveal-child]', el)
-              : [],
-          )
-          if (!children.length) return
-
-          gsap.fromTo(
-            children,
-            { opacity: 0, y: 18 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: DURATION.reveal,
-              ease: EASE.reveal,
-              stagger: STAGGER.step,
-              clearProps: 'opacity,transform',
-            },
-          )
-        },
-      })
-    })
+    } catch (error) {
+      // Leave the document marked ready — the sections have already been
+      // revealed or will be by the CSS fallback — and let the page render
+      // without motion rather than not at all.
+      console.error('[motion] setup failed, continuing without animation', error)
+    }
 
     // --- Lenis ---------------------------------------------------------------
     // Imported here rather than at module scope so it lands in this component's
@@ -153,7 +192,7 @@ export function MotionProvider() {
         lenis.destroy()
         setLenis(null)
       }
-      ctx.revert()
+      ctx?.revert()
       ScrollTrigger.getAll().forEach((t) => t.kill())
       delete document.documentElement.dataset.motion
     }
