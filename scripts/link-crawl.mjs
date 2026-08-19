@@ -67,7 +67,7 @@ for (const path of sitemapPaths) {
 }
 
 const byDepth = {}
-for (const [path, info] of seen) {
+for (const info of seen.values()) {
   if (info.status !== 200) continue
   byDepth[info.depth] = (byDepth[info.depth] ?? 0) + 1
 }
