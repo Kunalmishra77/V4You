@@ -30,3 +30,5 @@ Thumbs.db
 
 # Playwright MCP scratch output
 .playwright-mcp/
+
+lighthouse-report.json

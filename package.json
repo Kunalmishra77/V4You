@@ -22,7 +22,8 @@
     "a11y": "node scripts/a11y-scan.mjs",
     "audit:content": "node scripts/content-audit.mjs",
     "audit:keyboard": "node scripts/keyboard-audit.mjs",
-    "audit:images": "node scripts/image-audit.mjs"
+    "audit:images": "node scripts/image-audit.mjs",
+    "audit:lighthouse": "node scripts/lighthouse-audit.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
@@ -48,10 +49,12 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "axe-core": "^4.13.0",
+    "chrome-launcher": "^1.2.1",
     "cross-env": "^10.1.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.1",
     "eslint-config-prettier": "^10.1.8",
+    "lighthouse": "^13.4.1",
     "opentype.js": "^2.0.0",
     "playwright": "^1.62.1",
     "prettier": "^3.9.6",

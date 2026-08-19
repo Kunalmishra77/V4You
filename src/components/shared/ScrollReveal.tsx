@@ -19,6 +19,42 @@ import { cn } from '@/lib/utils'
  * the outcome is correct even before hydration. Same for JavaScript being
  * unavailable: the `.no-js` rule in the root layout keeps content visible.
  */
+/**
+ * One observer shared by every section on the page, rather than one per
+ * section.
+ *
+ * A page with fourteen revealed sections was creating fourteen
+ * IntersectionObservers, each with its own callback and its own entry in the
+ * browser's intersection bookkeeping. They do the same job with the same
+ * options, so they can be the same observer — the callback already receives
+ * the target element.
+ *
+ * Keyed by threshold, because that is the only option a caller can vary.
+ */
+const observers = new Map<number, IntersectionObserver>()
+
+function getSharedObserver(threshold: number) {
+  const existing = observers.get(threshold)
+  if (existing) return existing
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue
+        entry.target.setAttribute('data-reveal', 'shown')
+        // Reveal once. Re-hiding on scroll-up is a gimmick.
+        observer.unobserve(entry.target)
+      }
+    },
+    // The bottom inset holds the reveal until the section is meaningfully in
+    // view, rather than firing on the first pixel.
+    { threshold, rootMargin: '0px 0px -8% 0px' },
+  )
+
+  observers.set(threshold, observer)
+  return observer
+}
+
 export function ScrollReveal({
   children,
   as: Tag = 'div',
@@ -47,19 +83,9 @@ export function ScrollReveal({
       return
     }
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return
-        show()
-        observer.disconnect() // Reveal once. Re-hiding on scroll-up is a gimmick.
-      },
-      // The bottom inset holds the reveal until the section is meaningfully in
-      // view, rather than firing on the first pixel.
-      { threshold, rootMargin: '0px 0px -8% 0px' },
-    )
-
+    const observer = getSharedObserver(threshold)
     observer.observe(el)
-    return () => observer.disconnect()
+    return () => observer.unobserve(el)
   }, [threshold])
 
   return (

@@ -103,3 +103,18 @@ jobs:
       # static assets. Cheap now; the point is the first case-study screenshot.
       - name: Image pipeline
         run: pnpm audit:images
+
+      # CLAUDE.md's page definition of done: 95+ across all four categories.
+      #
+      # This runs in CI rather than locally because the performance number is
+      # not measurable on a developer laptop. Measured repeatedly against one
+      # unchanged build on an 8GB machine, the same route scored anywhere from
+      # 72 to 98 — the throttled CPU profile Lighthouse emulates is meaningless
+      # when the real CPU is already saturated. Accessibility, best practices,
+      # SEO and CLS were stable across every one of those runs; only
+      # performance moved.
+      #
+      # A CI runner is quieter and consistent, which is the minimum a
+      # performance budget needs to mean anything.
+      - name: Lighthouse
+        run: pnpm audit:lighthouse
