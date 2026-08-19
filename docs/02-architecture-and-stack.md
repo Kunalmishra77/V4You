@@ -29,7 +29,8 @@ runtime, a second ORM, an animation library beyond `motion`, or a headless UI ki
 ## 2. Folder structure
 
 ```
-v4you-website/
+V4You/                             # repo root — renamed from v4you-website/
+│                                  # at the client's request, 2026-08-18
 ├── CLAUDE.md
 ├── MISSING-ASSETS.md              # you create and maintain this
 ├── .env.example
