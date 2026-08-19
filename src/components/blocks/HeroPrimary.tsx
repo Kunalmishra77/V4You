@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react'
+
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { technologyEcosystem } from '@/seed/home-proof'
@@ -58,18 +60,50 @@ export function HeroPrimary({
       <div className="mx-auto grid w-full max-w-content flex-1 grid-rows-[1fr_auto] gap-10 px-gutter py-14 lg:py-20 [@media(max-height:820px)]:gap-6 [@media(max-height:820px)]:py-8 lg:[@media(max-height:820px)]:py-10">
         {/* Copy — left, vertically centred */}
         <div className="flex max-w-2xl flex-col justify-center [text-shadow:0_1px_24px_color-mix(in_oklab,var(--color-navy-900)_70%,transparent)]">
-          <Eyebrow as="p">{eyebrow}</Eyebrow>
+          <Eyebrow as="p" data-hero-item="" style={{ '--reveal-index': 0 } as CSSProperties}>
+            {eyebrow}
+          </Eyebrow>
 
+          {/*
+            Deliberately *not* split into masked lines.
+
+            The obvious move is to mask `lead` and `accent` as two lines, since
+            the copy already declares them separately. It is wrong twice. They
+            are not two lines — they are one sentence with three words picked
+            out in amber, and the seed says so: the lead ends mid-clause on
+            "Automate what". Forcing a break there imposes a line ending the
+            copy never asked for and overrides where the headline actually
+            wraps at each width. It also drops the space between them, which
+            joins two words in the accessible name.
+
+            SplitText would measure the real wrap, but it runs after paint, and
+            above the fold that means the hero renders finished and then jumps
+            back to its start. So the headline rises and fades with everything
+            else, and the masked line reveal stays where it can be measured
+            honestly — on the scroll-triggered headings below.
+          */}
           <h1
             id="hero-heading"
+            data-hero-item=""
+            style={{ '--reveal-index': 1 } as CSSProperties}
             className="mt-6 max-w-headline font-display text-display text-(--ink) [@media(max-height:820px)]:mt-4"
           >
             {headline.lead} <span className="text-amber-500">{headline.accent}</span>
           </h1>
 
-          <p className="mt-6 max-w-measure text-body-lg [@media(max-height:820px)]:mt-4">{body}</p>
+          <p
+            data-hero-item=""
+            style={{ '--reveal-index': 2 } as CSSProperties}
+            className="mt-6 max-w-measure text-body-lg [@media(max-height:820px)]:mt-4"
+          >
+            {body}
+          </p>
 
-          <div className="mt-9 flex flex-wrap items-center gap-4 [@media(max-height:820px)]:mt-6">
+          <div
+            data-hero-item=""
+            style={{ '--reveal-index': 3 } as CSSProperties}
+            className="mt-9 flex flex-wrap items-center gap-4 [@media(max-height:820px)]:mt-6"
+          >
             <Button href={primaryCta.href} size="lg">
               {primaryCta.label}
             </Button>
@@ -81,8 +115,14 @@ export function HeroPrimary({
           </div>
         </div>
 
-        {/* Proof strip — bottom right */}
-        <div className="flex justify-start lg:justify-end">
+        {/* Proof strip — bottom right. Last in, because it is the last thing
+            worth reading and arriving first would make it compete with the
+            headline. */}
+        <div
+          data-hero-item=""
+          style={{ '--reveal-index': 4 } as CSSProperties}
+          className="flex justify-start lg:justify-end"
+        >
           <HeroProofStrip
             items={technologyEcosystem.groups.flatMap((group) => group.items)}
             label={technologyEcosystem.label}

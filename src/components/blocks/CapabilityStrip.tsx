@@ -2,6 +2,7 @@ import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell } from '@/components/shared/SectionShell'
 import { capabilityStrip } from '@/seed/home'
+import { revealChild } from '@/lib/reveal'
 
 /**
  * CapabilityStrip — docs/04 §12.
@@ -16,7 +17,7 @@ import { capabilityStrip } from '@/seed/home'
  */
 export function CapabilityStrip({ canvas = 'navy-800' }: { canvas?: 'navy-800' | 'bone-2' }) {
   return (
-    <SectionShell canvas={canvas} density="tight" reveal>
+    <SectionShell canvas={canvas} density="tight" reveal="stagger">
       <div className="max-w-measure">
         <Eyebrow>What you can rely on</Eyebrow>
         <Headline className="mt-5">{capabilityStrip.heading}</Headline>
@@ -28,8 +29,8 @@ export function CapabilityStrip({ canvas = 'navy-800' }: { canvas?: 'navy-800' |
         rather than four floating boxes — the same device as PillarCards.
       */}
       <ul className="mt-12 grid gap-px bg-(--line) sm:grid-cols-2 lg:grid-cols-4">
-        {capabilityStrip.cells.map((cell) => (
-          <li key={cell.label} className="bg-(--surface) p-6 lg:p-7">
+        {capabilityStrip.cells.map((cell, index) => (
+          <li key={cell.label} {...revealChild(index)} className="bg-(--surface) p-6 lg:p-7">
             <p className="font-mono text-label text-(--accent-text) uppercase">{cell.label}</p>
             <h3 className="mt-4 font-display text-h3 text-(--ink)">{cell.title}</h3>
             <p className="mt-3 text-body-sm">{cell.body}</p>

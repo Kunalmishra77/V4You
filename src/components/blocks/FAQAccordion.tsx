@@ -4,6 +4,7 @@ import { JsonLd } from '@/components/shared/JsonLd'
 import { SectionShell } from '@/components/shared/SectionShell'
 import type { Canvas } from '@/components/shared/SectionShell'
 import { faqSchema, type Faq } from '@/lib/seo'
+import { revealChild } from '@/lib/reveal'
 
 /**
  * FAQAccordion — docs/04 §28, docs/06 §A2.
@@ -30,7 +31,7 @@ export function FAQAccordion({
   if (faqs.length === 0) return null
 
   return (
-    <SectionShell canvas={canvas} reveal>
+    <SectionShell canvas={canvas} reveal="stagger">
       {/* Only emitted where the answers are visible on the page. */}
       <JsonLd schemas={[faqSchema(faqs)]} />
 
@@ -40,8 +41,12 @@ export function FAQAccordion({
       </div>
 
       <div className="mt-12 max-w-measure border-t border-(--line)">
-        {faqs.map((faq) => (
-          <details key={faq.question} className="group border-b border-(--line)">
+        {faqs.map((faq, index) => (
+          <details
+            key={faq.question}
+            {...revealChild(index)}
+            className="group border-b border-(--line)"
+          >
             <summary className="flex cursor-pointer list-none items-baseline gap-5 py-5 [&::-webkit-details-marker]:hidden">
               <span className="flex-1 font-display text-body font-semibold text-(--ink)">
                 {faq.question}

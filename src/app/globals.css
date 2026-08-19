@@ -363,8 +363,16 @@
      below enforces by removing the animation rather than pausing it.
      -------------------------------------------------------------------- */
   .marquee-track {
-    animation: marquee-scroll 42s linear infinite;
+    animation: marquee-scroll var(--marquee-duration, 42s) linear infinite;
     will-change: transform;
+  }
+
+  /* A second row travelling the other way. Two rows in opposite directions read
+     as a system in motion; two rows going the same way read as one row that
+     wrapped. `animation-direction` rather than a second keyframe set, so both
+     rows share one animation and cannot drift apart. */
+  .marquee-track[data-direction='reverse'] {
+    animation-direction: reverse;
   }
 
   .marquee:hover .marquee-track,
@@ -379,6 +387,90 @@
     to {
       transform: translate3d(-50%, 0, 0);
     }
+  }
+
+  /* --- Hero entrance --------------------------------------------------------
+     The first thing anyone sees, and the one animation on the site that is
+     pure CSS by choice rather than by economy.
+
+     Everything else animates through GSAP, which runs in an effect — after the
+     browser has painted. Below the fold that is invisible, because the section
+     is already hidden and waiting for its trigger. Above the fold it is not:
+     the hero would paint in its final state and then jump back to its starting
+     state a frame later. The usual fix is to hide it in CSS until the runtime
+     takes over, which trades a flash for a hero that stays blank if the runtime
+     never arrives. On the most important surface of the site, neither is
+     acceptable.
+
+     A CSS animation has neither problem. It begins at first paint, so there is
+     nothing to flash, and it cannot fail to start, so there is nothing to
+     recover from. The cost is that there is no per-line mask up here — see the
+     note on the headline in HeroPrimary for why measuring lines above the fold
+     cannot be done honestly.
+     -------------------------------------------------------------------- */
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  [data-hero-item] {
+    animation: hero-rise 700ms var(--ease-reveal) both;
+    animation-delay: calc(120ms + var(--reveal-index, 0) * 110ms);
+  }
+
+  /* --- Mega menu ------------------------------------------------------------
+     The panel arrives rather than appearing: it drops a few pixels into place
+     while its columns follow a beat behind.
+
+     Only the opening is animated. The panel is `hidden` when closed, which is
+     what keeps a dozen links out of the tab order and out of the accessibility
+     tree, and `hidden` cannot be transitioned — an element cannot be both
+     removed from the tree and visibly leaving it. Animating the exit would mean
+     holding the panel in the DOM after it closes, and a keyboard user would
+     tab into a menu they had already dismissed. An instant close is the correct
+     trade, and in use it reads as decisive rather than abrupt.
+
+     The columns are staggered on `animation-delay` rather than transitions,
+     because they mount with the panel and there is no previous state to
+     transition from.
+     -------------------------------------------------------------------- */
+  @keyframes menu-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes menu-column-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .menu-panel {
+    animation: menu-panel-in var(--duration-menu) var(--ease-reveal) both;
+  }
+
+  .menu-panel [data-menu-column] {
+    animation: menu-column-in 340ms var(--ease-expo) both;
+    /* Held until the panel itself has landed, so the columns are not racing the
+       surface they sit on. */
+    animation-delay: calc(var(--duration-menu) + var(--reveal-index, 0) * 45ms);
   }
 
   /* --- Masked line reveal --------------------------------------------------
@@ -662,6 +754,12 @@
        over the outgoing one — collapse it to a plain label. */
     .swap > [data-swap-in] {
       display: none;
+    }
+
+    .menu-panel,
+    .menu-panel [data-menu-column],
+    [data-hero-item] {
+      animation: none;
     }
   }
 

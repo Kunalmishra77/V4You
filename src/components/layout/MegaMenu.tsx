@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
@@ -111,14 +111,18 @@ export function MegaMenu({ menu, condensed }: { menu: MegaMenuData; condensed: b
         id={panelId}
         hidden={!open}
         className={cn(
-          'absolute inset-x-0 z-40 border-t border-navy-700 bg-navy-800 shadow-2xl',
+          'menu-panel absolute inset-x-0 z-40 border-t border-navy-700 bg-navy-800 shadow-2xl',
           condensed ? 'top-16' : 'top-19',
         )}
       >
         <div className="mx-auto grid w-full max-w-content gap-10 px-gutter py-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-16">
           <div className="grid gap-10 sm:grid-cols-3">
-            {menu.groups.map((group) => (
-              <div key={group.heading}>
+            {menu.groups.map((group, index) => (
+              <div
+                key={group.heading}
+                data-menu-column=""
+                style={{ '--reveal-index': index } as CSSProperties}
+              >
                 <h3 className="font-mono text-label text-amber-500 uppercase">{group.heading}</h3>
                 {group.supportingCopy && (
                   <p className="mt-2 text-body-sm text-slate-300">{group.supportingCopy}</p>
@@ -145,7 +149,11 @@ export function MegaMenu({ menu, condensed }: { menu: MegaMenuData; condensed: b
           </div>
 
           {menu.featuredPanel && (
-            <div className="border-t border-navy-700 pt-8 surface-navy lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12">
+            <div
+              data-menu-column=""
+              style={{ '--reveal-index': menu.groups.length } as CSSProperties}
+              className="border-t border-navy-700 pt-8 surface-navy lg:border-t-0 lg:border-l lg:pt-0 lg:pl-12"
+            >
               {menu.featuredPanel.eyebrow && <Eyebrow>{menu.featuredPanel.eyebrow}</Eyebrow>}
               <p className="mt-4 font-display text-h3 text-bone">{menu.featuredPanel.heading}</p>
               {menu.featuredPanel.body && (

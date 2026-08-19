@@ -1,4 +1,5 @@
 import { Headline } from '@/components/shared/Headline'
+import { Marquee } from '@/components/shared/Marquee'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { technologyEcosystem } from '@/seed/home-proof'
@@ -18,12 +19,19 @@ import { technologyEcosystem } from '@/seed/home-proof'
  * third-party logo is a trademark with usage terms attached, not an asset to
  * approximate. The names carry the same information and make no implied claim.
  *
- * Mechanics: the track is duplicated once in the DOM and the copy is
- * `aria-hidden`, so a screen reader hears the list once. It pauses on hover and
- * stops entirely under reduced motion — CSS only, no client JavaScript.
+ * Mechanics live in Marquee. Two rails rather than one, travelling in opposite
+ * directions at different speeds: one rail reads as a list that happens to be
+ * moving, two read as a system with depth. The split is by ecosystem group
+ * rather than by halving the array, so each rail is a coherent set — languages
+ * and frameworks above, platforms and tooling below — instead of an arbitrary
+ * cut through the middle of one.
  */
 export function LogoMarquee({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
-  const items = technologyEcosystem.groups.flatMap((group) => group.items)
+  // Split by group, not down the middle of the flattened list, so each rail is
+  // a coherent set rather than an arbitrary cut through one.
+  const half = Math.ceil(technologyEcosystem.groups.length / 2)
+  const topRail = technologyEcosystem.groups.slice(0, half).flatMap((group) => group.items)
+  const bottomRail = technologyEcosystem.groups.slice(half).flatMap((group) => group.items)
 
   return (
     <SectionShell canvas={canvas} reveal>
@@ -37,24 +45,20 @@ export function LogoMarquee({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
         {technologyEcosystem.label}
       </p>
 
-      <div className="marquee group relative mt-6 overflow-hidden border-y border-(--line) py-6">
-        <div className="marquee-track flex w-max gap-10">
-          <ul className="flex shrink-0 gap-10">
-            {items.map((item) => (
-              <li key={item} className="font-display text-h3 whitespace-nowrap text-(--ink-muted)">
-                {item}
-              </li>
-            ))}
-          </ul>
-          {/* The duplicate exists only to make the loop seamless. */}
-          <ul aria-hidden="true" className="flex shrink-0 gap-10">
-            {items.map((item) => (
-              <li key={item} className="font-display text-h3 whitespace-nowrap text-(--ink-muted)">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div className="mt-6 border-y border-(--line)">
+        <Marquee
+          items={topRail}
+          duration={46}
+          className="py-5"
+          itemClassName="font-display text-h3 text-(--ink-muted)"
+        />
+        <Marquee
+          items={bottomRail}
+          duration={38}
+          direction="reverse"
+          className="border-t border-(--line) py-5"
+          itemClassName="font-display text-h3 text-(--ink-muted)"
+        />
       </div>
 
       {/* The grouping is the useful information; the marquee is the texture. */}

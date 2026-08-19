@@ -1,5 +1,6 @@
 import { SectionShell } from '@/components/shared/SectionShell'
 import { reportMissingAsset } from '@/lib/missing-assets'
+import { revealChild } from '@/lib/reveal'
 
 import type { EvidenceType } from './KpiTable'
 
@@ -46,10 +47,10 @@ export function MetricStrip({
   }
 
   return (
-    <SectionShell canvas={canvas} density="tight" reveal>
+    <SectionShell canvas={canvas} density="tight" reveal="stagger">
       <dl className="grid gap-px bg-(--line) sm:grid-cols-2 lg:grid-cols-4">
-        {metrics.map((metric) => (
-          <div key={metric.label} className="bg-(--surface) p-6 lg:p-7">
+        {metrics.map((metric, index) => (
+          <div key={metric.label} {...revealChild(index)} className="bg-(--surface) p-6 lg:p-7">
             <dt className="text-body-sm">{metric.label}</dt>
             <dd className="mt-3 font-display text-metric text-(--ink)">{metric.value}</dd>
             <dd className="mt-4 border-t border-(--line) pt-3">

@@ -3,6 +3,7 @@ import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell } from '@/components/shared/SectionShell'
 import type { Canvas } from '@/components/shared/SectionShell'
+import { revealChild } from '@/lib/reveal'
 
 /**
  * NumberedAccordion — docs/04 §27.
@@ -44,7 +45,7 @@ export function NumberedAccordion({
   if (panels.length === 0) return null
 
   return (
-    <SectionShell canvas={canvas} reveal>
+    <SectionShell canvas={canvas} reveal="stagger">
       <div className="max-w-measure">
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
         <Headline className="mt-5">{heading}</Headline>
@@ -53,7 +54,11 @@ export function NumberedAccordion({
 
       <div className="mt-12 border-t border-(--line)">
         {panels.map((panel, index) => (
-          <details key={panel.title} className="group border-b border-(--line)">
+          <details
+            key={panel.title}
+            {...revealChild(index)}
+            className="group border-b border-(--line)"
+          >
             <summary className="flex cursor-pointer list-none items-baseline gap-5 py-6 [&::-webkit-details-marker]:hidden">
               <span aria-hidden="true" className="font-mono text-label text-(--accent-text)">
                 [{String(index + 1).padStart(2, '0')}]

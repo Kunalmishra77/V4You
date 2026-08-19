@@ -5,6 +5,7 @@ import { Eyebrow } from '@/components/shared/Eyebrow'
 import { BrandFigure } from '@/components/shared/BrandFigure'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { solutionMatrix } from '@/seed/home-proof'
+import { revealChild } from '@/lib/reveal'
 
 /**
  * SolutionMatrix — docs/04 §23, home §4.7.
@@ -19,7 +20,7 @@ import { solutionMatrix } from '@/seed/home-proof'
  */
 export function SolutionMatrix({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
   return (
-    <SectionShell canvas={canvas} reveal>
+    <SectionShell canvas={canvas} reveal="stagger">
       <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:gap-16">
         <div className="max-w-measure">
           <Eyebrow>{solutionMatrix.eyebrow}</Eyebrow>
@@ -50,9 +51,10 @@ export function SolutionMatrix({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
           </thead>
 
           <tbody className="max-[759px]:block">
-            {solutionMatrix.rows.map((row) => (
+            {solutionMatrix.rows.map((row, index) => (
               <tr
                 key={row.outcome}
+                {...revealChild(index)}
                 className="border-b border-(--line) align-top max-[759px]:block max-[759px]:py-6"
               >
                 <th

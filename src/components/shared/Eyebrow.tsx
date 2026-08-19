@@ -21,13 +21,17 @@ export function Eyebrow({
   children,
   as: Tag = 'p',
   className,
+  ...rest
 }: {
   children: ReactNode
   as?: ElementType
   className?: string
-}) {
+} & Record<string, unknown>) {
   return (
-    <Tag className={cn('flex items-center gap-3 font-mono text-label uppercase', className)}>
+    <Tag
+      className={cn('flex items-center gap-3 font-mono text-label uppercase', className)}
+      {...rest}
+    >
       <span aria-hidden="true" className="block size-4 shrink-0 bg-(--accent-glyph) cut-slash" />
       <span className="text-(--accent-text)">{children}</span>
     </Tag>
