@@ -48,10 +48,30 @@ export function StickyContextualNav({ sections }: { sections: NavSection[] }) {
     return () => observer.disconnect()
   }, [sections])
 
-  // Keep the active item in view when the list itself scrolls horizontally.
+  /**
+   * Keep the active item in view when the list scrolls horizontally.
+   *
+   * This sets `scrollLeft` on the container rather than calling
+   * `scrollIntoView` on the child, and the difference is not stylistic.
+   * `scrollIntoView` moves the browser's *sequential focus navigation starting
+   * point* to the element it scrolls to — so on a service page the first Tab
+   * landed on "What we build" instead of the skip link. The skip link was
+   * still first in the DOM and still worked; it had simply stopped being what
+   * Tab reached first, which is the only thing that makes it useful.
+   *
+   * A guard against running on mount was not enough: React double-invokes
+   * effects in development, so the second invocation ran anyway. Scrolling the
+   * container directly avoids the problem rather than timing around it.
+   *
+   * Found by the keyboard audit. It is close to invisible with a mouse.
+   */
   useEffect(() => {
-    const current = listRef.current?.querySelector<HTMLElement>('[data-active="true"]')
-    current?.scrollIntoView({ block: 'nearest', inline: 'center' })
+    const list = listRef.current
+    const current = list?.querySelector<HTMLElement>('[data-active="true"]')
+    if (!list || !current) return
+
+    const target = current.offsetLeft - (list.clientWidth - current.clientWidth) / 2
+    list.scrollLeft = Math.max(0, Math.min(target, list.scrollWidth - list.clientWidth))
   }, [active])
 
   return (

@@ -87,8 +87,19 @@ jobs:
       - name: Accessibility
         run: pnpm a11y
 
+      # docs/06 §C3: the mechanical half of "test by unplugging the mouse".
+      # Skip link first, no positive tabindex, a visible ring on everything,
+      # and no focused element carrying a clip-path that would slice it.
+      - name: Keyboard walkthrough
+        run: pnpm audit:keyboard
+
       # docs/06 §A4 — the mechanical half of the content quality gate: unique
       # titles and descriptions, canonicals, expected JSON-LD, no banned
       # schema, 400-word and 3-link minimums.
       - name: Content and structured data
         run: pnpm audit:content
+
+      # docs/02 §4 — alt attributes, intrinsic dimensions, and a size budget on
+      # static assets. Cheap now; the point is the first case-study screenshot.
+      - name: Image pipeline
+        run: pnpm audit:images

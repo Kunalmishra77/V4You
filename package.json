@@ -20,7 +20,9 @@
     "generate:importmap": "payload generate:importmap",
     "seed": "payload run src/seed/seed.ts",
     "a11y": "node scripts/a11y-scan.mjs",
-    "audit:content": "node scripts/content-audit.mjs"
+    "audit:content": "node scripts/content-audit.mjs",
+    "audit:keyboard": "node scripts/keyboard-audit.mjs",
+    "audit:images": "node scripts/image-audit.mjs"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.88.0",
