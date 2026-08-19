@@ -111,6 +111,15 @@ jobs:
       - name: Link crawl
         run: pnpm audit:links
 
+      # What each route ships before it is interactive, measured off the build
+      # rather than off a stopwatch. Unlike the Lighthouse step below, this one
+      # gives the same answer on any machine, so it is the check that can
+      # actually be trusted to catch a payload regression — in particular a
+      # motion library slipping back into the initial chunk of every route,
+      # which is exactly how it got there the first time.
+      - name: Bundle audit
+        run: pnpm audit:bundle
+
       # CLAUDE.md's page definition of done: 95+ across all four categories.
       #
       # This runs in CI rather than locally because the performance number is

@@ -10,9 +10,15 @@ import { SplitText } from 'gsap/SplitText'
  * to know they are the same intent. Everything that needs GSAP imports it from
  * here.
  *
- * This module is only ever reached from a `'use client'` component, and every
- * one of those is loaded through `next/dynamic` with `ssr: false`, so GSAP
- * stays out of the server bundle and out of the initial chunk.
+ * **Nothing may import this module statically.** It carries GSAP, ScrollTrigger
+ * and SplitText — 136KB — and a static import from anywhere in the site layout
+ * puts all of it in the initial chunk of every route, where it is downloaded,
+ * parsed and executed before the page is interactive. It is reached from one
+ * place, `MotionProvider`, through a dynamic `import()` inside an effect, so it
+ * lands in a chunk of its own that is fetched after hydration.
+ *
+ * The reduced-motion check lives in `@/lib/reduced-motion` for the same reason:
+ * it has to be answered before deciding whether to fetch any of this.
  */
 
 let registered = false
@@ -62,11 +68,5 @@ export const STAGGER = {
  * reads as the animation chasing the scroll rather than greeting it.
  */
 export const TRIGGER_START = 'top 85%'
-
-export function prefersReducedMotion() {
-  return (
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  )
-}
 
 export { gsap, ScrollTrigger, SplitText }

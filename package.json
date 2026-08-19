@@ -23,6 +23,7 @@
     "audit:content": "node scripts/content-audit.mjs",
     "audit:keyboard": "node scripts/keyboard-audit.mjs",
     "audit:images": "node scripts/image-audit.mjs",
+    "audit:bundle": "node scripts/bundle-audit.mjs",
     "audit:lighthouse": "node scripts/lighthouse-audit.mjs",
     "audit:links": "node scripts/link-crawl.mjs"
   },
