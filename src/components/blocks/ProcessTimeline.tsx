@@ -1,5 +1,6 @@
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
+import { BrandFigure } from '@/components/shared/BrandFigure'
 import { SectionShell } from '@/components/shared/SectionShell'
 import { processTimeline } from '@/seed/home-proof'
 
@@ -16,12 +17,15 @@ import { processTimeline } from '@/seed/home-proof'
 export function ProcessTimeline({ canvas = 'bone-2' }: { canvas?: 'bone-2' | 'bone' | 'navy' }) {
   return (
     <SectionShell canvas={canvas} reveal>
-      <div className="max-w-measure">
-        <Eyebrow>{processTimeline.eyebrow}</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-          {processTimeline.heading}
-        </h2>
-        <p className="mt-5 text-body-lg">{processTimeline.body}</p>
+      <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:gap-16">
+        <div className="max-w-measure">
+          <Eyebrow>{processTimeline.eyebrow}</Eyebrow>
+          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
+            {processTimeline.heading}
+          </h2>
+          <p className="mt-5 text-body-lg">{processTimeline.body}</p>
+        </div>
+        <BrandFigure name="layers" className="max-w-[16rem] justify-self-end max-lg:hidden" />
       </div>
 
       <ol className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">

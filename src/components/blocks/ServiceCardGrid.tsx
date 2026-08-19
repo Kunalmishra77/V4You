@@ -2,6 +2,7 @@ import Link from 'next/link'
 
 import { CutCard } from '@/components/shared/CutCard'
 import { Eyebrow } from '@/components/shared/Eyebrow'
+import { BrandFigure } from '@/components/shared/BrandFigure'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { serviceCards } from '@/seed/services'
 
@@ -32,10 +33,13 @@ export function ServiceCardGrid({
 }) {
   return (
     <SectionShell canvas={canvas} reveal>
-      <div className="max-w-measure">
-        <Eyebrow>{eyebrow}</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">{heading}</h2>
-        <p className="mt-5 text-body-lg">{body}</p>
+      <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:gap-16">
+        <div className="max-w-measure">
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">{heading}</h2>
+          <p className="mt-5 text-body-lg">{body}</p>
+        </div>
+        <BrandFigure name="grid" className="max-w-[18rem] justify-self-end max-lg:hidden" />
       </div>
 
       <ul className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

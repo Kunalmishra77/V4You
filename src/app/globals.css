@@ -104,6 +104,11 @@
   --spacing-section: clamp(76px, 9vw, 132px);
   --spacing-notch: 22px; /* the card corner cut, docs/01 §2 */
 
+  /* Header heights (docs/01 §5: 76px → 64px at 90px scroll). Named because the
+     hero subtracts them to make nav + hero exactly one viewport. */
+  --spacing-header: 76px;
+  --spacing-header-sm: 64px;
+
   /* Radius 0 everywhere. The brand's geometry is the 45° cut, not the curve —
      so the shadcn radius scale is collapsed rather than left at its defaults. */
   --radius-xs: 0px;

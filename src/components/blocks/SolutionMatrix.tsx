@@ -1,6 +1,7 @@
 import Link from 'next/link'
 
 import { Eyebrow } from '@/components/shared/Eyebrow'
+import { BrandFigure } from '@/components/shared/BrandFigure'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { solutionMatrix } from '@/seed/home-proof'
 
@@ -18,12 +19,15 @@ import { solutionMatrix } from '@/seed/home-proof'
 export function SolutionMatrix({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
   return (
     <SectionShell canvas={canvas} reveal>
-      <div className="max-w-measure">
-        <Eyebrow>{solutionMatrix.eyebrow}</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-          {solutionMatrix.heading}
-        </h2>
-        <p className="mt-5 text-body-lg">{solutionMatrix.body}</p>
+      <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:gap-16">
+        <div className="max-w-measure">
+          <Eyebrow>{solutionMatrix.eyebrow}</Eyebrow>
+          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
+            {solutionMatrix.heading}
+          </h2>
+          <p className="mt-5 text-body-lg">{solutionMatrix.body}</p>
+        </div>
+        <BrandFigure name="converge" className="max-w-[17rem] justify-self-end max-lg:hidden" />
       </div>
 
       <div className="mt-12 overflow-x-auto">

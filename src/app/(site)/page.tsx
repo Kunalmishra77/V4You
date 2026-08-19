@@ -5,6 +5,7 @@ import { CapabilityTabs } from '@/components/blocks/CapabilityTabs'
 import { CaseStudyRail } from '@/components/blocks/CaseStudyRail'
 import { FAQAccordion } from '@/components/blocks/FAQAccordion'
 import { HeroPrimary } from '@/components/blocks/HeroPrimary'
+import { OrchestrationDiagram } from '@/components/blocks/OrchestrationDiagram'
 import { IndustryTabs } from '@/components/blocks/IndustryTabs'
 import { LogoMarquee } from '@/components/blocks/LogoMarquee'
 import { NumberedAccordion } from '@/components/blocks/NumberedAccordion'
@@ -76,8 +77,29 @@ export default async function HomePage() {
         ]}
       />
 
-      {/* 1 — navy */}
+      {/*
+        1 — navy. One viewport including the header. The background takes a
+        video when one exists; until then an abstract field stands in.
+      */}
       <HeroPrimary {...homeHero} />
+
+      {/*
+        1b — the orchestration diagram, immediately below the fold.
+        It is the page's argument and needs room to be read, which it was not
+        getting while it shared the first screen with the headline.
+      */}
+      <SectionShell canvas="navy-800" density="tight" reveal>
+        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
+          <div>
+            <Eyebrow>How it fits together</Eyebrow>
+            <h2 className="mt-5 max-w-headline font-display text-h3 text-(--ink)">
+              Signals in from the business. Work back out to the people who do it.
+            </h2>
+            <p className="mt-4 max-w-measure text-body-sm">{homeHero.trustLine}</p>
+          </div>
+          <OrchestrationDiagram />
+        </div>
+      </SectionShell>
 
       {/* 2 — navy-800. Logo wall if any client permits it, capability strip otherwise. */}
       <TrustBar />

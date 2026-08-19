@@ -1,6 +1,7 @@
 import { Button } from '@/components/shared/Button'
 import { CutCard } from '@/components/shared/CutCard'
 import { Eyebrow } from '@/components/shared/Eyebrow'
+import { Photo } from '@/components/shared/Photo'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { problemSection } from '@/seed/home'
 
@@ -19,12 +20,24 @@ import { problemSection } from '@/seed/home'
 export function ProblemCards({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
   return (
     <SectionShell canvas={canvas} reveal>
-      <div className="max-w-measure">
-        <Eyebrow>{problemSection.eyebrow}</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-          {problemSection.heading}
-        </h2>
-        <p className="mt-5 text-body-lg">{problemSection.body}</p>
+      {/*
+        Two columns so the right half of a wide screen carries something. The
+        reading measure on the copy is unchanged — the column is what changed.
+      */}
+      <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16">
+        <div className="max-w-measure">
+          <Eyebrow>{problemSection.eyebrow}</Eyebrow>
+          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
+            {problemSection.heading}
+          </h2>
+          <p className="mt-5 text-body-lg">{problemSection.body}</p>
+        </div>
+
+        <Photo
+          fallback="flow"
+          className="max-lg:hidden"
+          needs="A photograph of the team working — whiteboard, screens, a real working session in your own space. Landscape, 1600px wide minimum."
+        />
       </div>
 
       <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

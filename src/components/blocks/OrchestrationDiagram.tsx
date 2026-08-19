@@ -18,6 +18,11 @@ import { DiagramSparks } from './DiagramSparks'
  * Accessibility: one `role="img"` with a sentence-long label. Individual nodes
  * are deliberately not exposed — a screen reader reading sixteen disconnected
  * words produces noise, not a diagram.
+ *
+ * Type is sized in viewBox units, which means it shrinks with the diagram. At
+ * 780 units wide rendered into a 350px phone column, 16-unit labels landed at
+ * roughly 7px — present but unreadable. They are larger now, so the labels hold
+ * up at the narrowest width the layout produces.
  */
 
 const INPUTS = ['Customers', 'Operations', 'Data', 'Teams']
@@ -86,7 +91,7 @@ export function OrchestrationDiagram() {
             dominantBaseline="central"
             fill="var(--color-bone)"
             fontFamily="var(--font-body)"
-            fontSize="16"
+            fontSize="21"
           >
             {INPUTS[i]}
           </text>
@@ -111,7 +116,7 @@ export function OrchestrationDiagram() {
             dominantBaseline="central"
             fill="var(--color-bone)"
             fontFamily="var(--font-body)"
-            fontSize="16"
+            fontSize="21"
           >
             {OUTPUTS[i]}
           </text>
@@ -135,9 +140,9 @@ export function OrchestrationDiagram() {
         dominantBaseline="central"
         fill="var(--color-navy-900)"
         fontFamily="var(--font-mono)"
-        fontSize="13"
+        fontSize="15"
         fontWeight="500"
-        letterSpacing="1.4"
+        letterSpacing="1.2"
       >
         INTELLIGENCE
       </text>
@@ -148,9 +153,9 @@ export function OrchestrationDiagram() {
         dominantBaseline="central"
         fill="var(--color-navy-900)"
         fontFamily="var(--font-mono)"
-        fontSize="13"
+        fontSize="15"
         fontWeight="500"
-        letterSpacing="1.4"
+        letterSpacing="1.2"
       >
         LAYER
       </text>
