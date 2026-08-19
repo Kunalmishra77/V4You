@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { StickyMobileCTA } from '@/components/layout/StickyMobileCTA'
+import { LeadCaptureModal } from '@/components/forms/LeadCaptureModal'
 import { getNavigation } from '@/lib/content'
 import { fontVariables } from '@/lib/fonts'
 
@@ -62,6 +63,15 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
         </main>
         <SiteFooter />
         <StickyMobileCTA cta={navigation.stickyCta} />
+
+        {/*
+          Shown once per session, on exit intent — blueprint §13.6. Exit intent
+          rather than a timer on arrival: a modal that interrupts before the
+          visitor has read anything converts worse and is what Google's
+          intrusive-interstitial guidance is aimed at. Change to
+          `trigger={{ afterSeconds: 20 }}` if you want it on a delay instead.
+        */}
+        <LeadCaptureModal trigger="exit-intent" source="exit-intent-modal" />
       </body>
     </html>
   )
