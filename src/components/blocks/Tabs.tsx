@@ -1,6 +1,15 @@
 'use client'
 
-import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -21,6 +30,19 @@ import { cn } from '@/lib/utils'
  * is not a downgrade — on a phone a native picker is a better control than a
  * horizontally scrolling strip of eleven tabs, and it comes with the platform's
  * own accessibility for free.
+ *
+ * **The indicator slides between tabs** rather than the border jumping from one
+ * to the next. It is one absolutely positioned bar whose offset and width are
+ * measured from the active tab; the travel itself is a CSS transition, so the
+ * reduced-motion rule in globals.css governs it without this component having
+ * to ask.
+ *
+ * Until the first measurement lands, the selected tab keeps a plain bottom
+ * border and the sliding bar has zero width. That ordering matters: the static
+ * border is what renders on the server and on the first paint, so the control
+ * is never without an indicator — not while JavaScript is loading, and not if
+ * it never arrives. The two never overlap visibly because the first
+ * measurement puts the bar exactly where the border already was.
  */
 
 export type TabItem = {
@@ -40,8 +62,33 @@ export function Tabs({
   className?: string
 }) {
   const [active, setActive] = useState(0)
+  const [indicator, setIndicator] = useState<{ x: number; w: number } | null>(null)
   const baseId = useId()
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const listRef = useRef<HTMLDivElement>(null)
+
+  const measure = useCallback(() => {
+    const tab = tabRefs.current[active]
+    const list = listRef.current
+    if (!tab || !list) return
+    // Offsets relative to the list, not the page, so the bar is positioned
+    // inside the list's own coordinate space and a page scroll cannot move it.
+    setIndicator({ x: tab.offsetLeft, w: tab.offsetWidth })
+  }, [active])
+
+  useEffect(() => {
+    measure()
+
+    const list = listRef.current
+    if (!list || typeof ResizeObserver === 'undefined') return
+
+    // The tabs wrap, so a width change can move the active tab to another row
+    // without anything else about the component changing. Watching the list
+    // covers that, a font swap, and a zoom change in one.
+    const observer = new ResizeObserver(measure)
+    observer.observe(list)
+    return () => observer.disconnect()
+  }, [measure])
 
   const tabId = (index: number) => `${baseId}-tab-${items[index].id}`
   const panelId = (index: number) => `${baseId}-panel-${items[index].id}`
@@ -98,10 +145,25 @@ export function Tabs({
 
       {/* Desktop: the tab pattern. */}
       <div
+        ref={listRef}
         role="tablist"
         aria-label={selectLabel}
-        className="flex flex-wrap gap-x-1 gap-y-2 border-b border-(--line) max-[699px]:hidden"
+        className="relative flex flex-wrap gap-x-1 gap-y-2 border-b border-(--line) max-[699px]:hidden"
       >
+        {/* The travelling bar. Decorative — `aria-selected` on the tab is what
+            actually conveys selection, so this carries no meaning a screen
+            reader needs. */}
+        <span
+          aria-hidden="true"
+          className="tab-indicator pointer-events-none absolute bottom-0 left-0 h-0.5 bg-amber-500"
+          style={
+            {
+              '--tab-x': `${indicator?.x ?? 0}px`,
+              '--tab-w': `${indicator?.w ?? 0}px`,
+              opacity: indicator ? 1 : 0,
+            } as CSSProperties
+          }
+        />
         {items.map((item, index) => {
           const selected = index === active
           return (
@@ -121,9 +183,9 @@ export function Tabs({
               onKeyDown={(event) => onKeyDown(event, index)}
               className={cn(
                 'relative -mb-px min-h-11 border-b-2 px-4 py-3 font-display text-body-sm font-medium transition-colors',
-                selected
-                  ? 'border-amber-500 text-(--ink)'
-                  : 'border-transparent text-(--ink-muted) hover:text-(--ink)',
+                selected ? 'text-(--ink)' : 'border-transparent text-(--ink-muted) hover:text-(--ink)',
+                // Handed over to the sliding bar once it knows where to be.
+                selected && !indicator ? 'border-amber-500' : 'border-transparent',
               )}
             >
               {item.label}

@@ -424,6 +424,46 @@
     animation-delay: calc(120ms + var(--reveal-index, 0) * 110ms);
   }
 
+  /* --- Tabs -----------------------------------------------------------------
+     Two moving parts.
+
+     The panel arrives rather than swapping. Same constraint as the mega menu:
+     an inactive panel is `hidden`, which is what keeps its content out of the
+     tab order and out of the accessibility tree, and `hidden` cannot be
+     transitioned. So only the entrance animates — and because the panel goes
+     from `display: none` to displayed, the animation restarts on every switch
+     without any JavaScript telling it to.
+
+     The indicator slides. Its position and width are measured from the active
+     tab and written to two custom properties; the transition here does the
+     rest. Keeping the transition in CSS rather than animating in JavaScript
+     means the reduced-motion rule below governs it like everything else,
+     instead of the component needing to ask.
+     -------------------------------------------------------------------- */
+  @keyframes tab-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  [role='tabpanel'] {
+    animation: tab-panel-in 380ms var(--ease-reveal) both;
+  }
+
+  .tab-indicator {
+    transform: translateX(var(--tab-x, 0px));
+    width: var(--tab-w, 0px);
+    transition:
+      transform 340ms var(--ease-expo),
+      width 340ms var(--ease-expo),
+      opacity 160ms linear;
+  }
+
   /* --- Mega menu ------------------------------------------------------------
      The panel arrives rather than appearing: it drops a few pixels into place
      while its columns follow a beat behind.
@@ -758,8 +798,15 @@
 
     .menu-panel,
     .menu-panel [data-menu-column],
-    [data-hero-item] {
+    [data-hero-item],
+    [role='tabpanel'] {
       animation: none;
+    }
+
+    /* The indicator still moves — it has to, or it stops indicating — but it
+       moves instantly rather than travelling. */
+    .tab-indicator {
+      transition: none;
     }
   }
 
