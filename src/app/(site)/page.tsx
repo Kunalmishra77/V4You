@@ -16,6 +16,7 @@ import { ServiceCardGrid } from '@/components/blocks/ServiceCardGrid'
 import { SolutionMatrix } from '@/components/blocks/SolutionMatrix'
 import { TestimonialSlider } from '@/components/blocks/TestimonialSlider'
 import { TrustBar } from '@/components/blocks/TrustBar'
+import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { SectionShell } from '@/components/shared/SectionShell'
@@ -129,9 +130,7 @@ export default async function HomePage() {
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>Evidence</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            Proof over promises.
-          </h2>
+          <Headline className="mt-5">Proof over promises.</Headline>
           <p className="mt-5 text-body-lg">
             The work we can point to, and how each result was measured. Every figure states whether
             it was measured, modelled, estimated or reported by the client.

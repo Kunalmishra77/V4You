@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { CTABand } from '@/components/blocks/CTABand'
 import { HeroPage } from '@/components/blocks/HeroPage'
+import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { SectionShell } from '@/components/shared/SectionShell'
@@ -129,9 +130,7 @@ export default async function AccessibilityPage() {
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>Tested</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            What has actually been checked.
-          </h2>
+          <Headline className="mt-5">What has actually been checked.</Headline>
         </div>
         <ul className="mt-12 grid gap-x-10 gap-y-8 md:grid-cols-2">
           {TESTED.map((item) => (
@@ -147,9 +146,7 @@ export default async function AccessibilityPage() {
       <SectionShell canvas="bone-2" reveal>
         <div className="max-w-measure">
           <Eyebrow>Known limitations</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            What is not done yet.
-          </h2>
+          <Headline className="mt-5">What is not done yet.</Headline>
           <p className="mt-5 text-body-lg">
             An accessibility statement with no limitations is a statement nobody has checked. These
             are the gaps we know about.
@@ -168,9 +165,7 @@ export default async function AccessibilityPage() {
       <SectionShell canvas="bone" reveal>
         <div className="max-w-measure">
           <Eyebrow>Reporting a problem</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            If something here does not work for you, tell us.
-          </h2>
+          <Headline className="mt-5">If something here does not work for you, tell us.</Headline>
           <p className="mt-5 text-body-lg">
             Describe what you were trying to do, what happened, and what you were using — browser,
             device, and any assistive technology. We will reply, and we will tell you whether we can

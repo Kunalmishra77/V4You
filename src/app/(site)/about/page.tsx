@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { CTABand } from '@/components/blocks/CTABand'
 import { HeroPage } from '@/components/blocks/HeroPage'
 import { NumberedAccordion } from '@/components/blocks/NumberedAccordion'
+import { Headline } from '@/components/shared/Headline'
 import { AwaitingContent } from '@/components/shared/AwaitingContent'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -114,9 +115,7 @@ export default async function AboutPage() {
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>Story</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            How V4You started.
-          </h2>
+          <Headline className="mt-5">How V4You started.</Headline>
         </div>
         <AwaitingContent
           className="mt-10"
@@ -129,9 +128,7 @@ export default async function AboutPage() {
       <SectionShell canvas="bone" reveal>
         <div className="max-w-measure">
           <Eyebrow>Values</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            What we hold to when it costs something.
-          </h2>
+          <Headline className="mt-5">What we hold to when it costs something.</Headline>
           <p className="mt-5 text-body-lg">
             Values are only worth publishing if they occasionally lose you work. These do.
           </p>
@@ -153,9 +150,7 @@ export default async function AboutPage() {
       <SectionShell canvas="bone-2" density="tight" reveal>
         <div className="max-w-measure">
           <Eyebrow>Who you would work with</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            You will know who is accountable before you commit to anything.
-          </h2>
+          <Headline className="mt-5">You will know who is accountable before you commit to anything.</Headline>
           <p className="mt-5 text-body-lg">
             Leadership profiles are not published here yet, and we would rather leave the section
             out than fill it with silhouettes. In the meantime the first call is with the person who
@@ -186,9 +181,7 @@ export default async function AboutPage() {
       <SectionShell canvas="bone" reveal>
         <div className="max-w-measure">
           <Eyebrow>Working together</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            {deliveryModel.heading}
-          </h2>
+          <Headline className="mt-5">{deliveryModel.heading}</Headline>
           <p className="mt-5 text-body-lg">{deliveryModel.body}</p>
         </div>
         <ul className="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -205,7 +198,7 @@ export default async function AboutPage() {
       {featureFlags.showCareers && (
         <SectionShell canvas="bone-2" density="tight" reveal>
           <Eyebrow>Careers</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">We are hiring.</h2>
+          <Headline className="mt-5">We are hiring.</Headline>
         </SectionShell>
       )}
 

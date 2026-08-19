@@ -1,3 +1,4 @@
+import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell } from '@/components/shared/SectionShell'
 import { capabilityStrip } from '@/seed/home'
@@ -18,9 +19,7 @@ export function CapabilityStrip({ canvas = 'navy-800' }: { canvas?: 'navy-800' |
     <SectionShell canvas={canvas} density="tight" reveal>
       <div className="max-w-measure">
         <Eyebrow>What you can rely on</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-          {capabilityStrip.heading}
-        </h2>
+        <Headline className="mt-5">{capabilityStrip.heading}</Headline>
         <p className="mt-4 text-body-lg">{capabilityStrip.body}</p>
       </div>
 

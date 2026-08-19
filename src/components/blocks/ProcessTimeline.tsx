@@ -1,8 +1,10 @@
+import { Headline } from '@/components/shared/Headline'
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { BrandFigure } from '@/components/shared/BrandFigure'
 import { SectionShell } from '@/components/shared/SectionShell'
 import { processTimeline } from '@/seed/home-proof'
+import { revealChild } from '@/lib/reveal'
 
 /**
  * ProcessTimeline — docs/04 §24.
@@ -16,13 +18,11 @@ import { processTimeline } from '@/seed/home-proof'
  */
 export function ProcessTimeline({ canvas = 'bone-2' }: { canvas?: 'bone-2' | 'bone' | 'navy' }) {
   return (
-    <SectionShell canvas={canvas} reveal>
+    <SectionShell canvas={canvas} reveal="stagger">
       <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)] lg:gap-16">
         <div className="max-w-measure">
           <Eyebrow>{processTimeline.eyebrow}</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            {processTimeline.heading}
-          </h2>
+          <Headline className="mt-5">{processTimeline.heading}</Headline>
           <p className="mt-5 text-body-lg">{processTimeline.body}</p>
         </div>
         <BrandFigure name="layers" className="max-w-[16rem] justify-self-end max-lg:hidden" />
@@ -30,7 +30,7 @@ export function ProcessTimeline({ canvas = 'bone-2' }: { canvas?: 'bone-2' | 'bo
 
       <ol className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
         {processTimeline.steps.map((step, index) => (
-          <li key={step.title}>
+          <li key={step.title} {...revealChild(index)}>
             <span aria-hidden="true" className="block h-0.5 w-full bg-amber-500" />
             <p className="mt-4 font-mono text-label text-(--accent-text) uppercase">
               Step {String(index + 1).padStart(2, '0')}

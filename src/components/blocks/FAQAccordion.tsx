@@ -1,3 +1,4 @@
+import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { SectionShell } from '@/components/shared/SectionShell'
@@ -35,7 +36,7 @@ export function FAQAccordion({
 
       <div className="max-w-measure">
         <Eyebrow>{eyebrow}</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">{heading}</h2>
+        <Headline className="mt-5">{heading}</Headline>
       </div>
 
       <div className="mt-12 max-w-measure border-t border-(--line)">

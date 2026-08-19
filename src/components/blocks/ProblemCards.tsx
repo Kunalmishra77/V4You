@@ -1,9 +1,11 @@
+import { Headline } from '@/components/shared/Headline'
 import { Button } from '@/components/shared/Button'
 import { CutCard } from '@/components/shared/CutCard'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { Photo } from '@/components/shared/Photo'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { problemSection } from '@/seed/home'
+import { revealChild } from '@/lib/reveal'
 
 /**
  * ProblemCards — docs/04 §18, home §4.3.
@@ -19,7 +21,7 @@ import { problemSection } from '@/seed/home'
  */
 export function ProblemCards({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
   return (
-    <SectionShell canvas={canvas} reveal>
+    <SectionShell canvas={canvas} reveal="stagger">
       {/*
         Two columns so the right half of a wide screen carries something. The
         reading measure on the copy is unchanged — the column is what changed.
@@ -27,9 +29,7 @@ export function ProblemCards({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
       <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16">
         <div className="max-w-measure">
           <Eyebrow>{problemSection.eyebrow}</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            {problemSection.heading}
-          </h2>
+          <Headline className="mt-5">{problemSection.heading}</Headline>
           <p className="mt-5 text-body-lg">{problemSection.body}</p>
         </div>
 
@@ -42,7 +42,7 @@ export function ProblemCards({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
 
       <ul className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {problemSection.cards.map((card, index) => (
-          <CutCard as="li" key={card.title} className="p-6 lg:p-7">
+          <CutCard as="li" key={card.title} {...revealChild(index)} className="p-6 lg:p-7">
             <p aria-hidden="true" className="font-mono text-label text-(--accent-text) uppercase">
               {String(index + 1).padStart(2, '0')}
             </p>

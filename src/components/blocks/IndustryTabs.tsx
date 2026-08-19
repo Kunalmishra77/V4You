@@ -1,5 +1,6 @@
 import Link from 'next/link'
 
+import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { industryTabs } from '@/seed/industries'
@@ -82,9 +83,7 @@ export function IndustryTabs({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
     <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>Industries</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-          Technology shaped around how your industry operates.
-        </h2>
+        <Headline className="mt-5">Technology shaped around how your industry operates.</Headline>
         <p className="mt-5 text-body-lg">
           Eleven sectors, each with its own operating reality. Pick yours and see where we would
           start.

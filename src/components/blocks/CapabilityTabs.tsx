@@ -1,3 +1,4 @@
+import { Headline } from '@/components/shared/Headline'
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
@@ -55,9 +56,7 @@ export function CapabilityTabs({ canvas = 'navy' }: { canvas?: Canvas } = {}) {
     <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>{capabilityShowcase.eyebrow}</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-          {capabilityShowcase.heading}
-        </h2>
+        <Headline className="mt-5">{capabilityShowcase.heading}</Headline>
         <p className="mt-5 text-body-lg">{capabilityShowcase.body}</p>
       </div>
 

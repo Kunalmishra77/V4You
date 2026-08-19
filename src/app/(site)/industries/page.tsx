@@ -5,6 +5,7 @@ import { CTABand } from '@/components/blocks/CTABand'
 import { CaseStudyRail } from '@/components/blocks/CaseStudyRail'
 import { HeroPage } from '@/components/blocks/HeroPage'
 import { SolutionMatrix } from '@/components/blocks/SolutionMatrix'
+import { Headline } from '@/components/shared/Headline'
 import { CutCard } from '@/components/shared/CutCard'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -57,9 +58,7 @@ export default function IndustriesHubPage() {
       <SectionShell canvas="bone" reveal>
         <div className="max-w-measure">
           <Eyebrow>Find yours</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            Eleven sectors, eleven different first steps.
-          </h2>
+          <Headline className="mt-5">Eleven sectors, eleven different first steps.</Headline>
           <p className="mt-5 text-body-lg">
             Each page sets out how that industry actually operates, the frictions we see repeatedly,
             where AI genuinely earns its place, and where we would start.
@@ -99,9 +98,7 @@ export default function IndustriesHubPage() {
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>Evidence</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            Work we can point to.
-          </h2>
+          <Headline className="mt-5">Work we can point to.</Headline>
         </div>
         <div className="mt-10">
           <CaseStudyRail studies={[]} />

@@ -7,6 +7,7 @@ import { CTABand } from '@/components/blocks/CTABand'
 import { CaseStudyRail } from '@/components/blocks/CaseStudyRail'
 import { FAQAccordion } from '@/components/blocks/FAQAccordion'
 import { HeroPage } from '@/components/blocks/HeroPage'
+import { Headline } from '@/components/shared/Headline'
 import { CutCard } from '@/components/shared/CutCard'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -108,9 +109,7 @@ export default async function IndustryPage({ params }: PageProps<'/industries/[s
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>What we see repeatedly</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            The frictions that come up in almost every conversation.
-          </h2>
+          <Headline className="mt-5">The frictions that come up in almost every conversation.</Headline>
         </div>
         <ul className="mt-12 grid gap-6 sm:grid-cols-2">
           {tab.challenges.map((challenge, index) => (
@@ -128,9 +127,7 @@ export default async function IndustryPage({ params }: PageProps<'/industries/[s
       <SectionShell canvas="bone" reveal>
         <div className="max-w-measure">
           <Eyebrow>Where AI earns its place</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            Applications that hold up in {label.toLowerCase()}.
-          </h2>
+          <Headline className="mt-5">Applications that hold up in {label.toLowerCase()}.</Headline>
           <p className="mt-5 text-body-lg">
             Each one names the value area it moves rather than a percentage. A number without a case
             study behind it is a claim, and we do not have the case study yet.
@@ -156,9 +153,7 @@ export default async function IndustryPage({ params }: PageProps<'/industries/[s
       <SectionShell canvas="bone-2" reveal>
         <div className="max-w-measure">
           <Eyebrow>Sequencing</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            Where we typically start.
-          </h2>
+          <Headline className="mt-5">Where we typically start.</Headline>
           <p className="mt-5 text-body-lg">
             Not because it is the biggest opportunity, but because it is the one that makes the next
             decision better informed.
@@ -181,9 +176,7 @@ export default async function IndustryPage({ params }: PageProps<'/industries/[s
       <SectionShell canvas="bone" reveal>
         <div className="max-w-measure">
           <Eyebrow>What this usually involves</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            The capabilities this work draws on.
-          </h2>
+          <Headline className="mt-5">The capabilities this work draws on.</Headline>
         </div>
         <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {detail.services.map((service) => (
@@ -208,9 +201,7 @@ export default async function IndustryPage({ params }: PageProps<'/industries/[s
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>Architecture</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            A representative system for {label.toLowerCase()}.
-          </h2>
+          <Headline className="mt-5">A representative system for {label.toLowerCase()}.</Headline>
         </div>
         <div className="mt-12">
           <ArchitectureDiagram
@@ -243,9 +234,7 @@ export default async function IndustryPage({ params }: PageProps<'/industries/[s
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>Evidence</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            Work in {label.toLowerCase()}.
-          </h2>
+          <Headline className="mt-5">Work in {label.toLowerCase()}.</Headline>
         </div>
         <div className="mt-10">
           <CaseStudyRail studies={[]} />

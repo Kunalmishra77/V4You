@@ -1,3 +1,4 @@
+import { Headline } from '@/components/shared/Headline'
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell } from '@/components/shared/SectionShell'
@@ -32,7 +33,7 @@ export function CTABand({
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end lg:gap-16">
         <div>
           <Eyebrow>{eyebrow}</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">{heading}</h2>
+          <Headline className="mt-5">{heading}</Headline>
           <p className="mt-5 max-w-measure text-body-lg">{body}</p>
         </div>
 

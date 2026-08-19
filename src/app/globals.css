@@ -128,6 +128,35 @@
   --duration-button: 200ms;
   --duration-menu: 200ms;
   --duration-header: 250ms;
+
+  /* Expressive motion (docs/01 §5, extended).
+
+     `--ease-reveal` is the workhorse for anything that fades. It is
+     deliberately gentle, which is right for a section arriving and wrong for a
+     line of type climbing out from behind a mask — that wants to arrive fast
+     and settle slowly, so the eye reads the word before the movement finishes.
+
+     `--ease-expo` is that curve. It is the same one the reference site uses on
+     every heading, and there is no point pretending a better number exists:
+     an exponential-out is the correct shape for a masked reveal, and .19/1/.22/1
+     is its canonical approximation.
+
+     `--ease-swap` is symmetric, for state that toggles rather than arrives —
+     a label sliding out while its replacement slides in. An asymmetric curve
+     on a swap makes the two halves visibly disagree. */
+  --ease-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-swap: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --duration-line: 900ms;
+  --duration-swap: 260ms;
+
+  /* Gap between staggered siblings. 90ms is the point where a group still
+     reads as one gesture; past ~120ms it becomes a queue and the last card
+     feels late. */
+  --stagger-step: 90ms;
+  /* Gap between the lines of a masked heading. Slower than the sibling
+     stagger, because lines are read in sequence and cards are scanned. */
+  --stagger-line: 110ms;
 }
 
 /* --- The 45° signature device (docs/01 §2) ---------------------------------
@@ -352,6 +381,162 @@
     }
   }
 
+  /* --- Masked line reveal --------------------------------------------------
+     The signature effect, and the single biggest reason the reference site
+     feels alive while a fade-only site does not: each line of a heading is
+     clipped by its own overflow box and climbs into it from below.
+
+     The splitting is done at runtime by GSAP SplitText, because a heading's
+     line breaks are a function of its rendered width and nothing else — a
+     break authored for 1440px is wrong at 380px, and every width in between.
+     SplitText measures, and re-measures on resize.
+
+     What lives here is only the part CSS must own: the mask geometry. A line
+     box clips descenders, so the wrapper gets room below the baseline and an
+     equal negative margin to leave the leading untouched. Without this a `g`
+     or a `y` is sliced flat and it looks like a rendering bug.
+     -------------------------------------------------------------------- */
+  [data-split] .split-mask {
+    overflow: hidden;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+  }
+
+  /* Until SplitText has run, a heading inside an unrevealed section is hidden
+     with everything else, so there is nothing to flash. A heading outside one
+     is visible and simply does not animate. Neither case needs a guard, which
+     is why there is no `visibility: hidden` here — that is the rule that leaves
+     a page blank when a chunk fails to load. */
+
+  /* --- Staggered children ---------------------------------------------------
+     docs/01 §5 says reveal whole sections, never individual cards, and the
+     reason it says so is sound: a card that waits for its own scroll position
+     turns a page into a slot machine.
+
+     This is not that. There is still exactly one trigger for the section, and
+     every child is already committed the moment it fires — they simply arrive
+     90ms apart. The group still reads as one gesture. What it avoids is the
+     dead flatness of six cards fading in perfect unison, which reads as a
+     single image rather than six things.
+
+     Same conditional-hidden rule as above, for the same reason.
+     -------------------------------------------------------------------- */
+  [data-reveal-child] {
+    transition:
+      opacity var(--duration-reveal) var(--ease-reveal),
+      transform var(--duration-reveal) var(--ease-reveal);
+    transition-delay: calc(var(--reveal-index, 0) * var(--stagger-step));
+  }
+
+  [data-reveal]:not([data-reveal='shown']) [data-reveal-child] {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  /* A section that staggers its children must not also move as a whole —
+     the child would carry both transforms and land twice. */
+  [data-reveal][data-reveal-group] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* --- Masked label swap ----------------------------------------------------
+     The hover the reference site puts on every link: the label leaves upward
+     while an identical copy arrives from below, both clipped. It costs one
+     duplicated string and reads as considered in a way a colour change never
+     does.
+
+     The duplicate is `aria-hidden`, so the accessible name stays single.
+     Height comes from the real label; the copy is absolutely positioned, so
+     the two can never disagree about layout.
+     -------------------------------------------------------------------- */
+  .swap {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    /* Cropping to the line box would clip descenders mid-slide. */
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
+  }
+
+  .swap > span {
+    display: block;
+    transition: transform var(--duration-swap) var(--ease-swap);
+  }
+
+  .swap > [data-swap-in] {
+    position: absolute;
+    inset: 0;
+    transform: translateY(100%);
+  }
+
+  .group:hover .swap > [data-swap-out],
+  .group:focus-visible .swap > [data-swap-out],
+  a:hover > .swap > [data-swap-out],
+  a:focus-visible > .swap > [data-swap-out],
+  button:hover > .swap > [data-swap-out],
+  button:focus-visible > .swap > [data-swap-out] {
+    transform: translateY(-100%);
+  }
+
+  .group:hover .swap > [data-swap-in],
+  .group:focus-visible .swap > [data-swap-in],
+  a:hover > .swap > [data-swap-in],
+  a:focus-visible > .swap > [data-swap-in],
+  button:hover > .swap > [data-swap-in],
+  button:focus-visible > .swap > [data-swap-in] {
+    transform: translateY(0);
+  }
+
+  /* --- Card hover -----------------------------------------------------------
+     Thirty-one components shipped with no hover state at all, which is why the
+     site reads as a document rather than an interface. One shared behaviour,
+     so a card responds the same way everywhere: the rule warms toward the
+     accent, the surface lifts a little, and anything marked as the card's
+     arrow slides.
+
+     The lift is 3px. Enough to register at the edge of vision; small enough
+     that a grid of them does not ripple.
+     -------------------------------------------------------------------- */
+  .hover-card {
+    transition:
+      transform var(--duration-card) var(--ease-reveal),
+      border-color var(--duration-card) var(--ease-reveal),
+      background-color var(--duration-card) var(--ease-reveal);
+  }
+
+  .hover-card:hover,
+  .hover-card:focus-within {
+    transform: translateY(-3px);
+    border-color: var(--accent-glyph);
+  }
+
+  .hover-card [data-card-arrow] {
+    transition: transform var(--duration-card) var(--ease-expo);
+  }
+
+  .hover-card:hover [data-card-arrow],
+  .hover-card:focus-within [data-card-arrow] {
+    transform: translateX(6px);
+  }
+
+  /* --- Underline wipe -------------------------------------------------------
+     For inline links inside prose, where a lift would be wrong. The rule grows
+     from the left rather than fading, so the direction matches reading.
+     -------------------------------------------------------------------- */
+  .link-wipe {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size var(--duration-swap) var(--ease-swap);
+  }
+
+  .link-wipe:hover,
+  .link-wipe:focus-visible {
+    background-size: 100% 1px;
+  }
+
   [data-reveal] {
     opacity: 0;
     transform: translateY(22px);
@@ -366,8 +551,64 @@
   }
 }
 
+/* --- Lenis smooth scroll ----------------------------------------------------
+   Lenis animates `scrollTop` on a rAF loop rather than letting the compositor
+   scroll. Three rules make that safe, and they are the vendor's, not
+   improvised.
+
+   `height: auto` on html and body: Lenis measures the document, and a fixed
+   `height: 100%` reports the viewport instead of the content.
+
+   `scroll-behavior: auto`: CSS smooth scrolling and Lenis both animating the
+   same value fight each other, and the result is a scroll that overshoots and
+   corrects. Only one of them may own it.
+
+   `overscroll-behavior: contain` on opted-out subtrees: anything that scrolls
+   internally — a modal body, a horizontal rail — must be able to keep its
+   wheel events, or the page scrolls behind it. Mark those `data-lenis-prevent`.
+   -------------------------------------------------------------------------- */
+@layer base {
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  /* Set while a modal owns the viewport. */
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+}
+
 @layer a11y {
   .no-js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Every conditional-hidden state above keys off an unfired ancestor. With
+     JavaScript unavailable nothing ever fires, so each one needs releasing
+     explicitly — otherwise the page renders with headings and cards that are
+     technically present and permanently invisible. */
+  .no-js [data-reveal] [data-reveal-child] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The failsafe. Set by the timer in the root layout when the motion runtime
+     has not reported in — a chunk that failed to load, an error earlier in the
+     tree. Identical to the no-js release, because the outcome wanted is
+     identical: a page that does not animate is fine, a page that is blank is
+     not. */
+  .motion-failed [data-reveal],
+  .motion-failed [data-reveal] [data-reveal-child] {
     opacity: 1;
     transform: none;
   }
@@ -382,6 +623,38 @@
     [data-reveal] {
       opacity: 1;
       transform: none;
+    }
+
+    /* Same release as the no-js case. The blanket 0.01ms rule below shortens
+       transitions but does not clear a transform that is applied by a static
+       rule, so these have to be named. */
+    [data-reveal] [data-reveal-child] {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* Overflow is what makes the mask a mask. Removing it under reduced motion
+       means a heading can never be clipped by a transform that failed to
+       clear — the content is readable whatever else goes wrong. Reduced motion
+       also stops SplitText running at all, so this is belt and braces. */
+    [data-split] .split-mask {
+      overflow: visible;
+    }
+
+    .hover-card:hover,
+    .hover-card:focus-within {
+      transform: none;
+    }
+
+    .hover-card:hover [data-card-arrow],
+    .hover-card:focus-within [data-card-arrow] {
+      transform: none;
+    }
+
+    /* A swap that cannot animate must not leave the incoming copy stranded
+       over the outgoing one — collapse it to a plain label. */
+    .swap > [data-swap-in] {
+      display: none;
     }
   }
 

@@ -1,10 +1,12 @@
 import Link from 'next/link'
 
+import { Headline } from '@/components/shared/Headline'
 import { CutCard } from '@/components/shared/CutCard'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { BrandFigure } from '@/components/shared/BrandFigure'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { serviceCards } from '@/seed/services'
+import { revealChild } from '@/lib/reveal'
 
 /**
  * ServiceCardGrid — docs/04 §20.
@@ -32,19 +34,25 @@ export function ServiceCardGrid({
   canvas?: Canvas
 }) {
   return (
-    <SectionShell canvas={canvas} reveal>
+    <SectionShell canvas={canvas} reveal="stagger">
       <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,20rem)] lg:gap-16">
         <div className="max-w-measure">
           <Eyebrow>{eyebrow}</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">{heading}</h2>
+          <Headline className="mt-5">{heading}</Headline>
           <p className="mt-5 text-body-lg">{body}</p>
         </div>
         <BrandFigure name="grid" className="max-w-[18rem] justify-self-end max-lg:hidden" />
       </div>
 
       <ul className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {serviceCards.map((service) => (
-          <CutCard as="li" key={service.slug} interactive className="flex flex-col p-6 lg:p-7">
+        {serviceCards.map((service, index) => (
+          <CutCard
+            as="li"
+            key={service.slug}
+            interactive
+            {...revealChild(index)}
+            className="flex flex-col p-6 lg:p-7"
+          >
             <p className="font-mono text-label text-(--accent-text) uppercase">{service.title}</p>
 
             <h3 className="mt-4 font-display text-h3 text-(--ink)">

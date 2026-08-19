@@ -3,6 +3,7 @@
 import { useActionState, useCallback, useEffect, useRef, useState } from 'react'
 
 import { submitConsultation, type ConsultationState } from '@/app/(site)/contact/actions'
+import { lockScroll, unlockScroll } from '@/lib/lenis'
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { cn } from '@/lib/utils'
@@ -108,6 +109,10 @@ export function LeadCaptureModal({
     const previousPadding = body.style.paddingRight
     body.style.overflow = 'hidden'
     if (scrollbar > 0) body.style.paddingRight = `${scrollbar}px`
+    // `overflow: hidden` stops the browser scrolling the document. It does not
+    // stop Lenis, which drives scrollTop itself on a rAF loop and will keep
+    // sliding the page along behind this panel. Both are needed.
+    lockScroll()
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -139,6 +144,7 @@ export function LeadCaptureModal({
       document.removeEventListener('keydown', onKeyDown)
       body.style.overflow = previousOverflow
       body.style.paddingRight = previousPadding
+      unlockScroll()
     }
   }, [open, close])
 

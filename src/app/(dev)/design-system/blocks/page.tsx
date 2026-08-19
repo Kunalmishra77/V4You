@@ -17,6 +17,7 @@ import { ServiceCardGrid } from '@/components/blocks/ServiceCardGrid'
 import { SolutionMatrix } from '@/components/blocks/SolutionMatrix'
 import { TestimonialSlider } from '@/components/blocks/TestimonialSlider'
 import { TrustBar } from '@/components/blocks/TrustBar'
+import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell } from '@/components/shared/SectionShell'
 import { homeHero } from '@/seed/home'
@@ -50,9 +51,7 @@ export default function BlocksPreview() {
 
       <SectionShell canvas="navy" reveal>
         <Eyebrow>Proof over promises</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-          Work we can point to.
-        </h2>
+        <Headline className="mt-5">Work we can point to.</Headline>
         <div className="mt-10">
           <CaseStudyRail studies={[]} />
         </div>
@@ -76,9 +75,7 @@ export default function BlocksPreview() {
 
       <SectionShell canvas="bone-2" reveal>
         <Eyebrow>Architecture</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-          A representative system.
-        </h2>
+        <Headline className="mt-5">A representative system.</Headline>
         <div className="mt-10">
           <ArchitectureDiagram
             caption="What this diagram says"

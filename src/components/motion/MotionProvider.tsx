@@ -1,0 +1,163 @@
+'use client'
+
+import { useEffect } from 'react'
+
+import { setLenis } from '@/lib/lenis'
+import {
+  DURATION,
+  EASE,
+  ScrollTrigger,
+  SplitText,
+  STAGGER,
+  TRIGGER_START,
+  gsap,
+  prefersReducedMotion,
+  registerGsap,
+} from '@/lib/motion'
+
+/**
+ * The motion runtime. One instance, mounted once in the site layout.
+ *
+ * It owns three things:
+ *
+ *   1. **Lenis** — inertial smooth scrolling, driven off GSAP's ticker rather
+ *      than its own rAF loop so the two never disagree about frame timing.
+ *   2. **Headings** — every `[data-split]` is split into visual lines by
+ *      SplitText and each line climbs out from behind a mask.
+ *   3. **Sections** — every `[data-reveal]` arrives on scroll, with children
+ *      marked `data-reveal-child` staggered a step apart.
+ *
+ * Nothing here runs under `prefers-reduced-motion: reduce`. The effect returns
+ * before Lenis is constructed and before a single trigger is created, so the
+ * page scrolls natively and every element renders in its final state — which is
+ * what the CSS in globals.css already guarantees for that case.
+ *
+ * **The failsafe.** Sections are server-rendered hidden, so if this component
+ * never mounts — a chunk that 404s behind a bad cache, a JS error earlier in
+ * the tree — the page would be permanently blank below the fold. The inline
+ * script in the layout starts a timer that restores everything if this
+ * component has not reported in. Marking the document is therefore the first
+ * thing the effect does, before anything that could throw.
+ */
+export function MotionProvider() {
+  useEffect(() => {
+    // Tell the failsafe we are alive. First statement in the effect, on purpose:
+    // everything below can fail, and a blank page is a far worse outcome than
+    // a page that does not animate.
+    document.documentElement.dataset.motion = 'ready'
+
+    if (prefersReducedMotion()) return
+
+    registerGsap()
+
+    const ctx = gsap.context(() => {
+      // --- Headings ---------------------------------------------------------
+      // `autoSplit` re-splits when the font finishes loading or the element
+      // changes width. Without it a heading split against the fallback font
+      // keeps those line breaks after the real face arrives, and the masks end
+      // up in the wrong places.
+      SplitText.create('[data-split]', {
+        type: 'lines',
+        mask: 'lines',
+        linesClass: 'split-line',
+        autoSplit: true,
+        onSplit(self) {
+          // Returning the tween hands it to SplitText, which reverts it before
+          // re-splitting. Skipping that leaves the old lines mid-tween and the
+          // new ones inherit a transform nothing will ever clear.
+          return gsap.from(self.lines, {
+            yPercent: 110,
+            duration: DURATION.line,
+            ease: EASE.expo,
+            stagger: STAGGER.line,
+            scrollTrigger: {
+              trigger: self.elements[0],
+              start: TRIGGER_START,
+              once: true,
+            },
+          })
+        },
+      })
+
+      // --- Sections ---------------------------------------------------------
+      // `batch` groups elements that cross the trigger line in the same frame
+      // into one callback, so a row of cards animates as a row rather than as
+      // however many separate triggers happened to fire.
+      ScrollTrigger.batch('[data-reveal]', {
+        start: TRIGGER_START,
+        once: true,
+        onEnter(batch) {
+          for (const el of batch) el.setAttribute('data-reveal', 'shown')
+
+          // A section marked as a group does not move itself — its children do.
+          const children = batch.flatMap((el) =>
+            el.hasAttribute('data-reveal-group')
+              ? gsap.utils.toArray<HTMLElement>('[data-reveal-child]', el)
+              : [],
+          )
+          if (!children.length) return
+
+          gsap.fromTo(
+            children,
+            { opacity: 0, y: 18 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: DURATION.reveal,
+              ease: EASE.reveal,
+              stagger: STAGGER.step,
+              clearProps: 'opacity,transform',
+            },
+          )
+        },
+      })
+    })
+
+    // --- Lenis ---------------------------------------------------------------
+    // Imported here rather than at module scope so it lands in this component's
+    // chunk, which is already client-only and already deferred.
+    let lenis: import('lenis').default | null = null
+    let tick: ((time: number) => void) | null = null
+    let cancelled = false
+
+    void import('lenis').then(({ default: Lenis }) => {
+      if (cancelled) return
+
+      lenis = new Lenis({
+        // ~1.05s to settle. Long enough to read as inertia, short enough that a
+        // visitor scanning for a phone number does not feel held up.
+        lerp: 0.1,
+        wheelMultiplier: 1,
+        // Touch devices already have inertial scrolling in hardware. Adding a
+        // second layer on top makes it feel laggy and detached from the finger.
+        syncTouch: false,
+      })
+      setLenis(lenis)
+
+      lenis.on('scroll', ScrollTrigger.update)
+
+      // One ticker for both. GSAP's runs at a known point in the frame relative
+      // to its tweens; Lenis on its own rAF can land either side of it and the
+      // pinned sections judder.
+      tick = (time: number) => lenis?.raf(time * 1000)
+      gsap.ticker.add(tick)
+      // GSAP smooths its delta by default, which is right for tweens and wrong
+      // for a scroll position that must track the wheel exactly.
+      gsap.ticker.lagSmoothing(0)
+    })
+
+    return () => {
+      cancelled = true
+      if (tick) gsap.ticker.remove(tick)
+      if (lenis) {
+        lenis.destroy()
+        setLenis(null)
+      }
+      ctx.revert()
+      ScrollTrigger.getAll().forEach((t) => t.kill())
+      delete document.documentElement.dataset.motion
+    }
+  }, [])
+
+  return null
+}

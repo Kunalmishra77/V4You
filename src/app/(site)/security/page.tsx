@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { CTABand } from '@/components/blocks/CTABand'
 import { HeroPage } from '@/components/blocks/HeroPage'
 import { NumberedAccordion } from '@/components/blocks/NumberedAccordion'
+import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { SectionShell } from '@/components/shared/SectionShell'
@@ -127,9 +128,7 @@ export default async function SecurityPage() {
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>What we do not claim</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            The part most security pages leave out.
-          </h2>
+          <Headline className="mt-5">The part most security pages leave out.</Headline>
           <p className="mt-5 text-body-lg">
             A security page listing only strengths tells you very little, because every security
             page lists only strengths. Here is what we are not.
@@ -168,9 +167,7 @@ export default async function SecurityPage() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
             <Eyebrow>Shared responsibility</Eyebrow>
-            <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-              What stays with you.
-            </h2>
+            <Headline className="mt-5">What stays with you.</Headline>
             <ul className="mt-8 space-y-3 text-body-sm">
               <li>
                 Deciding who in your organisation should have access, and telling us when that
@@ -188,9 +185,7 @@ export default async function SecurityPage() {
 
           <div>
             <Eyebrow>Security questions</Eyebrow>
-            <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-              Send us the questionnaire.
-            </h2>
+            <Headline className="mt-5">Send us the questionnaire.</Headline>
             <p className="mt-5 max-w-measure text-body">
               If your procurement has a security questionnaire, send it. We will answer it honestly,
               including the questions where the answer is no. A supplier who answers yes to

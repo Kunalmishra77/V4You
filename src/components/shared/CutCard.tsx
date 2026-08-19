@@ -55,8 +55,12 @@ export function CutCard({
       className={cn(
         'group relative isolate',
         surface.vars,
+        // `focus-within` alongside `hover`, so a keyboard user reaching the
+        // card's link gets the same acknowledgement a pointer user gets. Without
+        // it the card is inert for anyone not using a mouse, which is the most
+        // common way a hover state quietly excludes people.
         interactive &&
-          'transition-transform duration-(--duration-card) ease-out hover:-translate-y-1',
+          'transition-transform duration-(--duration-card) ease-out hover:-translate-y-1 focus-within:-translate-y-1',
         className,
       )}
       {...rest}
@@ -70,7 +74,7 @@ export function CutCard({
       {interactive && (
         <span
           aria-hidden="true"
-          className="absolute top-0 right-0 -z-10 size-notch bg-amber-500 opacity-0 transition-opacity duration-(--duration-card) ease-out notch-fill group-hover:opacity-100"
+          className="absolute top-0 right-0 -z-10 size-notch bg-amber-500 opacity-0 transition-opacity duration-(--duration-card) ease-out notch-fill group-hover:opacity-100 group-focus-within:opacity-100"
         />
       )}
 

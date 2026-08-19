@@ -11,6 +11,7 @@ import { LogoMarquee } from '@/components/blocks/LogoMarquee'
 import { NumberedAccordion } from '@/components/blocks/NumberedAccordion'
 import { ProcessTimeline } from '@/components/blocks/ProcessTimeline'
 import { StickyContextualNav } from '@/components/blocks/StickyContextualNav'
+import { Headline } from '@/components/shared/Headline'
 import { CutCard } from '@/components/shared/CutCard'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -123,9 +124,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[slug
       <SectionShell canvas="bone" reveal id="problems" className={ANCHOR}>
         <div className="max-w-measure">
           <Eyebrow>What this solves</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            What usually brings people here.
-          </h2>
+          <Headline className="mt-5">What usually brings people here.</Headline>
         </div>
         <ul className="mt-12 grid gap-6 sm:grid-cols-2">
           {detail.problems.map((problem, index) => (
@@ -144,7 +143,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[slug
       <SectionShell canvas="navy" reveal id="capabilities" className={ANCHOR}>
         <div className="max-w-measure">
           <Eyebrow>Capabilities</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">What we build.</h2>
+          <Headline className="mt-5">What we build.</Headline>
         </div>
         <ul className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {detail.capabilities.map((capability) => (
@@ -161,9 +160,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[slug
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-16">
           <div>
             <Eyebrow>Why it matters</Eyebrow>
-            <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-              {detail.outcomeStatement}
-            </h2>
+            <Headline className="mt-5">{detail.outcomeStatement}</Headline>
           </div>
           <p className="self-end text-body-lg">{detail.benefits}</p>
         </div>
@@ -173,9 +170,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[slug
       <SectionShell canvas="bone-2" reveal id="deliverables" className={ANCHOR}>
         <div className="max-w-measure">
           <Eyebrow>Deliverables</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            What you actually receive.
-          </h2>
+          <Headline className="mt-5">What you actually receive.</Headline>
           <p className="mt-5 text-body-lg">
             Everything below is yours, including the parts that would let another supplier continue
             the work.
@@ -205,9 +200,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[slug
       <SectionShell canvas="bone-2" reveal id="architecture" className={ANCHOR}>
         <div className="max-w-measure">
           <Eyebrow>Architecture</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            A representative system.
-          </h2>
+          <Headline className="mt-5">A representative system.</Headline>
           <p className="mt-5 text-body-lg">
             One shape this work takes. Yours will differ — the point is that the shape is decided
             deliberately and written down.
@@ -237,9 +230,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[slug
       <SectionShell canvas="bone" reveal id="industries" className={ANCHOR}>
         <div className="max-w-measure">
           <Eyebrow>Where this applies</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            Industries where this comes up most.
-          </h2>
+          <Headline className="mt-5">Industries where this comes up most.</Headline>
         </div>
         <ul className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {(detail.industries as IndustrySlug[]).map((industry) => (
@@ -264,9 +255,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[slug
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>Evidence</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            Work we can point to.
-          </h2>
+          <Headline className="mt-5">Work we can point to.</Headline>
         </div>
         <div className="mt-10">
           <CaseStudyRail studies={[]} />
@@ -277,9 +266,7 @@ export default async function ServicePage({ params }: PageProps<'/services/[slug
       <SectionShell canvas="bone" reveal id="pricing" className={ANCHOR}>
         <div className="max-w-measure">
           <Eyebrow>Commercials</Eyebrow>
-          <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-            What drives the cost.
-          </h2>
+          <Headline className="mt-5">What drives the cost.</Headline>
           <p className="mt-5 text-body-lg">
             We do not publish a starting figure. A price quoted before scope is understood is either
             padded to cover the unknown or about to be revised — neither helps you plan. Here is

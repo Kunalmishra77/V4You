@@ -59,8 +59,14 @@ export function SectionShell({
    *
    * The canvas itself does not fade, only what sits on it. Fading the
    * background would put a visible seam between this section and its neighbour.
+   *
+   * Pass `'stagger'` where the section's contents are a set of peers — a card
+   * grid, a timeline, a list of panels. The section still has one trigger; the
+   * peers marked `data-reveal-child` just arrive a step apart instead of in
+   * perfect unison, which is the difference between six cards reading as six
+   * things and reading as one flat image.
    */
-  reveal?: boolean
+  reveal?: boolean | 'stagger'
   className?: string
   innerClassName?: string
 } & Record<string, unknown>) {
@@ -70,7 +76,11 @@ export function SectionShell({
     <div className={cn('mx-auto w-full max-w-content px-gutter', innerClassName)}>{children}</div>
   )
 
-  const content = reveal ? <ScrollReveal>{inner}</ScrollReveal> : inner
+  const content = reveal ? (
+    <ScrollReveal stagger={reveal === 'stagger'}>{inner}</ScrollReveal>
+  ) : (
+    inner
+  )
 
   return (
     <Tag

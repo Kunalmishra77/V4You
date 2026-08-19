@@ -1,3 +1,4 @@
+import { Headline } from '@/components/shared/Headline'
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell } from '@/components/shared/SectionShell'
@@ -46,7 +47,7 @@ export function NumberedAccordion({
     <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">{heading}</h2>
+        <Headline className="mt-5">{heading}</Headline>
         {body && <p className="mt-5 text-body-lg">{body}</p>}
       </div>
 

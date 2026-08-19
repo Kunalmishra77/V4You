@@ -1,3 +1,4 @@
+import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { technologyEcosystem } from '@/seed/home-proof'
@@ -28,9 +29,7 @@ export function LogoMarquee({ canvas = 'bone' }: { canvas?: Canvas } = {}) {
     <SectionShell canvas={canvas} reveal>
       <div className="max-w-measure">
         <Eyebrow>{technologyEcosystem.eyebrow}</Eyebrow>
-        <h2 className="mt-5 max-w-headline font-display text-h2 text-(--ink)">
-          {technologyEcosystem.heading}
-        </h2>
+        <Headline className="mt-5">{technologyEcosystem.heading}</Headline>
         <p className="mt-5 text-body-lg">{technologyEcosystem.body}</p>
       </div>
 

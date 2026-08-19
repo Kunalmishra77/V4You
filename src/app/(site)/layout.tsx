@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { MotionProvider } from '@/components/motion/MotionProvider'
 import { SiteFooter } from '@/components/layout/SiteFooter'
 import { SiteHeader } from '@/components/layout/SiteHeader'
 import { StickyMobileCTA } from '@/components/layout/StickyMobileCTA'
@@ -44,19 +45,41 @@ export default async function SiteLayout({ children }: LayoutProps<'/'>) {
     >
       <head>
         {/*
-          Removes `.no-js` before first paint. Sections that reveal on scroll are
-          server-rendered in their hidden state so there is no flash of content
-          being hidden after hydration — which means that without JavaScript they
-          would stay hidden forever. This one line is the guarantee that they do
-          not.
+          Two guarantees, both about the same risk.
+
+          Sections that reveal on scroll are server-rendered in their hidden
+          state, so there is no flash of content being hidden after hydration.
+          The cost of that is a page which stays blank below the fold if the
+          animation never runs. Line one covers the case where JavaScript is
+          off. The timer covers the case that actually happens in production —
+          JavaScript is on, but the motion chunk 404s behind a stale cache, or
+          something earlier in the tree threw before it mounted.
+
+          MotionProvider sets `data-motion="ready"` as the first statement in
+          its effect. Four seconds is long enough that a slow connection is not
+          punished with a page that skips its own animation, and short enough
+          that nobody is left looking at emptiness wondering if the site is
+          broken.
         */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.remove('no-js')`,
+            __html:
+              `document.documentElement.classList.remove('no-js');` +
+              `setTimeout(function(){` +
+              `var d=document.documentElement;` +
+              `if(d.dataset.motion!=='ready')d.classList.add('motion-failed')` +
+              `},4000)`,
           }}
         />
       </head>
       <body className="flex min-h-full flex-col">
+        {/*
+          The motion runtime: Lenis, ScrollTrigger and the heading splits. It
+          renders nothing. Mounted above the header so its effect runs before
+          any section has had a chance to scroll past its trigger.
+        */}
+        <MotionProvider />
+
         <SiteHeader navigation={navigation} />
         <main id="main" tabIndex={-1} className="flex-1 pb-20 min-[700px]:pb-0">
           {children}
