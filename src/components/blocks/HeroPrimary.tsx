@@ -57,7 +57,7 @@ export function HeroPrimary({
       */}
       <div className="mx-auto grid w-full max-w-content flex-1 grid-rows-[1fr_auto] gap-10 px-gutter py-14 lg:py-20 [@media(max-height:820px)]:gap-6 [@media(max-height:820px)]:py-8 lg:[@media(max-height:820px)]:py-10">
         {/* Copy — left, vertically centred */}
-        <div className="flex max-w-2xl flex-col justify-center">
+        <div className="flex max-w-2xl flex-col justify-center [text-shadow:0_1px_24px_color-mix(in_oklab,var(--color-navy-900)_70%,transparent)]">
           <Eyebrow as="p">{eyebrow}</Eyebrow>
 
           <h1

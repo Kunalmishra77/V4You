@@ -1,247 +1,310 @@
 # 09 — Hero video brief
 
-Everything needed to generate the home page hero background video, in order.
-Written for Google Flow (Veo), but the content decisions apply to any tool.
+Everything needed to generate the home page hero video. Written for Google Flow
+(Veo); the content decisions apply to any tool.
+
+**This replaces an earlier version that was wrong.** That one specified a calm,
+dark office at blue hour with the left of frame kept empty — generic
+stock-footage thinking, and not built from V4You's content. The reference
+supplied since (`ai-agentix.com`, and appinventiv.com) makes the target clear,
+and the page code has been changed so a **bright, full-frame** video works.
 
 ---
 
-## 1. The one rule that overrides everything else
+## 1. What the reference actually does
 
-**Nothing in this video may assert a fact.**
+The Agentix hero film, frame by frame:
 
-A hero background is understood as evocative rather than documentary, the same
-way stock B-roll is. That gives reasonable latitude — but it stops the moment
-something in frame makes a specific claim. Concretely:
-
-| Allowed | Not allowed |
+| | |
 |---|---|
-| Abstract light, data as texture, motion suggesting flow | **Any readable number, chart or metric** |
-| People working, faces soft or turned, no identification | A caption or context implying "this is our team" |
-| Generic screens with illegible UI | A recognisable product screen presented as V4You's work |
-| Neutral modern workspace | A named client's office, branding or logo |
+| **Structure** | A sector sequence — university → hospital → real estate → office |
+| **Look** | Bright, full-frame, golden-hour daylight. Nothing darkened. |
+| **Technique** | Holographic UI panels floating over real environments |
+| **Payoff** | Their product dashboard filling frame, their logo inside the UI |
+| **Specs** | 24s, 1920 × 1080, 30fps, 9.4 Mbps, 28 MB |
 
-The readable-number rule is the important one. The reference site
-(appinventiv.com) shows holographic dashboards over a restaurant scene. If ours
-shows a legible figure — "+47%", "2.4M", a rising chart — that is an invented
-metric on the most prominent surface of the site, and CLAUDE.md rule 1 rules it
-out. Keep all data abstract: light, particles, flow, geometry. No axes, no
-digits.
+**Three of those four we copy directly.** The sector sequence, the brightness
+and the floating-panel technique are all excellent and all available to us.
+
+## 2. The one part we cannot copy, and what replaces it
+
+Read the overlays in that film closely and they contain:
+
+```
++78.4%    +45.6%    −62.7%    ₹12.8 Cr    152 Deals Closed    4.8/s
+1,265 → 1,296     92% Complete     2,584 tasks     ₹3,42,000
+named leads with phone numbers, a live business feed
+```
+
+Agentix is a **product company**. That dashboard is their product, so showing
+it is legitimate. **V4You is a services company with no product and no case
+study behind any figure.** A V4You-branded dashboard reading "₹12.8 Cr
+pipeline" would be a fabricated product displaying fabricated results, on the
+most prominent surface of the site — and the site's own security page says, in
+writing, that V4You does not claim what it cannot evidence. The hero would be
+calling the rest of the site a liar.
+
+### What goes in the panels instead
+
+**Process, not results.** V4You already has the content, and it is more
+distinctive than a fake metric:
+
+The four-stage flow from the site's own AI capability section —
+
+```
+TRIGGER  →  RAG  →  GATE  →  EXECUTE
+```
+
+and the healthcare "where we typically start" flow, verbatim from
+`src/seed/industries.ts` —
+
+```
+01 DISCOVER        Map the patient journey end to end
+02 ADMINISTRATIVE  Automate registration and reminders
+03 GOVERNANCE      Add access control and audit logging
+04 MEASURE         Report on cycle time and no-shows
+```
+
+A viewer reading "GATE — human approval on anything priced or contractual"
+learns something true and specific about how V4You works. A viewer reading
+"+78.4%" learns nothing, because they know it is decoration.
+
+**This is a better film for this company,** not a compromised one.
 
 ---
 
-## 2. What the video should actually be about
+## 3. The concept — "one system, four floors"
 
-The site's argument is one sentence: **signals come in from customers,
-operations, data and teams; an intelligence layer routes work back out to
-products, agents, dashboards and people.**
+Four environments, one intelligence layer connecting them. Each environment
+gets a floating panel showing the *process* running there. The final shot
+resolves everything into the V4You mark.
 
-The video should feel like the human end of that — the moment where a system
-quietly does its job and a person gets on with theirs. Not the technology.
+Bright. Daylight. Full frame. Indian settings — the audience is Indian and
+international, and the reference is unmistakably Indian.
 
-`blueprint §15.1` rules out three things explicitly: **no robots, no
-neural-network clichés, no floating gradient orbs.** Those are the defaults every
-AI video generator reaches for, so they must be excluded in the prompt rather
-than hoped against.
+### Shot 1 — Hospital *(0–6s)*
 
-### Recommended concept — "the work continues"
+Modern multi-speciality hospital entrance, morning light, staff and visitors
+moving. A translucent panel floats upper-right showing the four-step healthcare
+flow above. Small amber pulse travels between steps.
 
-A calm, modern working environment at the blue hour. People working with
-evident focus. Screens present but never legible. Occasional slow amber
-accents — a light, a reflection, a moving highlight — echoing the brand mark.
-Camera almost still: a very slow push or drift, no cuts.
+### Shot 2 — Manufacturing *(6–12s)*
 
-Why this and not the reference's approach: their scene is a busy restaurant
-with visible AI overlays, which sells "AI is everywhere". V4You's positioning is
-the opposite — *technology that earns its place and gets out of the way*. A
-quieter frame is truer to the copy sitting on top of it.
+Clean production floor, daylight through high windows, operators working.
+Panel shows **plan versus actual** as two aligned bars with no numbers on them,
+and the labels `PLAN` / `ACTUAL` / `EXCEPTION`. An amber marker moves along.
 
-### Two alternatives, if you want a different feel
+### Shot 3 — Logistics *(12–18s)*
 
-- **Architectural** — slow drift through a modern building's structural
-  geometry: glass, steel, repeating diagonals. No people at all. Coldest,
-  safest, most abstract. Pairs strongest with the 45° brand language.
-- **Hands and craft** — close, shallow-focus shots of hands working: a
-  keyboard, a whiteboard, a notebook, a screen edge. Warm and human without
-  ever showing an identifiable face.
+Warehouse aisle or loading bay, bright, forklifts and staff. Panel shows a
+shipment moving through `DISPATCHED → IN TRANSIT → EXCEPTION FLAGGED →
+DELIVERED`, with the exception step highlighted amber.
 
----
+### Shot 4 — The resolve *(18–24s)*
 
-## 3. Constraints the design imposes
+Modern office, a person at a desk, screens present but content abstract. The
+camera pushes past them and the floating panels from all three previous shots
+converge into a single form: **the V4You mark — the amber square rotated 45°**
+— with four faint paths entering and four leaving.
 
-The hero copy sits over the **left 40%** of the frame, on near-opaque navy.
-So:
-
-- **Keep the left third quiet and dark.** Nothing important there. It will be
-  covered.
-- **Put the visual interest in the right half**, roughly 55–100% across.
-- **Overall exposure: dark.** The site's canvas is `#0A1D3E`. A bright video
-  fights the whole page.
-- **Cool palette** — blues, steel, deep neutrals. Warm accents only in small
-  amounts, ideally near amber `#EDA11A`.
-- **No hard cuts.** It loops silently behind text; a cut reads as a glitch.
-- **Nothing crossing the centre fast.** Movement behind text is what makes hero
-  video unreadable.
+That final shot is the site's own hero diagram brought to life. It is the
+strongest tie between the film and the brand, and it is the reason the logo
+belongs in the video.
 
 ---
 
-## 4. Google Flow — step by step
+## 4. Using the logo
 
-### Before you start
+Yes — it is your own mark, so there is no restriction.
 
-1. Open **labs.google/flow** and sign in.
-2. New project, name it `v4you-hero`.
-3. Choose the highest-quality Veo model available on your plan.
-4. Set aspect ratio **16:9**. Highest resolution offered — you will downscale
-   later, never upscale.
+**Where:** shot 4 only, as the convergence point. Not a watermark, not a
+corner bug, not an intro sting.
 
-### Generate
+**How:** the amber square rotated 45°, exactly as in `public/logo-mark.svg`.
+Amber `#EDA11A`. Keep the shape clean; do not add glow, bevel or particles to
+it.
 
-Flow produces roughly 8-second clips. You want **three or four**, then pick the
-best one or stitch two. Generate each shot separately rather than asking for a
-sequence — a single clip with no cut is the goal.
-
-Run each prompt **3–4 times**. Generation is non-deterministic; the difference
-between attempt one and attempt four is usually large.
-
-### Prompt A — recommended, the primary shot
-
-```text
-Cinematic wide shot of a calm modern office interior at blue hour, floor to
-ceiling windows, city lights soft and out of focus far behind. Three or four
-people working at desks in the mid and far distance, seen from behind or in
-profile, faces not identifiable. Computer screens visible but the content is
-completely illegible, only soft glow. Cool blue and deep navy colour palette,
-low key lighting, deep shadows. One small warm amber light source on the right
-side of the frame. Extremely slow camera push in, almost imperceptible. Shallow
-depth of field. Quiet, composed, unhurried mood. Anamorphic lens, subtle film
-grain, no text, no graphics, no user interface overlays, no charts, no numbers.
-```
-
-**Negative prompt** — paste into the negative field if Flow offers one; if not,
-append it as a sentence:
-
-```text
-robots, humanoid robots, androids, holograms, holographic displays, floating
-user interfaces, dashboards, charts, graphs, numbers, text, logos, glowing
-neural network diagrams, brain imagery, circuit board patterns, glowing orbs,
-purple and cyan neon, lens flares, fast motion, camera shake, cuts, transitions,
-crowds, direct eye contact with camera
-```
-
-### Prompt B — architectural alternative
-
-```text
-Cinematic slow drift past the structural geometry of a modern glass and steel
-building, seen from inside. Repeating diagonal lines and sharp angular
-intersections. Deep navy and cool steel blue, very low key, dark overall
-exposure. A single narrow band of warm amber light falling across the structure
-on the right of frame. No people. Extremely slow lateral camera movement.
-Shallow depth of field, anamorphic lens, subtle film grain. Calm, precise,
-architectural. No text, no graphics, no interface elements.
-```
-
-### Prompt C — hands and craft
-
-```text
-Extreme close up, shallow depth of field, hands working at a laptop keyboard in
-a dimly lit modern workspace. Only hands and forearms visible, no face. Screen
-glow illuminating the hands, screen content completely out of focus and
-illegible. Deep navy and cool blue palette, single warm amber accent light from
-the right. Very slow camera drift. Quiet and focused. Anamorphic lens, film
-grain. No text, no interface, no graphics, no numbers.
-```
-
-### Prompt D — a second angle of A, for stitching
-
-```text
-Cinematic medium shot, over the shoulder and from behind, one person standing
-at a large window in a dark modern office at dusk, city out of focus beyond.
-Figure in silhouette, face not visible. Cool navy palette, very low key, warm
-amber reflection on the glass at the right of frame. Almost static camera with
-the slightest drift. Contemplative, calm. Anamorphic, film grain. No text, no
-graphics, no interface.
-```
-
-### What to look for when choosing
-
-Reject a clip if any of these are true. They are the common failure modes and
-none of them can be fixed afterwards:
-
-- Any legible text, number, chart or UI on a screen
-- A face looking at camera, or clearly identifiable
-- Anything robotic, holographic or neural-network shaped
-- The left third is bright or busy
-- Motion crosses the centre quickly
-- Warped hands, extra fingers, melting objects — look closely, it is common
-- Overall exposure too bright to sit under bone-coloured text
+Veo will not render a specific logo reliably from a prompt. **Generate the
+footage without it and composite the mark in afterwards** (After Effects,
+Premiere, DaVinci, CapCut all do this). Same for the panel text — see below.
 
 ---
 
-## 5. Turning the clip into a web asset
+## 5. Producing it — the two-pass method
 
-Flow's export is far too heavy for a hero background. A hero video should be
-**under about 3MB**; the raw export is often 30–60MB.
+This is the part that determines whether the result looks professional.
 
-| Property | Target | Why |
-|---|---|---|
-| Duration | 8–12s, seamless loop | Longer means more weight for something nobody watches |
-| Resolution | 1920×1080 max | It sits behind text at partial opacity |
-| Format | MP4 (H.264), optionally WebM (VP9) | H.264 for reach, VP9 for size |
-| Audio | **Removed entirely** | It is muted anyway; the track is dead weight |
-| Size | Under 3MB | Above that it competes with the page for bandwidth |
-| Poster | One JPEG frame | Shown before load and under reduced motion |
+**Do not ask Veo to render the UI panels.** It will produce warped,
+meaningless pseudo-text every time, which is exactly what makes AI video look
+cheap. Instead:
 
-With ffmpeg:
+### Pass 1 — footage only (Veo / Flow)
+
+Generate the four environments **with no overlays at all**. Prompts in §6.
+Leave clean space in frame where a panel will sit.
+
+### Pass 2 — panels and logo (compositing)
+
+Add the panels, the text and the mark yourself, in the brand's own type and
+colour. They will be sharp, correctly worded, on-brand and legible — none of
+which Veo can guarantee.
+
+Panel style, to match the site:
+
+| | |
+|---|---|
+| Fill | Navy `#0A1D3E` at 55–70% opacity |
+| Border | 1px, `#2A4C7D` |
+| Corners | **Square. Radius 0 everywhere.** |
+| Heading | IBM Plex Mono, uppercase, letter-spacing 0.16em, `#EDA11A` |
+| Body | Inter Tight, `#F6F5F1` |
+| Accent | Amber `#EDA11A` on the active step only |
+
+Square corners matter. Rounded panels are the giveaway that a video was not
+made for this brand.
+
+---
+
+## 6. Flow prompts — footage only, no overlays
+
+Aspect **16:9**, highest resolution available. Run each **3–4 times**;
+generation is non-deterministic and attempt four is usually far better than
+attempt one.
+
+### Shot 1 — Hospital
+
+```text
+Cinematic wide shot, modern multi-speciality hospital entrance in India, bright
+morning daylight, clean contemporary architecture with large glass frontage.
+Staff in scrubs and visitors walking calmly through the entrance, seen at a
+distance, faces not identifiable. Warm natural light, clear sky, fresh and
+optimistic mood. Slow smooth camera push forward. Clean open sky in the upper
+right of frame. Shot on cinema camera, shallow depth of field, natural colour
+grade. No text, no graphics, no user interface, no holograms, no overlays.
+```
+
+### Shot 2 — Manufacturing
+
+```text
+Cinematic wide shot inside a clean modern manufacturing facility, bright
+daylight streaming through high industrial windows. Organised production line,
+two or three operators in safety gear working calmly, seen from a distance,
+faces not identifiable. Polished floor, orderly and well lit, blue and steel
+tones with warm daylight. Slow lateral camera glide. Clean empty space in the
+upper left of frame. Cinema camera, natural colour grade. No text, no graphics,
+no user interface, no holograms, no overlays.
+```
+
+### Shot 3 — Logistics
+
+```text
+Cinematic wide shot inside a large modern distribution warehouse, bright
+daylight from skylights, tall orderly racking, a forklift moving in the middle
+distance, two workers walking, faces not identifiable. Clean, organised,
+spacious. Cool neutral tones with warm daylight pools. Slow smooth dolly
+forward down the aisle. Clean space in the upper right of frame. Cinema camera,
+natural colour grade. No text, no graphics, no user interface, no holograms,
+no overlays.
+```
+
+### Shot 4 — The resolve
+
+```text
+Cinematic medium shot in a bright modern open plan office, large windows with
+soft daylight, one person working at a desk seen from behind over the shoulder,
+face not visible. Monitors present but screen content completely out of focus
+and illegible. Clean uncluttered desk, calm and spacious. Slow camera push past
+the person toward the window light, ending on clean bright empty space in the
+centre of frame. Cinema camera, shallow depth of field, natural colour grade.
+No text, no graphics, no user interface, no holograms, no overlays.
+```
+
+### Negative prompt — use on every shot
+
+```text
+text, letters, numbers, user interface, holograms, floating panels, dashboards,
+charts, graphs, logos, watermarks, robots, humanoid robots, androids, glowing
+neural networks, brain imagery, circuit boards, glowing orbs, purple and cyan
+neon, heavy lens flare, fast motion, camera shake, cuts, transitions, crowds,
+direct eye contact with camera, distorted hands, extra fingers, warped faces
+```
+
+### Rejecting a clip
+
+Reject if any of these is true — none can be fixed later:
+
+- Warped hands, extra fingers, melting objects *(look closely — very common)*
+- A face clearly identifiable or looking at camera
+- Veo has invented text or UI despite the negative prompt
+- No clean area where the panel needs to sit
+- Motion too fast, or a visible cut mid-clip
+- Anything that identifies a real hospital, brand or company
+
+---
+
+## 7. Compression
+
+The web asset budget is **under 3 MB**. The reference is 28 MB at 9.4 Mbps,
+which is fine for a portfolio download and far too heavy for a hero.
 
 ```bash
-# H.264 — the broad-compatibility version
-ffmpeg -i flow-export.mp4 -an -vf "scale=1920:-2" \
+# Join the four shots with short cross-dissolves in your editor first,
+# export a master, then:
+
+ffmpeg -i master.mp4 -an -vf "scale=1920:-2" \
   -c:v libx264 -crf 30 -preset slow -movflags +faststart \
   public/hero.mp4
 
-# VP9 — smaller, for browsers that accept it
-ffmpeg -i flow-export.mp4 -an -vf "scale=1920:-2" \
+ffmpeg -i master.mp4 -an -vf "scale=1920:-2" \
   -c:v libvpx-vp9 -crf 40 -b:v 0 public/hero.webm
 
-# Poster frame, taken two seconds in
-ffmpeg -i flow-export.mp4 -ss 00:00:02 -vframes 1 -q:v 3 public/hero-poster.jpg
+ffmpeg -i master.mp4 -ss 00:00:03 -vframes 1 -q:v 3 public/hero-poster.jpg
 ```
 
-`-an` strips audio. `-movflags +faststart` moves the index to the front so
-playback can begin before the file finishes downloading. Raise `-crf` to shrink
-further — 30 to 34 is usually invisible behind a gradient.
+`-an` strips audio — it is muted anyway and the track is dead weight.
+`+faststart` lets playback begin before the download finishes. Raise `-crf` to
+shrink further; 30–34 is usually invisible.
+
+**Target 16–20s**, not 24. It loops silently behind text; nobody watches it
+twice.
 
 ---
 
-## 6. Wiring it in
+## 8. Wiring it in
 
-Drop `hero.mp4` and `hero-poster.jpg` into `public/`, then add to `homeHero` in
-`src/seed/home.ts`:
+Drop `hero.mp4` and `hero-poster.jpg` into `public/`, then in
+`src/seed/home.ts` add to `homeHero`:
 
 ```ts
 videoSrc: '/hero.mp4',
 videoPoster: '/hero-poster.jpg',
 ```
 
-Nothing else changes. `HeroMedia` already handles the rest: it plays the video
-when motion is welcome, shows the poster when it is not, falls back to the
-abstract field if neither exists, and keeps the contrast gradient over all
-three.
-
-Then check:
+Then — and this matters — verify contrast against the real footage:
 
 ```bash
 pnpm build && pnpm start
-pnpm a11y            # contrast must still pass over the new footage
+pnpm a11y            # measures text contrast over the actual frames
 pnpm audit:images    # the poster counts against the asset budget
 ```
 
+The overlay is deliberately light so the film stays bright. If the headline
+fails contrast on a particular shot, **change that shot** rather than darkening
+the whole video — that is how the first version went wrong.
+
 ---
 
-## 7. If the video never happens
+## 9. Checklist
 
-The abstract field is a legitimate permanent answer, not a placeholder that has
-to be replaced. Plenty of strong engineering sites carry no hero video at all,
-and it costs nothing in bandwidth, nothing in accessibility, and nothing in
-honesty. Generate the video because it makes the page better — not because the
-slot exists.
+- [ ] Four shots generated, footage only, no overlays
+- [ ] Each shot has clean space where its panel will sit
+- [ ] No warped hands or invented text in the chosen takes
+- [ ] Panels composited in Plex Mono + Inter Tight, square corners
+- [ ] Panel copy is **process, never results** — no percentages, no currency
+- [ ] V4You mark composited into shot 4 as the convergence point
+- [ ] Cross-dissolves, no hard cuts
+- [ ] 16–20s, loops seamlessly
+- [ ] Audio stripped
+- [ ] Under 3 MB
+- [ ] Poster frame exported
+- [ ] `pnpm a11y` passes with the video in place

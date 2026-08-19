@@ -14,10 +14,18 @@ import { useEffect, useRef, useState } from 'react'
  * not hidden: the element is never created, so no bytes are fetched.
  *
  * **Contrast.** Text over video cannot be checked against a fixed background,
- * because the background moves. Rather than hope, a navy gradient sits between
- * the video and the copy — near-opaque on the side the text occupies, clearing
- * toward the other. The text is therefore reading against navy, not against
- * whatever frame is showing, so 15.3:1 holds on every frame.
+ * because the background moves. The first version solved that by darkening the
+ * left 40% of the frame, which worked and looked like exactly what it was — a
+ * bright film with a black bar over half of it.
+ *
+ * This version keeps the footage bright and full frame. A light, even navy wash
+ * sits over everything, and a soft scrim fades in only behind the copy and only
+ * as far as the copy reaches. Neither reads as a band. The text also carries a
+ * shadow, which does nothing on dark frames and saves the line on bright ones.
+ *
+ * The wash is deliberately mild, so **final contrast has to be verified against
+ * the real footage** — `pnpm a11y` measures it. If a shot blows out under the
+ * headline, the fix is that shot, not a heavier overlay.
  *
  * **No video yet.** Until the file exists the same slot renders a slow abstract
  * field in the brand geometry. It is not a grey box and not a stock clip; it
@@ -59,12 +67,19 @@ export function HeroMedia({ src, poster }: { src?: string; poster?: string }) {
       )}
 
       {/*
-        Contrast guarantee. Near-opaque navy under the copy, clearing across the
-        frame so the imagery still reads on the other side.
+        A light, even wash. Enough to seat the type; not enough to read as a
+        filter over the film.
       */}
-      <div className="absolute inset-0 bg-[linear-gradient(100deg,var(--color-navy-900)_0%,var(--color-navy-900)_40%,color-mix(in_oklab,var(--color-navy-900)_62%,transparent)_66%,color-mix(in_oklab,var(--color-navy-900)_30%,transparent)_100%)]" />
-      {/* A little extra weight at the foot, where the proof strip sits. */}
-      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(to_top,var(--color-navy-900),transparent)]" />
+      <div className="absolute inset-0 bg-navy-900/30" />
+
+      {/*
+        The scrim that does the real work: strongest at the very left edge,
+        gone by 58%. It follows the copy rather than halving the frame.
+      */}
+      <div className="absolute inset-0 bg-[linear-gradient(96deg,color-mix(in_oklab,var(--color-navy-900)_82%,transparent)_0%,color-mix(in_oklab,var(--color-navy-900)_58%,transparent)_28%,transparent_58%)]" />
+
+      {/* A little weight at the foot, where the proof strip sits. */}
+      <div className="absolute inset-x-0 bottom-0 h-2/5 bg-[linear-gradient(to_top,color-mix(in_oklab,var(--color-navy-900)_88%,transparent),transparent)]" />
     </div>
   )
 }
