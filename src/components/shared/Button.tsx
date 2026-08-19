@@ -2,6 +2,7 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import Link from 'next/link'
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from 'react'
 
+import { SwapLabel } from '@/components/shared/SwapLabel'
 import { cn } from '@/lib/utils'
 
 /**
@@ -98,6 +99,11 @@ function Shape({ variant }: { variant: Variant }) {
   return (
     <span
       aria-hidden="true"
+      // The one span that is actually painted behind the label. `pnpm a11y`
+      // measures label-against-shape contrast off this attribute rather than
+      // guessing at "the first aria-hidden span inside a .group", which also
+      // matches decoration that sits beside a label rather than behind it.
+      data-button-shape=""
       className={cn(
         'absolute inset-0 -z-10 transition-colors duration-(--duration-button) ease-out cut-button',
         fills[variant],
@@ -126,15 +132,7 @@ function Shape({ variant }: { variant: Variant }) {
  */
 function Label({ children }: { children: ReactNode }) {
   if (typeof children !== 'string') return <span>{children}</span>
-
-  return (
-    <span className="swap">
-      <span data-swap-out="">{children}</span>
-      <span data-swap-in="" aria-hidden="true">
-        {children}
-      </span>
-    </span>
-  )
+  return <SwapLabel>{children}</SwapLabel>
 }
 
 /**

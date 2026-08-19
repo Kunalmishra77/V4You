@@ -74,10 +74,14 @@ const CONTRAST_PROBE = () => {
   const parse = (s) => (s.match(/\d+(\.\d+)?/g) || []).slice(0, 3).map(Number)
 
   const out = []
-  for (const btn of document.querySelectorAll('a.group, button.group')) {
-    const label = btn.querySelector('span:not([aria-hidden])')
-    const shape = btn.querySelector('span[aria-hidden="true"]')
-    if (!label || !shape) continue
+  // Keyed off the shape span Button marks, not off "any aria-hidden span in a
+  // .group". The looser selector also matched decoration that sits *beside* a
+  // label rather than behind it — a rail line next to its own text reads as
+  // 1:1 and fails a control that is perfectly legible.
+  for (const shape of document.querySelectorAll('[data-button-shape]')) {
+    const btn = shape.closest('a, button')
+    const label = btn && btn.querySelector('span:not([aria-hidden])')
+    if (!label) continue
     const inner = shape.querySelector('span')
     const painted =
       inner && getComputedStyle(inner).backgroundColor !== 'rgba(0, 0, 0, 0)' ? inner : shape

@@ -9,8 +9,8 @@ import { OrchestrationDiagram } from '@/components/blocks/OrchestrationDiagram'
 import { IndustryTabs } from '@/components/blocks/IndustryTabs'
 import { LogoMarquee } from '@/components/blocks/LogoMarquee'
 import { NumberedAccordion } from '@/components/blocks/NumberedAccordion'
-import { PillarCards } from '@/components/blocks/PillarCards'
 import { PinnedSequence } from '@/components/blocks/PinnedSequence'
+import { StackedSlider } from '@/components/blocks/StackedSlider'
 import { ProblemCards } from '@/components/blocks/ProblemCards'
 import { ServiceCardGrid } from '@/components/blocks/ServiceCardGrid'
 import { SolutionMatrix } from '@/components/blocks/SolutionMatrix'
@@ -22,7 +22,7 @@ import { JsonLd } from '@/components/shared/JsonLd'
 import { SectionShell } from '@/components/shared/SectionShell'
 import { getSiteSettings } from '@/lib/content'
 import { buildMetadata, faqSchema, organizationSchema, websiteSchema } from '@/lib/seo'
-import { homeHero } from '@/seed/home'
+import { homeHero, pillarSection } from '@/seed/home'
 import { homeFaqs, processTimeline, trustPanels } from '@/seed/home-proof'
 
 /**
@@ -108,8 +108,23 @@ export default async function HomePage() {
       {/* 3 — bone */}
       <ProblemCards />
 
-      {/* 4 — navy */}
-      <PillarCards />
+      {/*
+        4 — navy. The four pillars as a stepped card stack rather than a
+        four-up grid. They are a sequence — discover, design, engineer, scale —
+        and a grid presents them as four alternatives read in any order. The
+        stack makes the order the point, and gives each one a card's worth of
+        room instead of a quarter column.
+
+        PillarCards is unchanged and still the right block anywhere the pillars
+        are supporting detail rather than the argument.
+      */}
+      <StackedSlider
+        eyebrow={pillarSection.eyebrow}
+        heading={pillarSection.heading}
+        body={pillarSection.body}
+        items={pillarSection.pillars}
+        canvas="navy"
+      />
 
       {/* 5 — bone */}
       <ServiceCardGrid />

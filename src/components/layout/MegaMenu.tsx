@@ -6,6 +6,7 @@ import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
+import { SwapLabel } from '@/components/shared/SwapLabel'
 import { track } from '@/lib/analytics'
 import { cn } from '@/lib/utils'
 import type { MegaMenu as MegaMenuData } from '@/types/content'
@@ -97,7 +98,7 @@ export function MegaMenu({ menu, condensed }: { menu: MegaMenuData; condensed: b
           open ? 'text-amber-500' : 'text-bone hover:text-amber-500',
         )}
       >
-        {menu.label}
+        <SwapLabel>{menu.label}</SwapLabel>
         <span
           aria-hidden="true"
           className={cn(
@@ -134,7 +135,7 @@ export function MegaMenu({ menu, condensed }: { menu: MegaMenuData; condensed: b
                         href={link.href}
                         className="group/link block font-display text-body-sm font-medium text-bone transition-colors hover:text-amber-500"
                       >
-                        {link.label}
+                        <SwapLabel>{link.label}</SwapLabel>
                         {link.description && (
                           <span className="mt-1 block font-body font-normal text-slate-300">
                             {link.description}

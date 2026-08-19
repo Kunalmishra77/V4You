@@ -110,6 +110,18 @@ Four `CutCard`s with numbered eyebrows. Home §4.3.
 Discover / Design / Engineer / Scale. Four cells, 1px gaps on a `line-dark` background so
 the grid reads as one object.
 
+### 19a. `StackedSlider`
+The same four pillars as a stepped card stack: a vertical rail of numbered lines on the
+left, one card at a time on the right, arriving out of a `perspective` container. Used on
+home §4, where the order of the four is the point and a grid reads as four alternatives.
+`PillarCards` remains the right block wherever the pillars are supporting detail.
+- **A11y:** the ARIA tab pattern rotated vertical — real `tablist`/`tab`/`tabpanel`,
+  `aria-orientation="vertical"`, Up/Down/Left/Right/Home/End, roving tabindex. The rail
+  buttons carry their card's title, so each tab has an accessible name.
+- **Contrast:** the panels behind the active card are empty and `aria-hidden`. Rendering
+  real body copy faded back to suggest depth puts text well under 4.5:1.
+- **Empty state:** renders nothing below the heading when `items` is empty.
+
 ### 20. `ServiceCardGrid`
 3 × 2 on desktop. Each card: outcome headline, description, up to 4 capability chips, CTA.
 - **Data:** `services`, ordered by `order`
@@ -195,6 +207,13 @@ Returns children unwrapped under reduced motion.
 
 ### `Eyebrow`
 Label + the 45° amber slash glyph. The slash is `aria-hidden`.
+
+### `SwapLabel`
+The masked label swap: on hover or focus the label leaves upward while an identical copy
+arrives from below, both clipped by the span around them. Used by `Button`, the header
+links and the mega menu. Takes a string only — duplicating arbitrary children is how a
+page ends up with two of something focusable or two elements sharing an id. The copy is
+`aria-hidden`, so the accessible name stays single.
 
 ### `Button`
 Variants: `primary` (amber/navy), `ghost-light`, `ghost-dark`, `navy`. Two-corner clip.

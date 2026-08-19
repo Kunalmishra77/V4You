@@ -15,12 +15,13 @@ import { ProblemCards } from '@/components/blocks/ProblemCards'
 import { ProcessTimeline } from '@/components/blocks/ProcessTimeline'
 import { ServiceCardGrid } from '@/components/blocks/ServiceCardGrid'
 import { SolutionMatrix } from '@/components/blocks/SolutionMatrix'
+import { StackedSlider } from '@/components/blocks/StackedSlider'
 import { TestimonialSlider } from '@/components/blocks/TestimonialSlider'
 import { TrustBar } from '@/components/blocks/TrustBar'
 import { Headline } from '@/components/shared/Headline'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { SectionShell } from '@/components/shared/SectionShell'
-import { homeHero } from '@/seed/home'
+import { homeHero, pillarSection } from '@/seed/home'
 import { homeFaqs, trustPanels } from '@/seed/home-proof'
 
 export const metadata: Metadata = {
@@ -42,6 +43,18 @@ export default function BlocksPreview() {
       <HeroPrimary {...homeHero} />
       <TrustBar />
       <ProblemCards />
+
+      {/* The pillars twice, because both blocks are in the library and they
+          are not interchangeable. The home page runs the stack, where the
+          order of the four is the argument; PillarCards is the grid, for
+          pages where the pillars are supporting detail. */}
+      <StackedSlider
+        eyebrow={pillarSection.eyebrow}
+        heading={pillarSection.heading}
+        body={pillarSection.body}
+        items={pillarSection.pillars}
+        canvas="navy"
+      />
       <PillarCards />
       <ServiceCardGrid />
       <CapabilityTabs />

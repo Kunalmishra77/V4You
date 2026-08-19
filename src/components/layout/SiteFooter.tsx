@@ -57,9 +57,17 @@ export async function SiteFooter() {
                 <ul className="mt-5 space-y-3">
                   {column.links.map((link) => (
                     <li key={link.href}>
+                      {/*
+                        A rule that grows from the left rather than appearing.
+                        Safe here in a way it would not be in prose: these links
+                        sit in a labelled navigation list where position, not
+                        appearance, identifies them as links — so an underline
+                        that is only present on hover adds emphasis rather than
+                        carrying the only cue.
+                      */}
                       <Link
                         href={link.href}
-                        className="text-body-sm text-slate-300 transition-colors hover:text-bone"
+                        className="link-wipe text-body-sm text-slate-300 transition-colors hover:text-bone"
                       >
                         {link.label}
                       </Link>

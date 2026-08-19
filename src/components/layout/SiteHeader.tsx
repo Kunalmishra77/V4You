@@ -10,6 +10,7 @@ import { MobileDrawer } from '@/components/layout/MobileDrawer'
 import { Button } from '@/components/shared/Button'
 import { cn } from '@/lib/utils'
 import type { Navigation } from '@/types/content'
+import { SwapLabel } from '@/components/shared/SwapLabel'
 
 /**
  * SiteHeader — docs/04 §1, docs/01 §5.
@@ -85,7 +86,7 @@ export function SiteHeader({ navigation }: { navigation: Navigation }) {
                 isCurrent(link.href) ? 'text-amber-500' : 'text-bone hover:text-amber-500',
               )}
             >
-              {link.label}
+              <SwapLabel>{link.label}</SwapLabel>
             </Link>
           ))}
         </nav>

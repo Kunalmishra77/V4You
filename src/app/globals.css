@@ -424,6 +424,43 @@
     animation-delay: calc(120ms + var(--reveal-index, 0) * 110ms);
   }
 
+  /* --- Stacked slider -------------------------------------------------------
+     The 3D card stack. `perspective` sits on the container rather than the
+     card, so every card tips toward the same vanishing point instead of each
+     one having its own — which is the difference between a stack and a pile.
+
+     The entrance is a `[role=tabpanel]` animation like the tabs, but tipped:
+     the card arrives rotated back on X, lifted and slightly small, and settles
+     flat. `transform-origin` at the top edge makes it hinge downward into
+     place rather than growing from its middle.
+     -------------------------------------------------------------------- */
+  .stack {
+    perspective: 60rem;
+  }
+
+  @keyframes stack-card-in {
+    from {
+      opacity: 0;
+      transform: rotateX(-9deg) translateY(26px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Qualified with the role rather than left as a bare class. Both this and
+     the `[role='tabpanel']` rule below are one selector of specificity, so
+     whichever appears later in the file wins — and the tabs block does. Adding
+     the attribute makes this rule specifically more specific, so the order of
+     the two blocks stops mattering. Without it the card animates flat and the
+     entire 3D effect is silently absent. */
+  [role='tabpanel'].stack-card {
+    transform-origin: top center;
+    backface-visibility: hidden;
+    animation: stack-card-in 520ms var(--ease-expo) both;
+  }
+
   /* --- Tabs -----------------------------------------------------------------
      Two moving parts.
 
@@ -627,36 +664,40 @@
     transform: translateY(0);
   }
 
-  /* --- Card hover -----------------------------------------------------------
-     Thirty-one components shipped with no hover state at all, which is why the
-     site reads as a document rather than an interface. One shared behaviour,
-     so a card responds the same way everywhere: the rule warms toward the
-     accent, the surface lifts a little, and anything marked as the card's
-     arrow slides.
+  /* --- Accordion ------------------------------------------------------------
+     A `<details>` opening and closing, animated with no JavaScript at all.
 
-     The lift is 3px. Enough to register at the edge of vision; small enough
-     that a grid of them does not ripple.
+     This used to be impossible: `<details>` toggles between `display: none` and
+     laid out, and neither height nor display is interpolable. Two recent
+     additions change that. `::details-content` gives the collapsible region a
+     selector of its own, and `interpolate-size: allow-keywords` makes `auto`
+     an animatable height — so the panel can travel from 0 to its own natural
+     height without anything measuring it.
+
+     Where a browser lacks either, the declarations are simply dropped and the
+     accordion snaps open exactly as it did before. That is the whole reason to
+     do it this way rather than with a height-measuring script: the enhancement
+     costs nothing when it is unavailable, and there is no code path that can
+     leave a panel stuck at zero height.
+
+     `content-visibility` is transitioned with `allow-discrete` so the content
+     stays rendered for the duration of the close, rather than vanishing on the
+     first frame and leaving an empty box to collapse.
      -------------------------------------------------------------------- */
-  .hover-card {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  details::details-content {
+    block-size: 0;
+    overflow: hidden;
     transition:
-      transform var(--duration-card) var(--ease-reveal),
-      border-color var(--duration-card) var(--ease-reveal),
-      background-color var(--duration-card) var(--ease-reveal);
+      block-size 320ms var(--ease-reveal),
+      content-visibility 320ms allow-discrete;
   }
 
-  .hover-card:hover,
-  .hover-card:focus-within {
-    transform: translateY(-3px);
-    border-color: var(--accent-glyph);
-  }
-
-  .hover-card [data-card-arrow] {
-    transition: transform var(--duration-card) var(--ease-expo);
-  }
-
-  .hover-card:hover [data-card-arrow],
-  .hover-card:focus-within [data-card-arrow] {
-    transform: translateX(6px);
+  details[open]::details-content {
+    block-size: auto;
   }
 
   /* --- Underline wipe -------------------------------------------------------
@@ -780,16 +821,6 @@
       overflow: visible;
     }
 
-    .hover-card:hover,
-    .hover-card:focus-within {
-      transform: none;
-    }
-
-    .hover-card:hover [data-card-arrow],
-    .hover-card:focus-within [data-card-arrow] {
-      transform: none;
-    }
-
     /* A swap that cannot animate must not leave the incoming copy stranded
        over the outgoing one — collapse it to a plain label. */
     .swap > [data-swap-in] {
@@ -799,8 +830,13 @@
     .menu-panel,
     .menu-panel [data-menu-column],
     [data-hero-item],
-    [role='tabpanel'] {
+    [role='tabpanel'],
+    [role='tabpanel'].stack-card {
       animation: none;
+    }
+
+    details::details-content {
+      transition: none;
     }
 
     /* The indicator still moves — it has to, or it stops indicating — but it

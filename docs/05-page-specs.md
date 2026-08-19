@@ -17,7 +17,7 @@ into intelligent products, connected workflows and measurable growth.
 | 1 | `HeroPrimary` | navy | Eyebrow "AI-first digital transformation". H1 "Build what's next. Automate what slows you down." — *slows you down* in amber. Lede from blueprint §4.1. Orchestration diagram. |
 | 2 | `TrustBar` → `CapabilityStrip` | navy-800 | Heading "Built for ambition. Designed for the real world." Logo wall if permitted logos exist; capability strip otherwise. |
 | 3 | `ProblemCards` | bone | "Growth gets harder when your systems do not work together." Four cards: Disconnected systems / Manual operations / Slow decisions / Products that do not scale. CTA "Find your highest-value opportunity". |
-| 4 | `PillarCards` | navy | "One partner from opportunity to operating impact." Discover / Design / Engineer / Scale. |
+| 4 | `StackedSlider` | navy | "One partner from opportunity to operating impact." Discover / Design / Engineer / Scale, one card at a time. Changed from `PillarCards` — the four are a sequence, and a four-up grid presents them as alternatives read in any order. |
 | 5 | `ServiceCardGrid` | bone | "Choose the capability you need today." Six services. |
 | 6 | `CapabilityTabs` | navy | "AI that works inside the business." Tabs: Agents, Voice, Knowledge, Automation, Analytics, Product intelligence. CTA "Assess your AI readiness" → disabled until Phase 4; links to `/contact` meanwhile. |
 | 7 | `SolutionMatrix` | bone | "Start with the business problem." Six outcome rows from blueprint §4.7. |

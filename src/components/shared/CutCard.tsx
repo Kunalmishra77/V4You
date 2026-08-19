@@ -60,21 +60,37 @@ export function CutCard({
         // it the card is inert for anyone not using a mouse, which is the most
         // common way a hover state quietly excludes people.
         interactive &&
-          'transition-transform duration-(--duration-card) ease-out hover:-translate-y-1 focus-within:-translate-y-1',
+          'transition-transform duration-(--duration-card) ease-out focus-within:-translate-y-1 hover:-translate-y-1',
         className,
       )}
       {...rest}
     >
-      {/* Edge, then fill. Both clipped, the fill inset by 1px. */}
-      <span aria-hidden="true" className={cn('absolute inset-0 -z-10 bg-(--line) cut-card')}>
+      {/* Edge, then fill. Both clipped, the fill inset by 1px.
+
+          On hover the edge warms toward amber and the fill lifts a little,
+          which is the pair the reference site uses on every card — a border
+          colour change plus roughly an 8% white wash. Warming the edge rather
+          than replacing it keeps the 45° cut reading as one continuous line;
+          swapping the colour outright makes the diagonal look like a seam. */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          'absolute inset-0 -z-10 bg-(--line) cut-card',
+          interactive &&
+            'transition-colors duration-(--duration-card) ease-out group-focus-within:bg-(--accent-glyph) group-hover:bg-(--accent-glyph)',
+        )}
+      >
         <span className={cn('absolute inset-px cut-card', surface.fill)} />
+        {interactive && (
+          <span className="absolute inset-px bg-(--ink) opacity-0 transition-opacity duration-(--duration-card) ease-out cut-card group-focus-within:opacity-[0.045] group-hover:opacity-[0.045]" />
+        )}
       </span>
 
       {/* The notch. A sibling, because the card's own clip would remove it. */}
       {interactive && (
         <span
           aria-hidden="true"
-          className="absolute top-0 right-0 -z-10 size-notch bg-amber-500 opacity-0 transition-opacity duration-(--duration-card) ease-out notch-fill group-hover:opacity-100 group-focus-within:opacity-100"
+          className="absolute top-0 right-0 -z-10 size-notch bg-amber-500 opacity-0 transition-opacity duration-(--duration-card) ease-out notch-fill group-focus-within:opacity-100 group-hover:opacity-100"
         />
       )}
 
