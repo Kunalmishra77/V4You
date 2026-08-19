@@ -58,6 +58,13 @@ export const INDUSTRY_LABELS: Record<IndustrySlug, string> = {
   enterprise: 'Enterprise',
 }
 
+/**
+ * The legal pages. They carry a `noindex` meta tag until
+ * `siteSettings.legal.approved` is set, so the sitemap omits them until then —
+ * a sitemap entry for a noindexed page is two contradictory instructions.
+ */
+export const LEGAL_ROUTES = ['/privacy-policy', '/terms', '/cookie-policy'] as const
+
 /** Routes that exist but must never be indexed — docs/06 §A1. */
 export const NOINDEX_ROUTES = ['/thank-you', '/design-system'] as const
 

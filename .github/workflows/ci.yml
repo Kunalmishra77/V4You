@@ -104,6 +104,13 @@ jobs:
       - name: Image pipeline
         run: pnpm audit:images
 
+      # T-077 and docs/06 §A3: every internal link resolves, nothing is more
+      # than three clicks from home, and nothing in the sitemap is unreachable
+      # by following links. It caught /cookie-policy sitting in the sitemap
+      # with no link to it anywhere.
+      - name: Link crawl
+        run: pnpm audit:links
+
       # CLAUDE.md's page definition of done: 95+ across all four categories.
       #
       # This runs in CI rather than locally because the performance number is

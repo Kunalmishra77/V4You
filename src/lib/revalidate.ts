@@ -20,12 +20,31 @@ import { revalidatePath } from 'next/cache'
  * every save turns a cache into a formality.
  */
 
-const log = (paths: string[], reason: string) => {
-  for (const path of paths) revalidatePath(path)
-  if (process.env.NODE_ENV === 'development') {
-    console.debug(`[revalidate] ${reason} → ${paths.join(', ')}`)
+/**
+ * `revalidatePath` only works inside a Next request or render context. Payload
+ * is also written to from places that have neither — the seed script, a CLI
+ * task, a cron job — and there it throws.
+ *
+ * A failed revalidation must never fail the write that triggered it. The
+ * content is saved either way; all that is lost is a cache invalidation, and
+ * the next deploy or the next manual save clears it. Letting the exception
+ * propagate meant `pnpm seed` could not write a global at all.
+ */
+const safeRevalidate = (paths: string[], reason: string) => {
+  try {
+    for (const path of paths) revalidatePath(path)
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(`[revalidate] ${reason} → ${paths.join(', ')}`)
+    }
+  } catch {
+    // Outside a request context. Expected for scripted writes.
+    if (process.env.NODE_ENV === 'development') {
+      console.debug(`[revalidate] skipped for ${reason} — no request context`)
+    }
   }
 }
+
+const log = safeRevalidate
 
 /** Pages that show a summary of every service or industry. */
 const HUBS: Record<'services' | 'industries', string[]> = {
@@ -78,9 +97,15 @@ export const revalidateGlobal =
     // `layout` scope on the root path invalidates every route beneath it.
     // No revalidateTag here: nothing sets cache tags, and Next 16 changed its
     // signature, so calling it would be ceremony rather than effect.
-    revalidatePath('/', 'layout')
-    if (process.env.NODE_ENV === 'development') {
-      console.debug(`[revalidate] ${slug} → every route (it is in the layout)`)
+    try {
+      revalidatePath('/', 'layout')
+      if (process.env.NODE_ENV === 'development') {
+        console.debug(`[revalidate] ${slug} → every route (it is in the layout)`)
+      }
+    } catch {
+      if (process.env.NODE_ENV === 'development') {
+        console.debug(`[revalidate] skipped for ${slug} — no request context`)
+      }
     }
     return doc
   }

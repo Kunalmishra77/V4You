@@ -197,6 +197,7 @@ export const navigationSeed: Navigation = {
         { label: 'Security', href: '/security' },
         { label: 'Accessibility', href: '/accessibility' },
         { label: 'Privacy policy', href: '/privacy-policy' },
+        { label: 'Cookie policy', href: '/cookie-policy' },
         { label: 'Terms', href: '/terms' },
       ],
     },
