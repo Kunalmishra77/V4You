@@ -50,11 +50,7 @@ export function ScrollReveal({
   stagger?: boolean
 }) {
   return (
-    <Tag
-      data-reveal=""
-      data-reveal-group={stagger ? '' : undefined}
-      className={cn(className)}
-    >
+    <Tag data-reveal="" data-reveal-group={stagger ? '' : undefined} className={cn(className)}>
       {children}
     </Tag>
   )

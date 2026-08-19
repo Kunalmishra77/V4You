@@ -150,7 +150,9 @@ export default async function AboutPage() {
       <SectionShell canvas="bone-2" density="tight" reveal>
         <div className="max-w-measure">
           <Eyebrow>Who you would work with</Eyebrow>
-          <Headline className="mt-5">You will know who is accountable before you commit to anything.</Headline>
+          <Headline className="mt-5">
+            You will know who is accountable before you commit to anything.
+          </Headline>
           <p className="mt-5 text-body-lg">
             Leadership profiles are not published here yet, and we would rather leave the section
             out than fill it with silhouettes. In the meantime the first call is with the person who

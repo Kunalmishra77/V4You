@@ -65,8 +65,7 @@ export const TRIGGER_START = 'top 85%'
 
 export function prefersReducedMotion() {
   return (
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   )
 }
 

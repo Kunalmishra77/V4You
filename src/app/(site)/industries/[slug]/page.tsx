@@ -109,7 +109,9 @@ export default async function IndustryPage({ params }: PageProps<'/industries/[s
       <SectionShell canvas="navy" reveal>
         <div className="max-w-measure">
           <Eyebrow>What we see repeatedly</Eyebrow>
-          <Headline className="mt-5">The frictions that come up in almost every conversation.</Headline>
+          <Headline className="mt-5">
+            The frictions that come up in almost every conversation.
+          </Headline>
         </div>
         <ul className="mt-12 grid gap-6 sm:grid-cols-2">
           {tab.challenges.map((challenge, index) => (

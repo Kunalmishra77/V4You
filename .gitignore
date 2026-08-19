@@ -32,3 +32,6 @@ Thumbs.db
 .playwright-mcp/
 
 lighthouse-report.json
+
+# Local scratch scripts for visual checks
+scripts/tmp/

@@ -183,7 +183,9 @@ export function Tabs({
               onKeyDown={(event) => onKeyDown(event, index)}
               className={cn(
                 'relative -mb-px min-h-11 border-b-2 px-4 py-3 font-display text-body-sm font-medium transition-colors',
-                selected ? 'text-(--ink)' : 'border-transparent text-(--ink-muted) hover:text-(--ink)',
+                selected
+                  ? 'text-(--ink)'
+                  : 'border-transparent text-(--ink-muted) hover:text-(--ink)',
                 // Handed over to the sliding bar once it knows where to be.
                 selected && !indicator ? 'border-amber-500' : 'border-transparent',
               )}
