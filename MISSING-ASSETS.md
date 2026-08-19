@@ -15,6 +15,18 @@ Last updated: 2026-08-17
 | **PostgreSQL connection string** | T-002 (Payload), all of Stage 3, every page that reads CMS data | **Blocked.** A Postgres server is running on `localhost:5432` but no credentials or database were supplied. `DATABASE_URI` in `.env.local` is a placeholder. Payload will be configured in code; `/admin` cannot be verified until this lands. |
 | **Payload globals** — `navigation`, `siteSettings` | T-015 | **Partially blocked by the above.** The shape is defined in `src/types/content.ts` and the content in `src/seed/`, which is where docs/02 §2 puts all copy — so the shell renders and is reviewable now. What is outstanding is the Payload collection config and admin editability, which cannot be written or verified without the database. When it lands, `payload generate:types` replaces `src/types/content.ts` and only the two function bodies in `src/lib/content.ts` change. No component is affected. |
 
+## Design assets
+
+Full specification — every image and video, with dimensions, formats, size
+budgets and what each must and must not show — is in
+**`docs/10-asset-specification.md`**. That is the single file to hand a
+designer. The hero video has its own brief with generation prompts in
+`docs/09-hero-video-brief.md`.
+
+Smallest useful delivery: hero video, one team-at-work photograph, and
+leadership portraits. Those three replace every visible placeholder on the
+pages a first-time visitor actually sees.
+
 ## Blocks a section, not the build
 
 | Item | Needed by | Empty state in use |
