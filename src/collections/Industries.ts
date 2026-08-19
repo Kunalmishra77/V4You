@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { revalidateEntry, revalidateEntryOnDelete } from '@/lib/revalidate'
+
 import { seoField } from '@/collections/fields/seo'
 import { slugField } from '@/collections/fields/slug'
 
@@ -30,6 +32,8 @@ export const Industries: CollectionConfig = {
   },
   defaultSort: 'order',
   hooks: {
+    afterChange: [revalidateEntry('industries')],
+    afterDelete: [revalidateEntryOnDelete('industries')],
     beforeValidate: [
       ({ data }) => {
         if (!data || data.status !== 'published') return data

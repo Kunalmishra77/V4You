@@ -42,7 +42,7 @@ export const industryDetails: Record<IndustrySlug, IndustryDetail> = {
   healthcare: {
     metaTitle: 'Healthcare technology solutions — V4You',
     metaDescription:
-      'Connected healthcare systems that give teams more time for care — administrative automation, patient communication and operational visibility, with clinical decisions left to clinicians.',
+      'Administrative automation, patient communication and operational visibility for healthcare teams — with clinical judgement left firmly with clinicians.',
     hero: {
       eyebrow: 'Healthcare',
       headline: 'Connected systems that give teams more time for care.',

@@ -56,14 +56,25 @@ export default async function ContactPage() {
             path: '/contact',
             type: 'ContactPage',
           }),
-          contactPoint
-            ? {
-                ...organizationSchema({
-                  legalName: contact.legalEntityName ?? 'V4You Technologies',
-                }),
-                contactPoint: [contactPoint],
-              }
-            : null,
+          /*
+           * Organization is emitted unconditionally; only `contactPoint` is
+           * conditional. It used to be the other way round, so with no email or
+           * phone supplied the entire Organization entity vanished from the one
+           * page docs/06 §A2 requires it on.
+           *
+           * The rule from docs/08 §5 is to omit the missing *field*, not the
+           * element that would have contained it — applied one level too high,
+           * it deletes valid markup instead of an unverified claim.
+           */
+          {
+            ...organizationSchema({
+              legalName: contact.legalEntityName ?? 'V4You Technologies',
+              email: contact.email,
+              telephone: contact.phone,
+              addressLines: contact.addressLines,
+            }),
+            ...(contactPoint ? { contactPoint: [contactPoint] } : {}),
+          },
         ]}
       />
 

@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { revalidatePage } from '@/lib/revalidate'
+
 import { seoField } from '@/collections/fields/seo'
 import { slugField } from '@/collections/fields/slug'
 
@@ -28,6 +30,7 @@ export const Pages: CollectionConfig = {
     update: ({ req }) => Boolean(req.user),
     delete: ({ req }) => Boolean(req.user),
   },
+  hooks: { afterChange: [revalidatePage] },
   fields: [
     slugField(),
     { name: 'title', type: 'text', required: true },

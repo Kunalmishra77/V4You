@@ -1,5 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateGlobal } from '@/lib/revalidate'
+
 /**
  * Navigation — docs/03 §4, T-015.
  *
@@ -14,6 +16,7 @@ export const Navigation: GlobalConfig = {
     read: () => true,
     update: ({ req }) => Boolean(req.user),
   },
+  hooks: { afterChange: [revalidateGlobal('navigation')] },
   fields: [
     {
       name: 'utilityBar',

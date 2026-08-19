@@ -1,5 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateGlobal } from '@/lib/revalidate'
+
 /**
  * Site settings — docs/03 §4, T-015.
  *
@@ -17,6 +19,7 @@ export const SiteSettings: GlobalConfig = {
     read: () => true,
     update: ({ req }) => Boolean(req.user),
   },
+  hooks: { afterChange: [revalidateGlobal('siteSettings')] },
   fields: [
     {
       name: 'brand',

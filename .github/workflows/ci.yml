@@ -10,26 +10,23 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  # The build must not depend on real credentials. Anything that reaches for a
+  # live service at build time is a bug this will surface.
+  NEXT_PUBLIC_SITE_URL: https://v4you.tech
+  PAYLOAD_SECRET: ci-placeholder-secret-not-used-for-anything-real
+  DATABASE_URI: postgresql://ci:ci@localhost:5432/ci
+
 jobs:
   verify:
     name: Lint, format, typecheck, build
     runs-on: ubuntu-latest
     timeout-minutes: 20
-
-    env:
-      # The build must not depend on real credentials. Anything that reaches for
-      # a live service at build time is a bug this will surface.
-      NEXT_PUBLIC_SITE_URL: https://v4you.tech
-      PAYLOAD_SECRET: ci-placeholder-secret-not-used-for-anything-real
-      DATABASE_URI: postgresql://ci:ci@localhost:5432/ci
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
         with:
           version: 11
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -38,14 +35,60 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Lint
-        run: pnpm lint
+      - run: pnpm lint
+      - run: pnpm format:check
+      - run: pnpm typecheck
+      - run: pnpm build
 
-      - name: Check formatting
-        run: pnpm format:check
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: .next
+          retention-days: 1
 
-      - name: Typecheck
-        run: pnpm typecheck
+  audit:
+    name: Accessibility and content
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: verify
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
 
-      - name: Build
-        run: pnpm build
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: .next
+
+      - name: Install browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      # Against a production build rather than a dev server: dev compiles each
+      # route on first request, which makes a scan measure compile time instead
+      # of the site.
+      - name: Start
+        run: |
+          pnpm start &
+          npx wait-on http://localhost:3000 --timeout 120000
+
+      # docs/06 §C3: zero axe violations on every route. The scan also asserts
+      # button contrast numerically, because axe returns "incomplete" rather
+      # than a verdict where a clipped layer paints the background.
+      - name: Accessibility
+        run: pnpm a11y
+
+      # docs/06 §A4 — the mechanical half of the content quality gate: unique
+      # titles and descriptions, canonicals, expected JSON-LD, no banned
+      # schema, 400-word and 3-link minimums.
+      - name: Content and structured data
+        run: pnpm audit:content

@@ -31,7 +31,7 @@ const LAST_REVIEWED = '18 August 2026'
 export const metadata: Metadata = buildMetadata({
   title: 'Accessibility — V4You Technologies',
   description:
-    'The standard we target, what has been tested, what is known to be incomplete, and how to report a problem.',
+    'The accessibility standard we target, exactly what has been tested so far, the limitations we know about, and how to tell us when something does not work.',
   path: '/accessibility',
 })
 
@@ -57,6 +57,10 @@ const TESTED = [
     body: 'Every field has a real label. Errors are announced, linked to their field, and summarised at the top of the form with focus moved there on a failed submit. The consultation form works with JavaScript disabled.',
   },
   {
+    title: 'Automated testing across every route',
+    body: 'An axe-core scan runs against seventeen routes — every page template, plus a deliberately broken URL — checking WCAG 2.2 A and AA rules along with axe’s best-practice set. It currently reports zero violations, and it runs as a script so it can be repeated rather than remembered.',
+  },
+  {
     title: 'Without JavaScript',
     body: 'The site renders and is navigable with scripting off. Sections that animate in on scroll are visible rather than hidden, which took a specific guard to get right.',
   },
@@ -64,12 +68,8 @@ const TESTED = [
 
 const LIMITATIONS = [
   {
-    title: 'No full automated audit yet',
-    body: 'A complete axe-core scan across every route is scheduled and has not been run. Individual components were checked as they were built, which is not the same thing as testing the assembled pages.',
-  },
-  {
     title: 'No screen reader pass yet',
-    body: 'Markup and ARIA were written to the pattern and verified programmatically, but the site has not yet been walked with NVDA, JAWS or VoiceOver. Programmatic correctness and a good listening experience are related but not identical.',
+    body: 'Markup and ARIA were written to the pattern and verified programmatically, but the site has not yet been walked with NVDA, JAWS or VoiceOver. An automated scan finds what can be checked mechanically, which is perhaps a third of what matters — a page can pass every rule and still be exhausting to listen to.',
   },
   {
     title: 'No testing with assistive technology users',

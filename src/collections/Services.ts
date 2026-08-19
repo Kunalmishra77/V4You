@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { revalidateEntry, revalidateEntryOnDelete } from '@/lib/revalidate'
+
 import { seoField } from '@/collections/fields/seo'
 import { slugField } from '@/collections/fields/slug'
 
@@ -26,6 +28,10 @@ export const Services: CollectionConfig = {
     delete: ({ req }) => Boolean(req.user),
   },
   defaultSort: 'order',
+  hooks: {
+    afterChange: [revalidateEntry('services')],
+    afterDelete: [revalidateEntryOnDelete('services')],
+  },
   fields: [
     slugField(),
     { name: 'title', type: 'text', required: true },
