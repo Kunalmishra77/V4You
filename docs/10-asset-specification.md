@@ -1,12 +1,15 @@
 # 10 — Asset specification
 
 **One document for the designer.** Every image, video and graphic the site
-needs: where it goes, what it must show, exact dimensions, format, file size,
-and what is already standing in for it.
+needs — now and across every future phase: where it goes, what it must show,
+exact dimensions, format, file size, and what is standing in for it today.
 
-Deliver files exactly as named. Drop them into the folder given in each row and
-the site picks them up — no code change is needed for anything marked
-`public/`.
+The full sitemap in `blueprint §2.1` is **102 routes** across four phases.
+Phase 1 (23 routes) is built. Everything else is specified here so the visual
+system is decided once rather than reinvented per phase.
+
+Deliver files exactly as named, into the folder given in each row. Anything
+under `public/` is picked up with no code change.
 
 ---
 
@@ -16,8 +19,8 @@ the site picks them up — no code change is needed for anything marked
 
 **No asset may assert a fact V4You cannot evidence.**
 
-This is not a style preference; it is the project's first rule and it has
-removed content from this site repeatedly. In practice:
+This is the project's first rule, not a style preference, and it has already
+removed content from this site repeatedly.
 
 | Fine | Not allowed |
 |---|---|
@@ -28,12 +31,12 @@ removed content from this site repeatedly. In practice:
 | Diagrams of how a system works | A dashboard that looks like a real client's |
 
 If an asset would make a viewer believe something specific about V4You's
-clients, results, size, awards or certifications — it cannot ship until there
-is evidence behind it.
+clients, results, size, awards or certifications, it cannot ship until there is
+evidence behind it.
 
 ### House style
 
-Everything comes from the design system in `docs/01`:
+From `docs/01`:
 
 | | |
 |---|---|
@@ -43,282 +46,306 @@ Everything comes from the design system in `docs/01`:
 | Bone | `#F6F5F1` — light canvas, warm not white |
 | Slate | `#5B6B85` on light, `#93A4BF` on dark |
 | Geometry | **45° diagonals. Square corners — radius is 0 everywhere.** |
+| Type | Schibsted Grotesk (display), Inter Tight (body), IBM Plex Mono (labels) |
 | Mood | Composed, cool, low-key. Not glossy, not neon, not playful. |
 
 **Never** round a corner. **Never** use purple/cyan "AI" gradients. **Never**
-show robots, humanoid AI, glowing brains, circuit-board motifs or neural-network
-diagrams — `blueprint §15.1` rules these out by name.
+show robots, humanoid AI, glowing brains, circuit-board motifs or
+neural-network diagrams — `blueprint §15.1` rules these out by name.
 
-### Formats and delivery
+### Formats, sizes and delivery
 
 - **Photography** — JPEG (quality 80) *and* WebP. Deliver both.
-- **Illustration / diagram** — SVG, outlined text, no external fonts.
+- **Illustration / diagram / icon** — SVG, outlined text, no external fonts.
 - **Video** — MP4 (H.264), audio stripped, plus one JPEG poster frame.
 - **Colour** — sRGB. Not Adobe RGB; it shifts in browsers.
 - **Naming** — exactly the filename in each row, lowercase, hyphenated.
-- Deliver a **layered source file** for anything composited, so it can be
-  re-cropped later.
+- **Source files** — deliver layered originals for anything composited.
+- **Alt text** — one line per photograph, describing what it shows and why.
+
+`pnpm audit:images` enforces a **250 KB ceiling** on anything in `public/`. An
+oversized file fails the build rather than quietly slowing the site.
 
 ### Priority key
 
 | | |
 |---|---|
 | **P1** | Blocks launch or replaces a visible placeholder |
-| **P2** | Materially improves a page that currently works |
-| **P3** | Nice to have, later phase |
+| **P2** | Materially improves a page that already works |
+| **P3** | Needed when that phase is built |
 
 ---
 
-## 1. Hero video — P1
+# PHASE 1 — live now (23 routes)
 
-The single highest-impact asset. **Full brief with generation prompts, negative
-prompts, rejection checklist and compression commands: `docs/09-hero-video-brief.md`.**
-Summary only here.
+## 1.1 Hero video
+
+Highest-impact single asset. **Full brief with generation prompts, negative
+prompts, rejection checklist and compression commands:
+`docs/09-hero-video-brief.md`.**
 
 | | |
 |---|---|
-| **ID** | `HERO-01` |
-| **Where** | Home page, hero background, full bleed behind the headline |
+| **ID** | `HERO-01` · **P1** |
+| **Where** | Home, hero background, full bleed behind the headline |
 | **File** | `public/hero.mp4` + `public/hero-poster.jpg` |
-| **Dimensions** | 1920 × 1080, 16:9 |
-| **Duration** | 8–12s, seamless loop |
+| **Size** | 1920 × 1080, 16:9 · 8–12s seamless loop |
 | **Format** | MP4 H.264, **audio removed**, `+faststart` |
-| **Max size** | **3 MB** — above this it competes with the page for bandwidth |
-| **Poster** | 1920 × 1080 JPEG, quality 80, under 250 KB |
+| **Max** | **3 MB** video · 250 KB poster |
 
-**Must show:** a calm modern workspace at blue hour, or architectural glass and
-steel geometry. Dark overall. Cool palette with one small warm amber accent on
-the right. Camera almost still.
+**Composition:** the headline sits over the **left 40%**. Keep it dark and
+empty; all interest in the right half.
 
-**Critical composition note:** the headline sits over the **left 40%** of the
-frame. Keep that area dark and empty. Put all interest in the right half.
+**Currently:** an abstract SVG field stands in — a legitimate permanent answer.
 
-**Must not show:** any readable number or chart, identifiable faces looking at
-camera, robots, holograms, floating UI, fast motion across centre frame.
-
-**Currently:** an abstract SVG field in the brand geometry stands in. It is a
-legitimate permanent answer if no video is produced.
-
----
-
-## 2. Photography — P1 and P2
+## 1.2 Photography
 
 All photography must be **V4You's own**: your space, your people, your work.
 Stock people are ruled out — a stock office photo on an About page implies it
-is this company's office, which is a claim nobody can support.
+is this company's office.
 
-### PH-01 — Team at work *(P1)*
+| ID | Where | File | Size | Max | Priority |
+|---|---|---|---|---|---|
+| `PH-01` | Home — "Growth gets harder…" right column | `public/photos/team-working.jpg` | 1600 × 1200 (4:3) | 220 KB | **P1** |
+| `PH-02` | About — leadership grid | `public/photos/team/{name}.jpg` | **800 × 800** each | 120 KB | **P1** |
+| `PH-03` | About — "Working together" | `public/photos/workspace.jpg` | 1600 × 900 (16:9) | 200 KB | P2 |
+| `PH-04` | Service page headers (**7**) | `public/photos/services/{slug}.jpg` | 1600 × 700 | 200 KB | P2 |
+| `PH-05` | Industry page headers (**11**) | `public/photos/industries/{slug}.jpg` | 1600 × 700 | 200 KB | P3 |
+| `PH-06` | Contact — office / reception | `public/photos/office.jpg` | 1600 × 900 | 200 KB | P3 |
 
-| | |
-|---|---|
-| **Where** | Home page, "Growth gets harder when your systems do not work together", right column |
-| **File** | `public/photos/team-working.jpg` + `.webp` |
-| **Dimensions** | 1600 × 1200 minimum, **4:3 landscape** |
-| **Max size** | 220 KB after compression |
+**`PH-01`** — a genuine working session: whiteboard, screens, two to four
+people mid-discussion. Candid, natural light. No legible screens, no client
+names on the whiteboard, nobody looking at the lens.
 
-**Must show:** a genuine working session — whiteboard, screens, two to four
-people mid-discussion. Natural light. Candid, not posed at the camera.
+**`PH-02`** — consistent lighting, background and crop across **every** person.
+Head and shoulders, neutral or navy backdrop. Mixed styles look worse than no
+photographs, which is why the section is currently omitted rather than
+half-filled. Also needs `assets/team/team.csv`
+(`name, role, bio, linkedin, is_leadership, order`).
 
-**Must not show:** legible screen content, client names or logos on the
-whiteboard, stock-looking poses, anyone looking at the lens.
+**`PH-04` service slugs:** `ai-automation`, `software-development`,
+`website-development`, `mobile-app-development`, `digital-marketing`,
+`cloud-devops`, `consulting`. Shoot as one set, one session, one treatment —
+they are seen together. No literal metaphors (robot for AI, padlock for
+security, rocket for growth).
 
-**Currently:** an abstract "flow" figure.
+**`PH-05` industry slugs:** `healthcare`, `manufacturing`, `education`,
+`real-estate`, `retail`, `finance`, `logistics`, `hospitality`, `government`,
+`startups`, `enterprise`. Generic environments only — nothing identifying a
+real organisation. **Healthcare especially:** no patients, no records, no
+screens with personal data however blurred.
 
-### PH-02 — Leadership portraits *(P1)*
+## 1.3 Illustration
 
-| | |
-|---|---|
-| **Where** | About page, leadership section — **the section does not render at all without these** |
-| **File** | `public/photos/team/{firstname-lastname}.jpg` + `.webp` |
-| **Dimensions** | **800 × 800 square**, one per person |
-| **Max size** | 120 KB each |
+| ID | What | Count | File | Size | Priority |
+|---|---|---|---|---|---|
+| `IL-01` | Service capability icons | **28** (7 × 4) | `public/icons/services/{slug}/{capability}.svg` | 48 × 48, 2px stroke | P2 |
+| `IL-02` | Section accent figures | 5 | `public/figures/{name}.svg` | ~320 × 320 | P2 |
+| `IL-03` | Service architecture diagrams | 7 | `public/diagrams/services/{slug}.svg` | 1200 × 700 | P3 |
+| `IL-04` | Industry architecture diagrams | 11 | `public/diagrams/industries/{slug}.svg` | 1200 × 700 | P3 |
 
-**Must show:** consistent lighting, consistent background, consistent crop
-across every person. Head and shoulders. Neutral or navy backdrop suits the
-site best.
+**`IL-01`** — line only, single colour via `currentColor`, square caps,
+**square corners**. Consistent stroke weight across all 28; they sit side by
+side. Not filled, not rounded, not multi-colour.
 
-**Must not show:** inconsistent styles between people — mixed backgrounds look
-worse than no photographs, which is why the section is currently omitted rather
-than half-filled.
+**`IL-02` names:** `grid`, `flow`, `layers`, `signal`, `converge`. Must use
+`currentColor` — they appear on navy, bone and amber canvases.
 
-**Also required:** `assets/team/team.csv` with columns
-`name, role, bio, linkedin, is_leadership, order`.
-
-**Currently:** the whole section is omitted, replaced by a line pointing to
-`/contact`. `docs/05 §2` forbids avatar placeholders.
-
-### PH-03 — Workspace / delivery *(P2)*
-
-| | |
-|---|---|
-| **Where** | About page, "Working together" section |
-| **File** | `public/photos/workspace.jpg` + `.webp` |
-| **Dimensions** | 1600 × 900, **16:9** |
-| **Max size** | 200 KB |
-
-**Must show:** the actual working environment — desks, screens, the room.
-Wide, calm, low-key. Can be empty of people.
-
-### PH-04 — Service page headers *(P2, seven files)*
-
-| | |
-|---|---|
-| **Where** | Top of each `/services/*` page |
-| **File** | `public/photos/services/{slug}.jpg` + `.webp` |
-| **Slugs** | `ai-automation`, `software-development`, `website-development`, `mobile-app-development`, `digital-marketing`, `cloud-devops`, `consulting` |
-| **Dimensions** | 1600 × 700, **wide landscape** |
-| **Max size** | 200 KB each |
-
-**Must show:** something concrete and abstract-leaning per service — a
-detail shot, a texture, a piece of the working environment. They must read as a
-set, so shoot them in one session with one treatment.
-
-**Must not show:** literal clip-art metaphors (a robot for AI, a padlock for
-security, a rocket for growth).
-
-### PH-05 — Industry context *(P3, eleven files)*
-
-| | |
-|---|---|
-| **Where** | Top of each `/industries/*` page |
-| **File** | `public/photos/industries/{slug}.jpg` + `.webp` |
-| **Slugs** | `healthcare`, `manufacturing`, `education`, `real-estate`, `retail`, `finance`, `logistics`, `hospitality`, `government`, `startups`, `enterprise` |
-| **Dimensions** | 1600 × 700 |
-| **Max size** | 200 KB each |
-
-**Must show:** the operating environment of that sector, generically — a ward
-corridor, a production line, a warehouse aisle.
-
-**Must not show:** anything identifying a real organisation. **Healthcare in
-particular:** no patients, no records, no screens with any personal data,
-however blurred.
+**`IL-03` / `IL-04`** — the site already generates these in code and they work.
+A designer version is an upgrade, not a gap.
 
 ---
 
-## 3. Illustration and diagrams — P2
+# PHASE 2 — Solutions (12 routes)
 
-These are **SVG**, not photography, and must match the existing diagram style
-already on the site (see any `/services/*` or `/industries/*` page).
+Eleven solution pages: AI CRM, hospital management, ERP, HRMS, inventory,
+warehouse, ecommerce, LMS, custom software, internal portals, business
+automation.
 
-### IL-01 — Service capability icons *(P2, 28 icons)*
+| ID | What | Count | File | Size | Priority |
+|---|---|---|---|---|---|
+| `SOL-01` | Solution page headers | 11 | `public/photos/solutions/{slug}.jpg` | 1600 × 700 | P3 |
+| `SOL-02` | Module icons (shared set) | ~40 | `public/icons/modules/{name}.svg` | 48 × 48 | P3 |
+| `SOL-03` | Solution architecture diagrams | 11 | `public/diagrams/solutions/{slug}.svg` | 1200 × 700 | P3 |
+| `SOL-04` | Solution OG cards | 11 | `public/og/solutions/{slug}.png` | 1200 × 630 | P3 |
 
-| | |
-|---|---|
-| **Where** | Capability cards on each service page — four per service |
-| **File** | `public/icons/{service-slug}/{capability}.svg` |
-| **Dimensions** | 48 × 48 artboard, **2px stroke**, square caps |
-| **Style** | Line only. Single colour, `currentColor`. **Square corners.** |
+**`SOL-02`** — one shared set covering the modules named in `blueprint §7`:
+lead capture, scoring, routing, pipeline, forecasting, registration,
+appointments, billing, pharmacy, lab, inventory, procurement, payroll,
+attendance, picking, packing, dispatch, catalogue, checkout, fulfilment,
+courses, assessments, approvals, notifications, audit trails and similar.
+Build the set, not eleven bespoke sets — most modules recur across solutions.
 
-**Must be:** geometric, built from straight lines and 45° angles. Consistent
-stroke weight across all 28 — they are seen side by side.
-
-**Must not be:** filled, rounded, multi-colour, or skeuomorphic.
-
-### IL-02 — Section accent figures *(P2, optional)*
-
-The site already generates these in code (`BrandFigure`) — abstract 45°
-compositions. A designer may replace them with richer versions.
-
-| | |
-|---|---|
-| **File** | `public/figures/{name}.svg` |
-| **Names** | `grid`, `flow`, `layers`, `signal`, `converge` |
-| **Dimensions** | ~320 × 320 artboard, scalable |
-| **Colour** | Must use `currentColor` and inherit — they appear on navy, bone and amber canvases |
-
-### IL-03 — Case study architecture diagrams *(P3)*
-
-| | |
-|---|---|
-| **Where** | Case study pages, Phase 3 |
-| **File** | `assets/case-studies/{slug}/architecture.svg` |
-| **Dimensions** | 1200 × 700, scalable |
-
-**Must show:** the real system, simplified. **Must not show:** invented
-components, or a client's internal system names without written permission.
+**`SOL-01`** — abstract or environmental, matching `PH-04`'s treatment.
+**Never a fabricated product screenshot.** A "screenshot" of an ERP V4You has
+not built for a named client is invented proof.
 
 ---
 
-## 4. Social and brand — mostly done
+# PHASE 3 — Technologies, case studies, resources (≈40+ routes)
 
-### SO-01 — Default Open Graph card *(complete)*
+## 3.1 Technologies (18 routes)
 
-`public/og-default.png`, 1200 × 630. Generated from the brand vectors. No
-action needed.
+Seventeen technology pages: OpenAI, Claude, Gemini, AWS, Azure, Google Cloud,
+Node.js, React, Next.js, Flutter, Python, LangChain, vector databases, RAG,
+prompt engineering, MCP, agentic AI.
 
-### SO-02 — Per-page OG images *(P3)*
+| ID | What | Count | File | Size | Priority |
+|---|---|---|---|---|---|
+| `TEC-01` | Reference architecture diagrams | 17 | `public/diagrams/technologies/{slug}.svg` | 1200 × 700 | P3 |
+| `TEC-02` | Technology page OG cards | 17 | `public/og/technologies/{slug}.png` | 1200 × 630 | P3 |
 
-| | |
-|---|---|
-| **File** | `public/og/{route}.png` |
-| **Dimensions** | **1200 × 630 exactly** |
-| **Max size** | 300 KB |
+**No vendor logos.** `docs/08 §7` and `docs/04 §14` are explicit: a technology
+logo is a trademark, and using it implies a partnership V4You does not have.
+The site uses **wordmarks set in Schibsted Grotesk**, under the fixed label
+"Technologies we work with" — never "our partners". Do not source vendor logo
+files.
 
-**Must show:** the page title in Schibsted Grotesk Bold, bone on navy, the
-logo, one amber rule. Text large enough to read as a thumbnail — assume it is
-displayed at 300px wide.
+## 3.2 Case studies — permission-gated
 
-### BR-01 — Brand files *(complete)*
+Per published study. Counts depend on how many are cleared.
 
-Logo, favicon, PWA icons and the OG card were vectorised from the supplied
-artwork and are in `public/` and `assets/brand/`. **No action needed.**
+| ID | What | Per study | File | Size | Priority |
+|---|---|---|---|---|---|
+| `CS-01` | Case study hero | 1 | `assets/case-studies/{slug}/hero.jpg` | 1600 × 900 | P3 |
+| `CS-02` | Product screenshots | 3–6 | `assets/case-studies/{slug}/screens/*.png` | 1440 wide | P3 |
+| `CS-03` | Architecture diagram | 1 | `assets/case-studies/{slug}/architecture.svg` | 1200 × 700 | P3 |
+| `CS-04` | Client logo | 1 | `assets/clients/{slug}.svg` | vector | P3 |
+| `CS-05` | Testimonial portrait | 1 | `assets/testimonials/{name}.jpg` | 400 × 400 | P3 |
+| `CS-06` | Case study OG card | 1 | `public/og/case-studies/{slug}.png` | 1200 × 630 | P3 |
+
+**Every one of these is blocked on written permission, not on design.**
+`CS-02` screenshots must be of real delivered work, cleared for publication.
+Numbers visible in a screenshot must be real or redacted — a mocked-up
+dashboard with invented figures is the exact failure the first rule exists to
+prevent.
+
+## 3.3 Resources (12 routes, then per item)
+
+Eleven resource types in `blueprint §11`: blogs, whitepapers, ebooks, guides,
+AI reports, templates, checklists, webinars, videos, podcasts, downloads.
+
+| ID | What | Count | File | Size | Priority |
+|---|---|---|---|---|---|
+| `RES-01` | Blog / article card images | per post | `public/resources/{slug}/card.jpg` | 1200 × 675 (16:9) | P3 |
+| `RES-02` | Gated asset covers | per asset | `public/resources/{slug}/cover.jpg` | 1240 × 1754 (A4 portrait) | P3 |
+| `RES-03` | Video thumbnails | per video | `public/resources/{slug}/thumb.jpg` | 1280 × 720 | P3 |
+| `RES-04` | Podcast cover art | 1 | `public/resources/podcast-cover.jpg` | **3000 × 3000 square** | P3 |
+| `RES-05` | Webinar stills | per webinar | `public/resources/{slug}/still.jpg` | 1600 × 900 | P3 |
+| `RES-06` | Resource type icons | 11 | `public/icons/resources/{type}.svg` | 48 × 48 | P3 |
+| `RES-07` | Resource OG cards | per item | `public/og/resources/{slug}.png` | 1200 × 630 | P3 |
+
+**`RES-02`** — whitepaper and ebook covers are the asset a visitor trades an
+email address for, so they carry real weight. Navy cover, title in Schibsted
+Grotesk, one amber rule, the mark. **3000 × 3000** for `RES-04` is the podcast
+platform requirement (Apple/Spotify), not a preference.
+
+---
+
+# PHASE 4 — Careers, calculators, assessment (≈8 routes)
+
+| ID | What | Count | File | Size | Priority |
+|---|---|---|---|---|---|
+| `CAR-01` | Careers hero | 1 | `public/photos/careers/hero.jpg` | 1600 × 900 | P3 |
+| `CAR-02` | Culture / office candids | 6–8 | `public/photos/careers/{n}.jpg` | 1200 × 900 | P3 |
+| `CAR-03` | Hiring process diagram | 1 | `public/diagrams/hiring-process.svg` | 1200 × 500 | P3 |
+| `CAL-01` | Calculator explainer diagrams | 3 | `public/diagrams/calculators/{name}.svg` | 1000 × 600 | P3 |
+| `ASM-01` | Assessment maturity-band graphic | 1 | `public/diagrams/maturity-bands.svg` | 1200 × 400 | P3 |
+
+**`CAR-02`** — real people at V4You, genuinely at work. This is the section
+where stock imagery is most tempting and most damaging: a candidate who
+recognises a stock photo on a careers page stops believing the rest of it.
+
+**`CAL-01` / `ASM-01`** — must never show an output that looks like a
+guaranteed figure. `docs/04 §34`: the result is labelled an estimate, always,
+with assumptions visible.
+
+---
+
+# CROSS-CUTTING
+
+## Social cards
+
+| ID | What | Count | File | Size | Priority |
+|---|---|---|---|---|---|
+| `SO-01` | Default OG card | 1 | `public/og-default.png` | 1200 × 630 | **done** |
+| `SO-02` | Phase 1 per-page OG | 23 | `public/og/{route}.png` | 1200 × 630 | P3 |
+| `SO-03` | Full-sitemap per-page OG | ~102 total | `public/og/{route}.png` | 1200 × 630 | P3 |
+
+Title in Schibsted Grotesk Bold, bone on navy, the mark, one amber rule. Text
+large enough to read as a thumbnail — assume 300px wide. Max 300 KB.
+
+These can be **generated programmatically** from the page title rather than
+designed one by one. At 102 routes that is the sensible route; say the word and
+I will build the generator instead of putting 102 rows on a designer.
+
+## Video library
+
+| ID | What | Count | Length | Priority |
+|---|---|---|---|---|
+| `VID-01` | Hero background | 1 | 8–12s loop | **P1** |
+| `VID-02` | Service explainers | 7 | 45–90s | P3 |
+| `VID-03` | Case study walkthroughs | per study | 2–3 min | P3 |
+| `VID-04` | Client testimonial films | per client | 60–90s | P3 |
+| `VID-05` | Architecture / process motion | 3–5 | 15–30s loop | P3 |
+
+All video: MP4 H.264, poster frame, captions file (`.vtt`) for anything with
+speech — `docs/06 §C` requires captions and transcripts for media. `VID-04` is
+permission-gated exactly like a written testimonial.
+
+## Email
+
+| ID | What | File | Size |
+|---|---|---|---|
+| `EM-01` | Email header mark | `public/email/logo.png` | 400 × 116, PNG on transparent |
+
+Raster, not SVG — most email clients do not render SVG.
+
+## Brand — complete
+
+Logo, favicon, PWA icons and the default OG card were vectorised from the
+supplied artwork and live in `public/` and `assets/brand/`. **No action needed.**
 
 If the original `Logo.png` / `fevicon.png` still exist anywhere, drop them into
-`assets/brand/source/` — the current source files there are reconstructions.
+`assets/brand/source/` — what is there now are reconstructions.
 
 ---
 
-## 5. Client proof — blocked on permission, not on design
+# Totals
 
-These are **not** a design task. They are a permissions task, and no amount of
-design work substitutes.
+| Phase | Images | Videos | Notes |
+|---|---:|---:|---|
+| **Phase 1** — live | **~75** + portraits | 1 | 28 of those are icons |
+| **Phase 2** — Solutions | ~73 | 0 | 40 shared module icons |
+| **Phase 3** — Tech / cases / resources | ~90 + per-item | per study | Grows with content volume |
+| **Phase 4** — Careers etc. | ~14 | 0 | |
+| **Cross-cutting** | ~102 OG cards | 4 video families | OG cards better generated |
 
-| Asset | Needed | Gate |
-|---|---|---|
-| Client logos | `assets/clients/{slug}.svg` | `permissions.csv` row with `logo_permitted = yes` |
-| Case study screenshots | `assets/case-studies/{slug}/screens/` | Written clearance from the client |
-| Testimonial portraits | 400 × 400 square | The person's written approval of the exact quote |
+**Roughly 250 static assets** for the full 102-route sitemap, plus one video
+family. That is the honest scale of what the reference site carries.
 
-**There is no override.** The site's access control returns nothing for an
-unpermitted client, so an unapproved logo cannot appear even if the file is
-present.
+## Delivery order
 
----
+Do not commission all of it. In order of return:
 
-## 6. Complete checklist
-
-| ID | Asset | Count | Priority | Status |
-|---|---|---|---|---|
-| HERO-01 | Hero video + poster | 1 | **P1** | Abstract field standing in |
-| PH-01 | Team at work | 1 | **P1** | Abstract figure standing in |
-| PH-02 | Leadership portraits | ? | **P1** | Section omitted entirely |
-| PH-03 | Workspace | 1 | P2 | Not present |
-| PH-04 | Service headers | 7 | P2 | Not present |
-| PH-05 | Industry context | 11 | P3 | Not present |
-| IL-01 | Capability icons | 28 | P2 | Text-only chips |
-| IL-02 | Section figures | 5 | P2 | Generated in code |
-| IL-03 | Case study diagrams | ? | P3 | Phase 3 |
-| SO-01 | Default OG card | 1 | — | **Complete** |
-| SO-02 | Per-page OG cards | ~23 | P3 | Falls back to default |
-| BR-01 | Brand marks | — | — | **Complete** |
-
-**Smallest useful delivery:** `HERO-01`, `PH-01`, `PH-02`. Those three replace
-every visible placeholder on the pages a first-time visitor actually sees.
+1. **`HERO-01`, `PH-01`, `PH-02`** — replaces every visible placeholder on the
+   pages a first-time visitor actually sees. Three assets.
+2. **`PH-03`, `PH-04`, `IL-01`** — makes the seven service pages feel finished.
+   36 assets, one photo session plus an icon set.
+3. **Client proof** (`CS-04`, `CS-05`) — not design work. Permission work. The
+   highest-value thing on this whole list and it needs signatures, not a
+   designer.
+4. **`PH-05`, `SO-02`** — industry pages and social cards.
+5. Everything else, **only as its phase is built.** Assets produced for pages
+   that do not exist get lost, go stale, or lock in a style decision before the
+   page is designed.
 
 ---
 
-## 7. After delivery
-
-Drop files into the paths above, then:
+## After delivery
 
 ```bash
 pnpm build && pnpm start
-pnpm audit:images     # alt text, dimensions, size budget
+pnpm audit:images     # alt text, dimensions, 250 KB ceiling
 pnpm a11y             # contrast still passes over new imagery
 ```
-
-`pnpm audit:images` enforces a **250 KB ceiling** on anything in `public/`.
-An oversized file fails the build rather than quietly slowing the site.
-
-Every image also needs **alt text** — describing what it shows and why it is
-there. Supply a one-line alt for each photograph with the files.
