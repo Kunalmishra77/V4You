@@ -12,6 +12,7 @@ import {
 } from 'react'
 
 import type { CaseStudyCard } from '@/components/blocks/CaseStudyRail'
+import { BrandFigure, type FigureName } from '@/components/shared/BrandFigure'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { Headline } from '@/components/shared/Headline'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
@@ -45,6 +46,20 @@ import { cn } from '@/lib/utils'
  * thing honours `prefers-reduced-motion` through the stylesheet rather than
  * through a check in here.
  */
+
+/**
+ * A figure per position on the ring.
+ *
+ * The reference fills the lower half of every card with a product screenshot,
+ * which is most of why theirs read as objects and a text-only card reads as a
+ * slab. There is no screenshot to use — nothing has been built for a real
+ * client that can be shown — so the cards carry the brand's own abstract
+ * figures instead. They occupy the same space and claim nothing.
+ *
+ * Assigned by index rather than stored on the study, because it is decoration:
+ * a case study's record should not have to know which drawing sits behind it.
+ */
+const FIGURES: FigureName[] = ['grid', 'flow', 'layers', 'signal', 'converge']
 
 export function ShowcaseCarousel({
   eyebrow,
@@ -232,7 +247,7 @@ export function ShowcaseCarousel({
         // drag-and-drop — either one cancels the pointer stream mid-gesture.
         onDragStart={(event) => event.preventDefault()}
         className={cn(
-          'showcase-stage relative mt-12 min-h-[27rem] select-none lg:min-h-[30rem]',
+          'showcase-stage relative mt-12 min-h-[30rem] select-none lg:min-h-[34rem]',
           dragging ? 'cursor-grabbing' : 'cursor-grab',
         )}
       >
@@ -282,18 +297,36 @@ export function ShowcaseCarousel({
               key={item.slug}
               {...panelProps}
               style={{ '--offset': offset } as CSSProperties}
-              className="showcase-card absolute inset-x-0 top-0 mx-auto w-[min(86vw,33rem)] border border-navy-700 bg-navy-800 p-8 surface-navy-800 lg:p-10"
+              className="showcase-card absolute inset-x-0 top-0 mx-auto flex w-[min(88vw,40rem)] flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
             >
-              <p className="font-mono text-label text-(--accent-text) uppercase">
-                {item.confidentialityLabel ?? item.clientDisplayName}
-              </p>
-              <h3 className="mt-5 font-display text-h2 text-(--ink)">{item.headline}</h3>
-              <p className="mt-4 text-body">{item.outcome}</p>
-              {isSample && (
-                <p className="mt-6 border-t border-navy-700 pt-4 font-mono text-label text-(--ink-muted) uppercase">
-                  Sample — not a real engagement
+              <div className="p-8 lg:p-9">
+                <p className="font-mono text-label text-(--accent-text) uppercase">
+                  {item.confidentialityLabel ?? item.clientDisplayName}
                 </p>
-              )}
+                <h3 className="mt-4 font-display text-h3 text-(--ink)">{item.headline}</h3>
+                <p className="mt-3 text-body-sm">{item.outcome}</p>
+                {isSample && (
+                  <p className="mt-5 font-mono text-label text-(--ink-muted) uppercase">
+                    Sample — not a real engagement
+                  </p>
+                )}
+              </div>
+
+              {/* The lower half, where the reference puts a screenshot. */}
+              <div className="relative h-44 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900 lg:h-52">
+                {/*
+                  Oversized and centred rather than fitted. An SVG with a
+                  viewBox letterboxes inside a box of a different ratio, so
+                  `inset-0` left the drawing marooned in the middle of a mostly
+                  empty panel. Scaling it past the edges and letting the panel
+                  clip is the equivalent of `object-fit: cover` for inline SVG,
+                  which has no such property.
+                */}
+                <BrandFigure
+                  name={FIGURES[index % FIGURES.length]}
+                  className="absolute top-1/2 left-1/2 w-[150%] -translate-x-1/2 -translate-y-1/2 opacity-60"
+                />
+              </div>
             </div>
           )
           })}

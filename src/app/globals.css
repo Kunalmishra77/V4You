@@ -561,19 +561,27 @@
   .showcase-ring {
     /* The two numbers that shape the arc, and they are not independent: a
        card's sideways travel is `radius × sin(step)`, so they trade off.
-       91rem at 26deg puts the neighbours about 640px either side of the front
-       card — clear of it, and curving out of frame by the second step, which is
-       what the reference does. The first attempt used 30rem at 30deg, giving
-       240px: the neighbours sat on top of the front card and the arc read as a
-       shuffled deck.
+       168rem at 14deg puts the neighbours about 650px either side of the front
+       card — clear of it, and curving out of frame by the second step. The
+       first attempt used 30rem at 30deg, giving 240px: the neighbours sat on
+       top of the front card. The second used 91rem at 26deg, which spaced them
+       correctly but turned them so far they read as panels seen edge-on. The
+       reference's neighbours are barely turned; they are large, nearly flat
+       cards that happen to be tilted. A long radius with a shallow step gives
+       exactly that — same spread, a fraction of the rotation.
+
+       `--ring-tilt` is the in-plane lean, and it is what makes them read as
+       cards rather than as a mechanism. Applied outward, so the two sides
+       mirror each other.
 
        A wide radius also keeps the tilt honest. Every card is the same distance
        from the ring's centre but not from the camera — a neighbour sits
        `radius × (cos(step) − 1)` further back, about 150px here, so it is a
        little smaller without being scaled. Shrinking them with `scale` instead
        is the giveaway that a carousel is flat. */
-    --ring-radius: 91rem;
-    --ring-step: 26deg;
+    --ring-radius: 168rem;
+    --ring-step: 14deg;
+    --ring-tilt: 5deg;
     position: absolute;
     inset: 0;
     transform-style: preserve-3d;
@@ -584,7 +592,7 @@
     transform-style: preserve-3d;
     backface-visibility: hidden;
     transform: rotateY(calc(var(--offset, 0) * var(--ring-step)))
-      translateZ(var(--ring-radius));
+      translateZ(var(--ring-radius)) rotate(calc(var(--offset, 0) * var(--ring-tilt) * -1));
     transition: transform 700ms var(--ease-expo);
     will-change: transform;
   }
