@@ -294,7 +294,7 @@ export function ShowcaseCarousel({
                     go(index)
                   }}
                   style={{ '--offset': offset } as CSSProperties}
-                  className="showcase-card absolute inset-x-0 top-0 mx-auto flex w-[min(84vw,34rem)] flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
+                  className="showcase-card flex flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
                 >
                   <div className="p-7">
                     <p className="font-mono text-label text-(--accent-text) uppercase">

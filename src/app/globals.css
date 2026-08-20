@@ -528,85 +528,52 @@
   }
 
   /* --- Showcase carousel ----------------------------------------------------
-     A genuine circular carousel, not a row of cards with the far ones scaled
-     down.
+     A rotary wheel in two dimensions. Not a 3D ring — that was two rebuilds
+     spent guessing from screenshots, and opening the reference in a browser
+     settled it in one reading: every card there reports `transform-style: flat`
+     and `perspective: none`, and their transforms are plain 2D rotations
+     stepping 0°, 20°, 40°, 60°.
 
-     Every card sits at the same radius on a ring: turn it by its share of the
-     angle, then push it out along its own new Z axis. `rotateY` before
-     `translateZ` is the whole trick — the translate happens in the rotated
-     frame, so the cards end up spaced around a circle rather than along a line.
-     The ring itself is pushed back by exactly that radius, which brings the
-     front card to the plane the reader is looking at.
+     The arc comes from `transform-origin`, which sits at the card's own
+     horizontal centre and roughly 2290px *below* its top — the hub of a very
+     large wheel, far under the viewport. Rotating a card about that point
+     swings it along the rim, so a neighbour is tilted *and* carried downward
+     and outward at once. That downward sweep is the part no amount of
+     translate-and-rotate reproduces, and it is why the earlier versions looked
+     like a fanned deck rather than a wheel.
 
-     Why this and not the first attempt: that one moved cards sideways and back
-     with `translateX` + a negative `translateZ` scaled by distance, so
-     neighbours shrank and hid behind the front card, and the arc had a visible
-     end. On a ring there is no end — the far cards curve away and off both
-     edges, and each one is the same size as the one in front, just turned.
+     Three numbers, and they are the reference's own, scaled to our card:
+     radius, step, and the card's width. Everything else follows.
 
-     `--ring-radius` and `--ring-step` are the only two numbers, and the note on
-     them below explains why they trade off against each other.
-
-     `perspective` sits on the stage, not the ring, so every card turns toward
-     one vanishing point. On the ring it would move with the ring.
+     No perspective, no `preserve-3d`, no Z anywhere. Worth stating plainly
+     because the effect looks three-dimensional and is not.
      -------------------------------------------------------------------- */
-  .showcase-stage {
-    perspective: 100rem;
-    /* Cards curve out past the container on purpose — the arc is meant to leave
-       the frame. The section clips at the viewport, so nothing can cause a
-       horizontal scrollbar. */
-    overflow: visible;
-  }
-
+  .showcase-stage,
   .showcase-ring {
-    /* The two numbers that shape the arc, and they are not independent: a
-       card's sideways travel is `radius × sin(step)`, so they trade off.
-       168rem at 14deg puts the neighbours about 650px either side of the front
-       card — clear of it, and curving out of frame by the second step. The
-       first attempt used 30rem at 30deg, giving 240px: the neighbours sat on
-       top of the front card. The second used 91rem at 26deg, which spaced them
-       correctly but turned them so far they read as panels seen edge-on. The
-       reference's neighbours are barely turned; they are large, nearly flat
-       cards that happen to be tilted. A long radius with a shallow step gives
-       exactly that — same spread, a fraction of the rotation.
-
-       `--ring-tilt` is the in-plane lean, and it is what makes them read as
-       cards rather than as a mechanism. Applied outward, so the two sides
-       mirror each other.
-
-       A wide radius also keeps the tilt honest. Every card is the same distance
-       from the ring's centre but not from the camera — a neighbour sits
-       `radius × (cos(step) − 1)` further back, about 150px here, so it is a
-       little smaller without being scaled. Shrinking them with `scale` instead
-       is the giveaway that a carousel is flat. */
-    --ring-radius: 168rem;
-    --ring-step: 14deg;
-    --ring-tilt: 5deg;
     position: absolute;
     inset: 0;
-    transform-style: preserve-3d;
-    transform: translateZ(calc(var(--ring-radius) * -1));
   }
 
   .showcase-card {
-    transform-style: preserve-3d;
-    backface-visibility: hidden;
-    transform: rotateY(calc(var(--offset, 0) * var(--ring-step)))
-      translateZ(var(--ring-radius)) rotate(calc(var(--offset, 0) * var(--ring-tilt) * -1));
+    --card-w: min(84vw, 32.5rem);
+    --wheel-radius: 143rem;
+    --wheel-step: 20deg;
+
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: var(--card-w);
+    /* x at the card's own centre, y at the hub far below it. */
+    transform-origin: calc(var(--card-w) / 2) var(--wheel-radius);
+    transform: translateX(calc(var(--card-w) / -2))
+      rotate(calc(var(--offset, 0) * var(--wheel-step)));
     transition: transform 700ms var(--ease-expo);
     will-change: transform;
   }
 
   /* The centre card is a sibling of the arc, not a card on it — see the
      component. It is the `tabpanel`, so it picks up `tab-panel-in` from the tabs
-     block, which is wanted here: it fades in each time the selection changes.
-
-     That animation is also why the centre card can no longer live *on* the
-     ring. `tab-panel-in` ends at `transform: none`, so while it was the front
-     card of the arc the animation overrode its place on the circle and pinned
-     it flat at the ring's own depth — every other offset had a correct 3D
-     matrix and offset 0 alone came out a 2D identity. Separating the layers
-     removes the conflict rather than working around it. */
+     block, which is wanted here: it fades in each time the selection changes. */
   .showcase-center {
     position: relative;
   }
