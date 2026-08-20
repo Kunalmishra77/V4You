@@ -109,7 +109,7 @@ export function ParallaxCards({
             scrollTrigger: {
               trigger: sectionRef.current,
               start: 'center center',
-              end: '+=1600',
+              end: '+=1150',
               pin: true,
               scrub: 1,
               anticipatePin: 1,
@@ -143,10 +143,19 @@ export function ParallaxCards({
           // The CTA arrives after the last column has landed — literally, at
           // the point on the timeline where the longest tween ends.
           if (ctaRef.current) {
+            // Placed to *end* with the last column rather than to start there.
+            //
+            // Appended after it, the timeline ran on past the moment the fourth
+            // column landed — and every fraction of timeline left over is more
+            // scroll the reader spends pinned in front of a section that has
+            // finished moving. It read as the page refusing to let go. Ending
+            // together means the pin releases on the same frame the sequence
+            // completes.
+            const total = 0.4 + (items.length - 1) * 0.2
             tl.from(
               ctaRef.current,
               { opacity: 0, y: 40, ease: 'none', duration: 0.25 },
-              '>-0.05',
+              total - 0.25,
             )
           }
         })
@@ -225,7 +234,13 @@ export function ParallaxCards({
               <div
                 data-parallax-card=""
                 style={{ '--reveal-index': index } as CSSProperties}
-                className="flex min-h-[24rem] flex-col border-y border-(--line) p-7 lg:min-h-[27rem] lg:p-8"
+                // `h-full` is what makes the four the same height. The cell is
+                // a grid item and stretches to the tallest row, but this block
+                // sits inside it and was only ever as tall as its own copy — so
+                // the two shorter cards ended a few pixels short and their
+                // buttons sat off the shared baseline. Filling the cell hands
+                // the extra space to `flex-1` on the body instead.
+                className="flex h-full min-h-[24rem] flex-col border-y border-(--line) p-7 lg:min-h-[27rem] lg:p-8"
               >
                 <span
                   aria-hidden="true"
