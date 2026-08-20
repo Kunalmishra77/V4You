@@ -528,36 +528,35 @@
   }
 
   /* --- Showcase carousel ----------------------------------------------------
-     A rotary wheel in two dimensions. Not a 3D ring — that was two rebuilds
-     spent guessing from screenshots, and opening the reference in a browser
-     settled it in one reading: every card there reports `transform-style: flat`
-     and `perspective: none`, and their transforms are plain 2D rotations
-     stepping 0°, 20°, 40°, 60°.
+     A rotary wheel in two dimensions, read off the reference's live DOM rather
+     than inferred from a screenshot. Its cards report `transform-style: flat`
+     and `perspective: none`; the transforms are plain 2D rotations 20° apart
+     about a `transform-origin` roughly 2290px beneath each card. The hub sits
+     far below the viewport, so turning a card about it carries the card along
+     the rim — tilted, and swept downward and outward at once. That downward
+     sweep is the part no combination of translate and rotate reproduces.
 
-     The arc comes from `transform-origin`, which sits at the card's own
-     horizontal centre and roughly 2290px *below* its top — the hub of a very
-     large wheel, far under the viewport. Rotating a card about that point
-     swings it along the rim, so a neighbour is tilted *and* carried downward
-     and outward at once. That downward sweep is the part no amount of
-     translate-and-rotate reproduces, and it is why the earlier versions looked
-     like a fanned deck rather than a wheel.
+     Nothing is pinned in the middle. Whichever card is at 0° faces the reader,
+     and a moment later it is a different card.
 
-     Three numbers, and they are the reference's own, scaled to our card:
-     radius, step, and the card's width. Everything else follows.
+     The radius is shorter than the reference's 2290px, which is deliberate:
+     travel is `radius × sin(step)`, and at their radius the fourth and fifth
+     cards land past the edge of a 1920 viewport instead of showing at the
+     corners. 110rem keeps their 20° tilt exactly and brings five cards into
+     view — two either side of centre — which is what the section is meant to
+     show.
 
-     No perspective, no `preserve-3d`, no Z anywhere. Worth stating plainly
-     because the effect looks three-dimensional and is not.
+     No perspective, no `preserve-3d`, no Z anywhere. Worth saying plainly,
+     because the effect reads as three-dimensional and is not.
      -------------------------------------------------------------------- */
-  .showcase-stage,
-  .showcase-ring {
+  .showcase-stage {
     position: absolute;
     inset: 0;
   }
 
   .showcase-card {
     --card-w: min(84vw, 32.5rem);
-    --wheel-radius: 143rem;
-    --wheel-step: 20deg;
+    --wheel-radius: 110rem;
 
     position: absolute;
     top: 0;
@@ -565,17 +564,30 @@
     width: var(--card-w);
     /* x at the card's own centre, y at the hub far below it. */
     transform-origin: calc(var(--card-w) / 2) var(--wheel-radius);
-    transform: translateX(calc(var(--card-w) / -2))
-      rotate(calc(var(--offset, 0) * var(--wheel-step)));
-    transition: transform 700ms var(--ease-expo);
+    transform: translateX(calc(var(--card-w) / -2)) rotate(var(--card-deg, 0deg));
+    transition: transform 620ms var(--ease-expo);
     will-change: transform;
   }
 
-  /* The centre card is a sibling of the arc, not a card on it — see the
-     component. It is the `tabpanel`, so it picks up `tab-panel-in` from the tabs
-     block, which is wanted here: it fades in each time the selection changes. */
-  .showcase-center {
-    position: relative;
+  /* While the hand is on the wheel it must track the pointer exactly. An easing
+     here is what makes a drag feel like it is being negotiated rather than
+     turned. The transition returns on release, so the settle is still eased. */
+  .showcase-stage--dragging .showcase-card {
+    transition: none;
+  }
+
+  /* The card in front is the `tabpanel`, so it inherits `tab-panel-in` from the
+     tabs block — whose final keyframe is `transform: none`. That would flatten
+     it off the rim to sit upright at the hub's depth. Naming the animation off
+     on the more specific selector keeps the wheel transform. */
+  .showcase-card[role='tabpanel'] {
+    z-index: 2;
+    animation: none;
+  }
+
+  .showcase-card[inert] {
+    pointer-events: auto;
+    cursor: pointer;
   }
 
   /* --- Stacked slider -------------------------------------------------------

@@ -3,7 +3,6 @@
 import {
   useCallback,
   useEffect,
-  useId,
   useRef,
   useState,
   type CSSProperties,
@@ -21,58 +20,64 @@ import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { cn } from '@/lib/utils'
 
 /**
- * ShowcaseCarousel — three layers, deliberately separate.
+ * ShowcaseCarousel — a 2D rotary wheel, read off the reference's live DOM.
  *
- * The first version folded the centre card into the arc, and that one decision
- * caused the bug it was reported for: the drag layer and its badge painted over
- * the card in the middle, because they were siblings in the same container and
- * the badge simply had a higher `z-index`. Nudging that number would have hidden
- * the symptom until the next element arrived. The layers are now genuinely
- * separate and the stacking is enforced by structure rather than by arithmetic.
+ * Every card sits on the rim of a very large wheel whose hub is far below the
+ * viewport, and the whole wheel turns. Nothing is pinned in the middle: the card
+ * that happens to be at 0° is the one facing the reader, and a moment later it
+ * is a different card. That is the mechanism the reference uses, and it is not
+ * 3D — its cards report `transform-style: flat` and `perspective: none`, with
+ * plain 2D rotations stepping 20° apart around a `transform-origin` about
+ * 2290px beneath each card.
  *
- *   1. **The arc** — every card on a ring, tilted by position, draggable,
- *      clickable. `absolute inset-0 z-0`, which makes it a stacking context of
- *      its own. Everything inside it, the drag badge included, is sealed into
- *      that context and *cannot* paint above a later sibling however high its
- *      own `z-index` climbs. That is the fix, and it holds for anything added
- *      to the arc later.
+ * **The angle is continuous.** A single `angle` in degrees is the source of
+ * truth; a card's place on the rim is `index × step − angle`, wrapped so the
+ * set spreads either side of centre rather than queueing off to the right. The
+ * selected index is read back out of the angle, never stored separately — two
+ * copies of the same state is how a carousel ends up with the pill and the card
+ * disagreeing.
  *
- *   2. **The centre card** — a sibling of the arc, never a child, at `z-20`.
- *      Its wrapper is `pointer-events-none` so a drag beginning beside the card
- *      still reaches the arc underneath; the card itself is
- *      `pointer-events-auto`, so its own button stays clickable. You drag the
- *      space around it, and the card is never obstructed.
+ * **Dragging turns the wheel, it does not step it.** The angle follows the
+ * pointer directly and the CSS transition is switched off while a drag is
+ * running, so the wheel tracks the hand exactly. On release the transition
+ * comes back and the angle settles to the nearest card. Stepping in fixed jumps
+ * — the previous version — is what made it feel notched rather than turned.
  *
- *   3. **The marquee** — a separate rail below, scrolling continuously and
- *      pausing on hover. It shares no stacking context with either.
+ * Three layers, kept apart on purpose:
  *
- * `isolation: isolate` on the wrapper stops all of this negotiating with
- * anything else on the page.
- *
- * **Controls.** The pills are a real `tablist` and the centre card its
- * `tabpanel`, with arrow keys and a roving tabindex. Dragging, the two arrow
- * buttons and clicking a card in the arc are pointer shortcuts on top of that —
- * the arc cards are `aria-hidden` because selecting one does exactly what its
- * pill does, and announcing both would read as two of every sector.
+ *   1. **The wheel** — `absolute inset-0 z-0`, a stacking context of its own, so
+ *      everything inside it including the drag badge is sealed in and cannot
+ *      paint over a later sibling however high its z-index climbs.
+ *   2. **The pills and arrows** — a real `tablist` above, with arrow keys and a
+ *      roving tabindex. Dragging and clicking a card are pointer shortcuts on
+ *      top of it, never the only way through.
+ *   3. **The rail** — a separate marquee below, continuous, paused on hover.
  */
 
 /**
- * A figure per position on the ring.
- *
- * The reference fills each card with a product screenshot, which is most of why
- * theirs read as objects. There is none to use — nothing built for a real client
- * can be shown — so the cards carry the brand's own abstract figures. They
- * occupy the same space and claim nothing. Assigned by index because it is
- * decoration: a case study's record should not have to know which drawing sits
- * behind it.
+ * Degrees between one card and the next on the rim. The reference's own value.
  */
-const FIGURES: FigureName[] = ['grid', 'flow', 'layers', 'signal', 'converge']
+const STEP = 20
+
+/**
+ * Degrees of wheel rotation per pixel of pointer travel. 0.13 puts one card at
+ * roughly 150px of drag, which is far enough that a small slip does not change
+ * the selection and short enough that reaching the far card is one gesture.
+ */
+const DEG_PER_PX = 0.13
 
 /** Pointer travel, in px, past which a drag is a drag and not a click. */
 const CLICK_SLOP = 6
 
-/** Pointer travel, in px, that advances the arc by one card. */
-const STEP_DISTANCE = 140
+/**
+ * A figure per card.
+ *
+ * The reference fills each card with a product screenshot, which is most of why
+ * theirs read as objects. There is none to use — nothing built for a real client
+ * can be shown — so the cards carry the brand's own abstract figures. They
+ * occupy the same space and claim nothing.
+ */
+const FIGURES: FigureName[] = ['grid', 'flow', 'layers', 'signal', 'converge']
 
 export function ShowcaseCarousel({
   eyebrow,
@@ -88,27 +93,38 @@ export function ShowcaseCarousel({
   heading: string
   body?: string
   items: CaseStudyCard[]
-  /** The rail below the arc. Continuous, pauses on hover. */
+  /** The rail below the wheel. Continuous, pauses on hover. */
   marqueeItems?: readonly string[]
   marqueeLabel?: string
   isSample?: boolean
   canvas?: Canvas
 }) {
-  const [active, setActive] = useState(0)
+  const [angle, setAngle] = useState(0)
   const [badge, setBadge] = useState<{ x: number; y: number } | null>(null)
   const [dragging, setDragging] = useState(false)
-  const baseId = useId()
   const stageRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
-  const drag = useRef({ active: false, startX: 0, moved: 0 })
+  const drag = useRef({ active: false, lastX: 0, moved: 0, startAngle: 0 })
 
   const count = items.length
 
-  const go = useCallback(
-    (next: number, focusTab = false) => {
-      if (!count) return
-      const index = ((next % count) + count) % count
-      setActive(index)
+  // The selection is derived, never stored. One source of truth means the pill
+  // and the card in front cannot drift apart.
+  const active = ((Math.round(angle / STEP) % count) + count) % count
+
+  /** Turn the wheel to a card, by the shortest way round. */
+  const goTo = useCallback(
+    (index: number, focusTab = false) => {
+      setAngle((current) => {
+        const span = count * STEP
+        let target = index * STEP
+        // Choose the equivalent target nearest the current angle, so selecting
+        // the last card from the first turns one step back rather than four
+        // forward.
+        while (target - current > span / 2) target -= span
+        while (current - target > span / 2) target += span
+        return target
+      })
       if (focusTab) tabRefs.current[index]?.focus()
     },
     [count],
@@ -118,31 +134,31 @@ export function ShowcaseCarousel({
     switch (event.key) {
       case 'ArrowRight':
         event.preventDefault()
-        go(index + 1, true)
+        goTo((index + 1) % count, true)
         break
       case 'ArrowLeft':
         event.preventDefault()
-        go(index - 1, true)
+        goTo((index - 1 + count) % count, true)
         break
       case 'Home':
         event.preventDefault()
-        go(0, true)
+        goTo(0, true)
         break
       case 'End':
         event.preventDefault()
-        go(count - 1, true)
+        goTo(count - 1, true)
         break
     }
   }
 
-  // --- Drag, on the arc layer only ------------------------------------------
+  // --- Drag: turns the wheel continuously -----------------------------------
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     // Touch already swipes the page; hijacking it makes the section a trap.
     if (event.pointerType !== 'mouse' || !stageRef.current) return
-    // Capture, or the gesture dies the moment the cursor crosses the arc's edge
-    // — which on something you drag sideways is most of the time.
+    // Capture, or the gesture dies the moment the cursor leaves the stage —
+    // which on something you drag sideways is most of the time.
     stageRef.current.setPointerCapture(event.pointerId)
-    drag.current = { active: true, startX: event.clientX, moved: 0 }
+    drag.current = { active: true, lastX: event.clientX, moved: 0, startAngle: angle }
     setDragging(true)
   }
 
@@ -153,20 +169,22 @@ export function ShowcaseCarousel({
     }
     if (!drag.current.active) return
 
-    const delta = event.clientX - drag.current.startX
-    drag.current.moved = Math.max(drag.current.moved, Math.abs(delta))
-
-    // Committed as the threshold is crossed rather than on release. Waiting for
-    // release makes a long drag feel like it did nothing until you let go.
-    if (Math.abs(delta) > STEP_DISTANCE) {
-      go(active + (delta < 0 ? 1 : -1))
-      drag.current.startX = event.clientX
-    }
+    const delta = event.clientX - drag.current.lastX
+    drag.current.lastX = event.clientX
+    drag.current.moved += Math.abs(delta)
+    // Dragging left turns the wheel forwards, which is the direction the
+    // content moves under the hand.
+    setAngle((current) => current - delta * DEG_PER_PX)
   }
 
   const endDrag = (event?: PointerEvent<HTMLDivElement>) => {
     if (event && stageRef.current?.hasPointerCapture(event.pointerId)) {
       stageRef.current.releasePointerCapture(event.pointerId)
+    }
+    if (drag.current.active) {
+      // Settle on the nearest card. The transition is back on by this point, so
+      // the wheel eases into place rather than jumping.
+      setAngle((current) => Math.round(current / STEP) * STEP)
     }
     drag.current.active = false
     setDragging(false)
@@ -180,14 +198,13 @@ export function ShowcaseCarousel({
       if (event.key !== 'Escape') return
       drag.current.active = false
       setDragging(false)
+      setAngle((current) => Math.round(current / STEP) * STEP)
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [dragging])
 
   if (!count) return null
-
-  const current = items[active]
 
   return (
     <SectionShell canvas={canvas} className="overflow-hidden">
@@ -208,7 +225,7 @@ export function ShowcaseCarousel({
       )}
 
       <div className="mt-10 flex items-center justify-center gap-3">
-        <ArrowButton label="Previous" direction="prev" onClick={() => go(active - 1)} />
+        <ArrowButton label="Previous" direction="prev" onClick={() => goTo((active - 1 + count) % count)} />
 
         <div
           role="tablist"
@@ -225,11 +242,11 @@ export function ShowcaseCarousel({
                 }}
                 type="button"
                 role="tab"
-                id={baseId + '-tab-' + index}
+                id={`showcase-tab-${item.slug}`}
                 aria-selected={selected}
-                aria-controls={baseId + '-panel'}
+                aria-controls={`showcase-panel-${item.slug}`}
                 tabIndex={selected ? 0 : -1}
-                onClick={() => go(index)}
+                onClick={() => goTo(index)}
                 onKeyDown={(event) => onTabKeyDown(event, index)}
                 className={cn(
                   'min-h-11 shrink-0 px-5 py-2.5 font-display text-body-sm font-medium whitespace-nowrap',
@@ -244,15 +261,11 @@ export function ShowcaseCarousel({
           })}
         </div>
 
-        <ArrowButton label="Next" direction="next" onClick={() => go(active + 1)} />
+        <ArrowButton label="Next" direction="next" onClick={() => goTo((active + 1) % count)} />
       </div>
 
-      {/*
-        The stacking context for layers 1 and 2. `isolate` keeps the whole
-        arrangement from negotiating z-index with anything else on the page.
-      */}
+      {/* `isolate` keeps the wheel from negotiating z-index with the page. */}
       <div className="showcase relative isolate mt-12 min-h-[32rem] lg:min-h-[36rem]">
-        {/* --- LAYER 1: the arc. Background, draggable, z-0. ---------------- */}
         <div
           ref={stageRef}
           onPointerDown={onPointerDown}
@@ -269,116 +282,97 @@ export function ShowcaseCarousel({
           onDragStart={(event) => event.preventDefault()}
           className={cn(
             'showcase-stage absolute inset-0 z-0 select-none',
-            dragging ? 'cursor-grabbing' : 'cursor-grab',
+            // No transition while the hand is on it, so the wheel tracks the
+            // pointer exactly rather than easing behind it.
+            dragging ? 'showcase-stage--dragging cursor-grabbing' : 'cursor-grab',
           )}
         >
-          <div className="showcase-ring">
-            {items.map((item, index) => {
-              // The *shortest* signed distance round the ring, not
-              // `index - active`. Plain subtraction puts every card on one side
-              // when the first is selected, and the carousel visibly has an end.
-              let offset = index - active
-              if (offset > count / 2) offset -= count
-              if (offset < -count / 2) offset += count
+          {items.map((item, index) => {
+            // Place on the rim relative to the current angle, then wrap so the
+            // set spreads either side of centre instead of queueing off to the
+            // right. Continuous, not an integer — this is what makes the drag
+            // smooth rather than notched.
+            const span = count * STEP
+            let offsetDeg = index * STEP - angle
+            offsetDeg = (((offsetDeg + span / 2) % span) + span) % span
+            offsetDeg -= span / 2
 
-              return (
-                <div
-                  key={item.slug}
-                  // Decorative. Clicking one does exactly what its pill does, so
-                  // announcing both would read as two of every sector — and the
-                  // pill is the version that works without a pointer.
-                  aria-hidden="true"
-                  onClick={() => {
-                    // A drag that happens to end over a card is not a click.
-                    if (drag.current.moved > CLICK_SLOP) return
-                    go(index)
-                  }}
-                  style={{ '--offset': offset } as CSSProperties}
-                  className="showcase-card flex flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
-                >
-                  <div className="p-7">
-                    <p className="font-mono text-label text-(--accent-text) uppercase">
-                      {item.confidentialityLabel ?? item.clientDisplayName}
+            const isFront = index === active
+
+            return (
+              <div
+                key={item.slug}
+                {...(isFront
+                  ? {
+                      role: 'tabpanel',
+                      id: `showcase-panel-${item.slug}`,
+                      'aria-labelledby': `showcase-tab-${item.slug}`,
+                    }
+                  : { 'aria-hidden': true as const, inert: true })}
+                onClick={() => {
+                  // A drag that happens to end over a card is not a click.
+                  if (drag.current.moved > CLICK_SLOP) return
+                  goTo(index)
+                }}
+                style={{ '--card-deg': `${offsetDeg}deg` } as CSSProperties}
+                className="showcase-card flex flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
+              >
+                <div className="p-7 lg:p-8">
+                  <p className="font-mono text-label text-(--accent-text) uppercase">
+                    {item.confidentialityLabel ?? item.clientDisplayName}
+                  </p>
+                  <h3 className="mt-4 font-display text-h3 text-(--ink)">{item.headline}</h3>
+                  <p className="mt-3 text-body-sm">{item.outcome}</p>
+
+                  {isSample && (
+                    <p className="mt-5 font-mono text-label text-(--ink-muted) uppercase">
+                      Sample — not a real engagement
                     </p>
-                    <h3 className="mt-4 font-display text-h3 text-(--ink)">{item.headline}</h3>
-                    <p className="mt-3 text-body-sm">{item.outcome}</p>
-                  </div>
+                  )}
 
-                  <div className="relative h-40 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900">
-                    <BrandFigure
-                      name={FIGURES[index % FIGURES.length]}
-                      className="absolute top-1/2 left-1/2 w-[150%] -translate-x-1/2 -translate-y-1/2 opacity-60"
-                    />
+                  <div className="mt-6">
+                    {/*
+                      Samples go to contact, not to a case-study page. Those are
+                      Phase 2 and do not exist, and `next/link` would prefetch a
+                      404 for every card in the set.
+                    */}
+                    <Button
+                      href={isSample ? '/contact' : `/case-studies/${item.slug}`}
+                      variant="ghost-dark"
+                    >
+                      {isSample ? 'Ask about work like this' : 'Read the case study'}
+                    </Button>
                   </div>
                 </div>
-              )
-            })}
-          </div>
+
+                <div className="relative h-40 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900 lg:h-44">
+                  <BrandFigure
+                    name={FIGURES[index % FIGURES.length]}
+                    className="absolute top-1/2 left-1/2 w-[150%] -translate-x-1/2 -translate-y-1/2 opacity-60"
+                  />
+                </div>
+              </div>
+            )
+          })}
 
           {/*
-            Inside the arc layer, not beside it. That is the fix: the arc is a
-            stacking context, so this badge is sealed within it and cannot paint
-            over the centre card whatever its own z-index says.
+            Inside the wheel layer, not beside it. The wheel is a stacking
+            context, so this badge is sealed within it and cannot paint over
+            anything that comes after.
           */}
           {badge && (
             <span
               aria-hidden="true"
               style={{ '--badge-x': badge.x + 'px', '--badge-y': badge.y + 'px' } as CSSProperties}
-              className="drag-badge pointer-events-none absolute hidden size-20 place-content-center rounded-full border border-amber-500 bg-navy-900/85 text-center font-mono text-label text-amber-500 uppercase backdrop-blur-sm [@media(pointer:fine)]:grid"
+              className="drag-badge pointer-events-none absolute z-30 hidden size-20 place-content-center rounded-full border border-amber-500 bg-navy-900/85 text-center font-mono text-label text-amber-500 uppercase backdrop-blur-sm [@media(pointer:fine)]:grid"
             >
               {dragging ? 'Dragging' : 'Drag'}
             </span>
           )}
         </div>
-
-        {/* --- LAYER 2: the centre card. Foreground, z-20. ------------------ */}
-        <div className="pointer-events-none relative z-20 flex justify-center">
-          <div
-            role="tabpanel"
-            id={baseId + '-panel'}
-            aria-labelledby={baseId + '-tab-' + active}
-            tabIndex={0}
-            className="showcase-center pointer-events-auto flex w-[min(90vw,38rem)] flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-500"
-          >
-            <div className="p-8 lg:p-9">
-              <p className="font-mono text-label text-(--accent-text) uppercase">
-                {current.confidentialityLabel ?? current.clientDisplayName}
-              </p>
-              <h3 className="mt-4 font-display text-h3 text-(--ink)">{current.headline}</h3>
-              <p className="mt-3 text-body-sm">{current.outcome}</p>
-
-              {isSample && (
-                <p className="mt-5 font-mono text-label text-(--ink-muted) uppercase">
-                  Sample — not a real engagement
-                </p>
-              )}
-
-              <div className="mt-7">
-                {/*
-                  A sample goes to contact, not to a case-study page. Those are
-                  Phase 2 and do not exist, and `next/link` would prefetch a 404
-                  for every card in the set.
-                */}
-                <Button
-                  href={isSample ? '/contact' : `/case-studies/${current.slug}`}
-                  variant="ghost-dark"
-                >
-                  {isSample ? 'Ask about work like this' : 'Read the case study'}
-                </Button>
-              </div>
-            </div>
-
-            <div className="relative h-44 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900 lg:h-52">
-              <BrandFigure
-                name={FIGURES[active % FIGURES.length]}
-                className="absolute top-1/2 left-1/2 w-[150%] -translate-x-1/2 -translate-y-1/2 opacity-60"
-              />
-            </div>
-          </div>
-        </div>
       </div>
 
-      {/* --- LAYER 3: the rail. Separate, continuous, pauses on hover. ------ */}
+      {/* The rail. Separate, continuous, pauses on hover. */}
       {marqueeItems && marqueeItems.length > 0 && (
         <div className="mt-16 border-y border-navy-700">
           {marqueeLabel && (
