@@ -566,13 +566,23 @@
      opposite, and that is what went wrong before — at 20° a step, the outer
      cards ended up rotated 40°, with their text on a diagonal nobody could read.
 
-     22rem cards and 10° a step, with the radius set from the stage's own width
-     in the component — fixed pixels looked right at 1920 and put two of the five
-     cards off-screen at 1280.
+     19rem cards, with the radius set from the stage's own width in the component
+     — fixed pixels looked right at 1920 and put two of the five cards off-screen
+     at 1280.
 
-     The gap is measured between *bounding boxes*, not between cards. A rotated
-     card occupies more width than its own, so spacing the centres by the card
-     width alone leaves neighbours overlapping.
+     Card size is part of the spacing, not separate from it. The gap is between
+     *bounding boxes*, and a rotated card's box is wider than the card: at 26°
+     a 304×352 card occupies 427px. Shrinking the card from 22rem to 19rem
+     bought roughly 90px of air between every pair without moving anything
+     further out — which matters, because widening the radius instead pushes the
+     outer pair off the edge of the frame.
+
+     The gaps are not equal and cannot be. Spacing between neighbours is
+     `radius × (sin nθ − sin (n−1)θ)`, and sine is concave, so each step out is
+     shorter than the last while the rotated box gets wider. Both effects
+     squeeze the outer gap. A wheel does that, and the reference's does too; the
+     job is keeping the tightest one comfortable rather than making them
+     identical.
 
      Every card is the same fixed height, not sized to its own copy. On a wheel
      the difference shows immediately: cards at different heights read as cards
@@ -606,8 +616,8 @@
   }
 
   .showcase-card {
-    --card-w: min(80vw, 22rem);
-    --card-h: 23rem;
+    --card-w: min(78vw, 19rem);
+    --card-h: 22rem;
 
     position: absolute;
     /* Not flush to the top. A rotated rectangle's bounding box reaches higher

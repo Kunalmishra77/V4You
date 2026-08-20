@@ -62,7 +62,7 @@ import { cn } from '@/lib/utils'
  * every size: the neighbour lands about 28% of the way out, the far card about
  * 55%.
  */
-const RADIUS_RATIO = 1.25
+const RADIUS_RATIO = 1.26
 
 /** Width assumed before the stage has been measured, so SSR renders sensibly. */
 const FALLBACK_STAGE_WIDTH = 1280
@@ -88,8 +88,10 @@ const OVAL = 0.9
  * row rather than a wheel. A tighter circle with a wider step keeps the same
  * spread and bends it properly.
  *
- * 13° at 1.25× puts the neighbours ~540px out and 61px down, and the far pair
- * ~1050px out and 243px down. Tilts of 13° and 26°, both still readable.
+ * 13° at 1.26× puts the neighbours ~545px out and the far pair ~1060px, with
+ * tilts of 13° and 26°. Wider than this and the outer pair leave the frame
+ * almost entirely — at 1.32× only 60px of them was still on screen at 1920,
+ * which is a sliver rather than a card.
  */
 const STEP = 13
 
@@ -325,9 +327,9 @@ export function ShowcaseCarousel({
 
       {/* `isolate` keeps the wheel from negotiating z-index with the page. */}
       <div // Tall enough for a whole card plus the drop of the outermost one. A card is
-          // ~457px and the 20° card sits ~184px lower, so anything under 44rem clips the outer pair, which fall well below the middle one
+          // ~457px and the 20° card sits ~184px lower, so anything under 43rem clips the outer pair, which fall well below the middle one
           // clips the bottom off the cards at the edges.
-          className="showcase relative isolate mt-12 min-h-[44rem]">
+          className="showcase relative isolate mt-12 min-h-[43rem]">
         <div
           ref={stageRef}
           onPointerDown={onPointerDown}
@@ -420,17 +422,23 @@ export function ShowcaseCarousel({
                 }
                 className="showcase-card flex flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
               >
-                <div className="flex min-h-0 flex-1 flex-col p-6">
+                <div className="flex min-h-0 flex-1 flex-col p-5">
                   <p className="font-mono text-label text-(--accent-text) uppercase">
                     {item.confidentialityLabel ?? item.clientDisplayName}
                   </p>
-                  <h3 className="mt-3 font-display text-h4 text-(--ink)">{item.headline}</h3>
+                  {/* Clamped like the body below it. The box is a fixed height
+                      and the card clips, so anything that wraps one line more
+                      than expected is cut mid-word with no ellipsis — which
+                      reads as broken rather than as truncated. */}
+                  <h3 className="mt-3 line-clamp-2 font-display text-body-lg font-semibold text-(--ink)">
+                    {item.headline}
+                  </h3>
                   {/* Clamped, because the card's height is fixed and a long
                       outcome would otherwise push the button out of the box. */}
-                  <p className="mt-3 line-clamp-3 text-body-sm">{item.outcome}</p>
+                  <p className="mt-3 line-clamp-2 text-body-sm">{item.outcome}</p>
 
                   {isSample && (
-                    <p className="mt-5 font-mono text-label text-(--ink-muted) uppercase">
+                    <p className="mt-4 font-mono text-[0.625rem] tracking-[0.14em] text-(--ink-muted) uppercase">
                       Sample — not a real engagement
                     </p>
                   )}
@@ -451,7 +459,7 @@ export function ShowcaseCarousel({
                       Adding one only when a card reaches the front would reflow
                       the card's insides at the exact moment it is moving, which
                       is the other half of the jump. */}
-                  <div className="mt-auto min-h-[3.25rem] pt-6">
+                  <div className="mt-auto min-h-[3.25rem] pt-5">
                     {isFront && (
                       <Button
                         href={isSample ? '/contact' : `/case-studies/${item.slug}`}
