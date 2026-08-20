@@ -55,16 +55,21 @@ import { cn } from '@/lib/utils'
  */
 
 /**
- * Degrees between one card and the next on the rim. The reference's own value.
+ * Degrees between one card and the next on the rim.
+ *
+ * Small, deliberately. The tilt of a card is its own step multiplied by how far
+ * it is from the middle, so a large step turns the outer cards into unreadable
+ * diagonals. 10° keeps the furthest card at 20°, which still reads. The spacing
+ * is made up by the radius instead — see globals.css.
  */
-const STEP = 20
+const STEP = 10
 
 /**
- * Degrees of wheel rotation per pixel of pointer travel. 0.13 puts one card at
+ * Degrees of wheel rotation per pixel of pointer travel. 0.065 puts one card at
  * roughly 150px of drag, which is far enough that a small slip does not change
  * the selection and short enough that reaching the far card is one gesture.
  */
-const DEG_PER_PX = 0.13
+const DEG_PER_PX = 0.065
 
 /** Pointer travel, in px, past which a drag is a drag and not a click. */
 const CLICK_SLOP = 6
@@ -265,7 +270,10 @@ export function ShowcaseCarousel({
       </div>
 
       {/* `isolate` keeps the wheel from negotiating z-index with the page. */}
-      <div className="showcase relative isolate mt-12 min-h-[32rem] lg:min-h-[36rem]">
+      <div // Tall enough for a whole card plus the drop of the outermost one. A card is
+          // ~457px and the 20° card sits ~184px lower, so anything under 44rem
+          // clips the bottom off the cards at the edges.
+          className="showcase relative isolate mt-12 min-h-[44rem]">
         <div
           ref={stageRef}
           onPointerDown={onPointerDown}
@@ -317,11 +325,11 @@ export function ShowcaseCarousel({
                 style={{ '--card-deg': `${offsetDeg}deg` } as CSSProperties}
                 className="showcase-card flex flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
               >
-                <div className="p-7 lg:p-8">
+                <div className="p-6">
                   <p className="font-mono text-label text-(--accent-text) uppercase">
                     {item.confidentialityLabel ?? item.clientDisplayName}
                   </p>
-                  <h3 className="mt-4 font-display text-h3 text-(--ink)">{item.headline}</h3>
+                  <h3 className="mt-3 font-display text-h4 text-(--ink)">{item.headline}</h3>
                   <p className="mt-3 text-body-sm">{item.outcome}</p>
 
                   {isSample && (
@@ -345,7 +353,7 @@ export function ShowcaseCarousel({
                   </div>
                 </div>
 
-                <div className="relative h-40 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900 lg:h-44">
+                <div className="relative h-24 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900">
                   <BrandFigure
                     name={FIGURES[index % FIGURES.length]}
                     className="absolute top-1/2 left-1/2 w-[150%] -translate-x-1/2 -translate-y-1/2 opacity-60"

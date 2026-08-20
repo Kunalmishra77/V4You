@@ -528,35 +528,45 @@
   }
 
   /* --- Showcase carousel ----------------------------------------------------
-     A rotary wheel in two dimensions, read off the reference's live DOM rather
-     than inferred from a screenshot. Its cards report `transform-style: flat`
-     and `perspective: none`; the transforms are plain 2D rotations 20° apart
-     about a `transform-origin` roughly 2290px beneath each card. The hub sits
-     far below the viewport, so turning a card about it carries the card along
-     the rim — tilted, and swept downward and outward at once. That downward
-     sweep is the part no combination of translate and rotate reproduces.
+     Cards on a wheel. Each one is rotated about a hub far below the section, so
+     turning it carries the card along the rim — a gentle tilt and a small drop
+     as it moves out from the middle.
 
-     Nothing is pinned in the middle. Whichever card is at 0° faces the reader,
-     and a moment later it is a different card.
+     Three numbers, and they are chosen together because they are not
+     independent. Centre-to-centre spacing is `radius × sin(step)`, and the drop
+     is `radius × (1 − cos(step))`. A long radius with a small step gives wide
+     spacing and almost no tilt; a short radius with a big step gives the
+     opposite, and that is what went wrong before — at 20° a step, the outer
+     cards ended up rotated 40°, with their text on a diagonal nobody could read.
 
-     The radius is shorter than the reference's 2290px, which is deliberate:
-     travel is `radius × sin(step)`, and at their radius the fourth and fifth
-     cards land past the edge of a 1920 viewport instead of showing at the
-     corners. 110rem keeps their 20° tilt exactly and brings five cards into
-     view — two either side of centre — which is what the section is meant to
-     show.
+     24rem cards, 10° a step, 191rem radius: tilts of 10° and 20° that stay
+     legible, and about 80px of clear air between neighbours. Five cards across
+     a 1920 viewport, three of them whole and the outer pair running off the
+     edges.
 
-     No perspective, no `preserve-3d`, no Z anywhere. Worth saying plainly,
-     because the effect reads as three-dimensional and is not.
+     The gap is measured between *bounding boxes*, not between cards. A 384×420
+     card turned 10° occupies 451px of horizontal space, so spacing the centres
+     by the card's own width leaves the neighbours overlapping — which is what
+     160rem did, by about 20px. The radius has to clear the rotated box.
+
+     The wheel clips, because cards swing well below their own box on the way
+     round and would otherwise land on whatever follows the section.
+
+     No perspective and no Z anywhere — the effect reads as depth and is plain
+     2D rotation, which is what the reference does too.
      -------------------------------------------------------------------- */
+  .showcase {
+    overflow: hidden;
+  }
+
   .showcase-stage {
     position: absolute;
     inset: 0;
   }
 
   .showcase-card {
-    --card-w: min(84vw, 32.5rem);
-    --wheel-radius: 110rem;
+    --card-w: min(80vw, 24rem);
+    --wheel-radius: 191rem;
 
     position: absolute;
     top: 0;
@@ -570,16 +580,16 @@
   }
 
   /* While the hand is on the wheel it must track the pointer exactly. An easing
-     here is what makes a drag feel like it is being negotiated rather than
-     turned. The transition returns on release, so the settle is still eased. */
+     here makes a drag feel negotiated rather than turned. The transition
+     returns on release, so the settle is still eased. */
   .showcase-stage--dragging .showcase-card {
     transition: none;
   }
 
   /* The card in front is the `tabpanel`, so it inherits `tab-panel-in` from the
      tabs block — whose final keyframe is `transform: none`. That would flatten
-     it off the rim to sit upright at the hub's depth. Naming the animation off
-     on the more specific selector keeps the wheel transform. */
+     it off the rim. Naming the animation off on the more specific selector
+     keeps the wheel transform. */
   .showcase-card[role='tabpanel'] {
     z-index: 2;
     animation: none;
