@@ -556,8 +556,14 @@
      The path is an oval, not a circle. A true circle drops the outer cards by
      `radius × (1 − cos θ)` — 169px at 20° — and every one of those pixels has to
      be reserved below the wheel, where it reads as a hole in the section. The
-     component lifts each card back by most of its own drop, which keeps the
-     fall-away without the dead space.
+     component keeps 40% of the fall: 0, 17 and 68px across the set, which
+     descends visibly without costing the height.
+
+     Position is explicit — an x, a y and a rotation per card — rather than
+     swung about a `transform-origin` far below. The arc is identical and the
+     terms are separable, which the earlier version was not: correcting the drop
+     of a rotation you are also relying on for placement put the ±10° cards
+     *above* the middle one.
 
      The wheel clips, because cards swing well below their own box on the way
      round and would otherwise land on whatever follows the section.
@@ -587,13 +593,12 @@
     left: 50%;
     width: var(--card-w);
     height: var(--card-h);
-    /* x at the card's own centre, y at the hub far below it. */
-    transform-origin: calc(var(--card-w) / 2) var(--wheel-radius);
-    /* The lift is in the parent's space, applied with the centring translate
-       and before the rotation takes effect, so it pulls the card straight up
-       rather than along the rim. It is what turns the circle into an oval —
-       see `OVAL` in the component. */
-    transform: translate(calc(var(--card-w) / -2), var(--card-lift, 0px))
+    /* The card turns about its own centre. Where it sits on the arc is carried
+       by `--card-x` and `--card-y`, which the component works out — see the note
+       there for why the position is explicit rather than derived from a distant
+       origin. */
+    transform-origin: center;
+    transform: translate(calc(-50% + var(--card-x, 0px)), var(--card-y, 0px))
       rotate(var(--card-deg, 0deg));
     transition: transform 620ms var(--ease-expo);
     will-change: transform;

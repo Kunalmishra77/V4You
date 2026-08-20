@@ -65,8 +65,8 @@ const RADIUS_PX = 175 * 16
  * How much of the circle's vertical drop to keep. A true circle drops the outer
  * cards `radius × (1 − cos θ)` — 169px at 20° — and all of that empty space has
  * to be reserved below the wheel, where it reads as a hole in the section.
- * Keeping 40% flattens the path into a shallow oval: the cards still fall away
- * as they travel, and the section is 170px shorter.
+ * Keeping 40% flattens the path into a shallow oval: 0px, 17px and 68px of fall
+ * across the set, which descends visibly without costing the height.
  */
 const OVAL = 0.4
 
@@ -331,11 +331,16 @@ export function ShowcaseCarousel({
             offsetDeg = (((offsetDeg + span / 2) % span) + span) % span
             offsetDeg -= span / 2
 
-            // Lift the card back up by the part of the circular drop we are
-            // not keeping. Applied in the parent's space, alongside the
-            // centring translate, so the rotation does not carry it round.
-            const drop = RADIUS_PX * (1 - Math.cos((offsetDeg * Math.PI) / 180))
-            const lift = -drop * (1 - OVAL)
+            // Place the card explicitly rather than swinging it about a hub
+            // far below. Same arc, but every term is separate and can be read:
+            // x is where on the rim it sits, y is how far it has fallen, and the
+            // rotation is the tilt. Deriving all three from one distant
+            // `transform-origin` was what put the ±10° cards *above* the middle
+            // one — the rotation and the correction for it were fighting, and
+            // the sequence came out scattered instead of descending.
+            const rad = (offsetDeg * Math.PI) / 180
+            const x = RADIUS_PX * Math.sin(rad)
+            const y = RADIUS_PX * (1 - Math.cos(rad)) * OVAL
 
             const isFront = index === active
 
@@ -375,7 +380,8 @@ export function ShowcaseCarousel({
                 style={
                   {
                     '--card-deg': `${offsetDeg}deg`,
-                    '--card-lift': `${lift}px`,
+                    '--card-x': `${x}px`,
+                    '--card-y': `${y}px`,
                     // Stacking follows distance from the middle rather than the
                     // selected/not-selected flag. Flipping a z-index the moment
                     // `active` changes makes two cards swap depth in one frame,
