@@ -232,7 +232,7 @@ export function ShowcaseCarousel({
         // drag-and-drop — either one cancels the pointer stream mid-gesture.
         onDragStart={(event) => event.preventDefault()}
         className={cn(
-          'showcase-stage relative mt-12 min-h-[24rem] select-none lg:min-h-[27rem]',
+          'showcase-stage relative mt-12 min-h-[27rem] select-none lg:min-h-[30rem]',
           dragging ? 'cursor-grabbing' : 'cursor-grab',
         )}
       >
@@ -240,14 +240,30 @@ export function ShowcaseCarousel({
           <span
             aria-hidden="true"
             style={{ '--badge-x': badge.x + 'px', '--badge-y': badge.y + 'px' } as CSSProperties}
-            className="drag-badge pointer-events-none absolute z-30 hidden border border-amber-500 bg-navy-900/80 px-3 py-1.5 font-mono text-label text-amber-500 uppercase backdrop-blur-sm [@media(pointer:fine)]:block"
+            className="drag-badge pointer-events-none absolute z-30 hidden size-20 place-content-center rounded-full border border-amber-500 bg-navy-900/85 text-center font-mono text-label text-amber-500 uppercase backdrop-blur-sm [@media(pointer:fine)]:grid"
           >
             {dragging ? 'Dragging' : 'Drag'}
           </span>
         )}
 
-        {items.map((item, index) => {
-          const offset = index - active
+        {/*
+          A ring, not a row. The cards are laid out on a circle inside this
+          element and it is pushed back by the circle's radius, so the front
+          card lands on the plane the reader is looking at.
+        */}
+        <div className="showcase-ring">
+          {items.map((item, index) => {
+          // The *shortest* signed distance round the ring, not `index - active`.
+          //
+          // Plain subtraction puts every card on one side when the first is
+          // selected — offsets 0,1,2,3,4, nothing to the left, and the carousel
+          // visibly has an end. Wrapping past the halfway point turns that into
+          // 0,1,2,-2,-1: there is always something arriving from both
+          // directions, which is the whole reason theirs reads as endless.
+          let offset = index - active
+          if (offset > count / 2) offset -= count
+          if (offset < -count / 2) offset += count
+
           const isFront = offset === 0
           const panelProps = isFront
             ? {
@@ -266,7 +282,7 @@ export function ShowcaseCarousel({
               key={item.slug}
               {...panelProps}
               style={{ '--offset': offset } as CSSProperties}
-              className="showcase-card absolute inset-x-0 top-0 mx-auto w-[min(88vw,34rem)] border border-navy-700 bg-navy-800 p-8 surface-navy-800 lg:p-10"
+              className="showcase-card absolute inset-x-0 top-0 mx-auto w-[min(86vw,33rem)] border border-navy-700 bg-navy-800 p-8 surface-navy-800 lg:p-10"
             >
               <p className="font-mono text-label text-(--accent-text) uppercase">
                 {item.confidentialityLabel ?? item.clientDisplayName}
@@ -280,7 +296,8 @@ export function ShowcaseCarousel({
               )}
             </div>
           )
-        })}
+          })}
+        </div>
       </div>
     </SectionShell>
   )

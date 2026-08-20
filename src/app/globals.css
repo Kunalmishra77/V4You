@@ -528,59 +528,83 @@
   }
 
   /* --- Showcase carousel ----------------------------------------------------
-     The 3D stage. Every card is absolutely positioned in the same place; what
-     separates them is `--offset`, the signed distance from the selected card,
-     written by the component.
+     A genuine circular carousel, not a row of cards with the far ones scaled
+     down.
 
-     One rule does all of it. `--offset` drives the sideways travel, the tilt
-     and the depth together, so a card two along is automatically further, more
-     turned and further back than a card one along — there is no per-position
-     styling to keep in sync, and adding a sixth card needs no CSS at all.
+     Every card sits at the same radius on a ring: turn it by its share of the
+     angle, then push it out along its own new Z axis. `rotateY` before
+     `translateZ` is the whole trick — the translate happens in the rotated
+     frame, so the cards end up spaced around a circle rather than along a line.
+     The ring itself is pushed back by exactly that radius, which brings the
+     front card to the plane the reader is looking at.
 
-     `perspective` sits on the stage rather than the card so all of them turn
-     toward the same vanishing point. On the card it would give each one its
-     own, and the row would fan rather than recede.
+     Why this and not the first attempt: that one moved cards sideways and back
+     with `translateX` + a negative `translateZ` scaled by distance, so
+     neighbours shrank and hid behind the front card, and the arc had a visible
+     end. On a ring there is no end — the far cards curve away and off both
+     edges, and each one is the same size as the one in front, just turned.
 
-     Cards more than one step away are faded out and taken out of the pointer's
-     way. They are still in the DOM and still `inert`, so nothing about the
-     accessibility tree changes as the selection moves — only opacity does.
+     `--ring-radius` and `--ring-step` are the only two numbers, and the note on
+     them below explains why they trade off against each other.
+
+     `perspective` sits on the stage, not the ring, so every card turns toward
+     one vanishing point. On the ring it would move with the ring.
      -------------------------------------------------------------------- */
   .showcase-stage {
-    perspective: 90rem;
+    perspective: 100rem;
+    /* Cards curve out past the container on purpose — the arc is meant to leave
+       the frame. The section clips at the viewport, so nothing can cause a
+       horizontal scrollbar. */
+    overflow: visible;
+  }
+
+  .showcase-ring {
+    /* The two numbers that shape the arc, and they are not independent: a
+       card's sideways travel is `radius × sin(step)`, so they trade off.
+       91rem at 26deg puts the neighbours about 640px either side of the front
+       card — clear of it, and curving out of frame by the second step, which is
+       what the reference does. The first attempt used 30rem at 30deg, giving
+       240px: the neighbours sat on top of the front card and the arc read as a
+       shuffled deck.
+
+       A wide radius also keeps the tilt honest. Every card is the same distance
+       from the ring's centre but not from the camera — a neighbour sits
+       `radius × (cos(step) − 1)` further back, about 150px here, so it is a
+       little smaller without being scaled. Shrinking them with `scale` instead
+       is the giveaway that a carousel is flat. */
+    --ring-radius: 91rem;
+    --ring-step: 26deg;
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: translateZ(calc(var(--ring-radius) * -1));
   }
 
   .showcase-card {
     transform-style: preserve-3d;
-    transform: translateX(calc(var(--offset, 0) * 62%)) translateZ(calc(abs(var(--offset, 0)) * -14rem))
-      rotateY(calc(var(--offset, 0) * -18deg));
-    opacity: 1;
-    transition:
-      transform 620ms var(--ease-expo),
-      opacity 380ms var(--ease-reveal);
+    backface-visibility: hidden;
+    transform: rotateY(calc(var(--offset, 0) * var(--ring-step)))
+      translateZ(var(--ring-radius));
+    transition: transform 700ms var(--ease-expo);
     will-change: transform;
   }
 
-  /* Two or more steps out: present, but neither seen nor clickable. `abs()` is
-     what keeps this symmetric without a second rule for the other side. */
-  .showcase-card:not([role='tabpanel']) {
-    z-index: 1;
-  }
-
+  /* The front card paints over its neighbours whatever their DOM order.
+     Qualified with the role, and that qualification is load-bearing for a
+     second reason: the tabs block below animates every `[role='tabpanel']`
+     with `tab-panel-in`, whose final keyframe is `transform: none`. The front
+     card here *is* a tabpanel, so that animation was overriding its place on
+     the ring and pinning it flat at the ring's own depth — offsets ±1 and ±2
+     had correct 3D matrices and offset 0 alone came out a 2D identity. Naming
+     the animation off is more specific than the bare attribute selector, so
+     the ring transform wins. */
   .showcase-card[role='tabpanel'] {
-    /* The front card must sit above its neighbours, and above the ones behind
-       it in DOM order as well — without this the later siblings paint on top of
-       the selected one. */
     z-index: 10;
+    animation: none;
   }
 
   .showcase-card[inert] {
     pointer-events: none;
-  }
-
-  @supports (width: abs(-1px)) {
-    .showcase-card {
-      opacity: clamp(0, calc(2 - abs(var(--offset, 0))), 1);
-    }
   }
 
   /* --- Stacked slider -------------------------------------------------------
