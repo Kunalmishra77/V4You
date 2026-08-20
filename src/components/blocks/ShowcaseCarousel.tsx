@@ -62,7 +62,7 @@ import { cn } from '@/lib/utils'
  * every size: the neighbour lands about 28% of the way out, the far card about
  * 55%.
  */
-const RADIUS_RATIO = 1.6
+const RADIUS_RATIO = 1.25
 
 /** Width assumed before the stage has been measured, so SSR renders sensibly. */
 const FALLBACK_STAGE_WIDTH = 1280
@@ -71,27 +71,34 @@ const FALLBACK_STAGE_WIDTH = 1280
  * How much of the circle's vertical drop to keep. A true circle drops the outer
  * cards `radius × (1 − cos θ)` — 169px at 20° — and all of that empty space has
  * to be reserved below the wheel, where it reads as a hole in the section.
- * Keeping 40% flattens the path into a shallow oval: 0px, 17px and 68px of fall
- * across the set, which descends visibly without costing the height.
+ * Keeping 90% is close to the true circle. Flattening it much further stops the
+ * path reading as a wheel at all — the cards look like a row that happens to be
+ * tilted. The section pays for the curve in height, and that is the right
+ * trade: the band below simply sits further down.
  */
-const OVAL = 0.4
+const OVAL = 0.9
 
 /**
  * Degrees between one card and the next on the rim.
  *
- * Small, deliberately. The tilt of a card is its own step multiplied by how far
- * it is from the middle, so a large step turns the outer cards into unreadable
- * diagonals. 10° keeps the furthest card at 20°, which still reads. The spacing
- * is made up by the radius instead — see globals.css.
+ * The step and the radius set the curve together, and they pull against each
+ * other: horizontal travel is `radius × sin(step)`, while the fall is
+ * `radius × (1 − cos step)`. A long radius with a small step spreads the cards
+ * wide and almost flat — which is what 10° at 1.6× gave, and it read as a tilted
+ * row rather than a wheel. A tighter circle with a wider step keeps the same
+ * spread and bends it properly.
+ *
+ * 13° at 1.25× puts the neighbours ~540px out and 61px down, and the far pair
+ * ~1050px out and 243px down. Tilts of 13° and 26°, both still readable.
  */
-const STEP = 10
+const STEP = 13
 
 /**
  * Degrees of wheel rotation per pixel of pointer travel. 0.065 puts one card at
  * roughly 150px of drag, which is far enough that a small slip does not change
  * the selection and short enough that reaching the far card is one gesture.
  */
-const DEG_PER_PX = 0.065
+const DEG_PER_PX = 0.085
 
 /** Pointer travel, in px, past which a drag is a drag and not a click. */
 const CLICK_SLOP = 6
@@ -318,9 +325,9 @@ export function ShowcaseCarousel({
 
       {/* `isolate` keeps the wheel from negotiating z-index with the page. */}
       <div // Tall enough for a whole card plus the drop of the outermost one. A card is
-          // ~457px and the 20° card sits ~184px lower, so anything under 27rem once the path is flattened
+          // ~457px and the 20° card sits ~184px lower, so anything under 44rem clips the outer pair, which fall well below the middle one
           // clips the bottom off the cards at the edges.
-          className="showcase relative isolate mt-12 min-h-[27rem]">
+          className="showcase relative isolate mt-12 min-h-[44rem]">
         <div
           ref={stageRef}
           onPointerDown={onPointerDown}
@@ -420,7 +427,7 @@ export function ShowcaseCarousel({
                   <h3 className="mt-3 font-display text-h4 text-(--ink)">{item.headline}</h3>
                   {/* Clamped, because the card's height is fixed and a long
                       outcome would otherwise push the button out of the box. */}
-                  <p className="mt-3 line-clamp-4 text-body-sm">{item.outcome}</p>
+                  <p className="mt-3 line-clamp-3 text-body-sm">{item.outcome}</p>
 
                   {isSample && (
                     <p className="mt-5 font-mono text-label text-(--ink-muted) uppercase">

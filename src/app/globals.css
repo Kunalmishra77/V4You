@@ -527,6 +527,33 @@
     animation-iteration-count: 4;
   }
 
+  /* --- FAQ panel ------------------------------------------------------------
+     The scrolling answer panel fades out at its bottom edge, because hiding the
+     scrollbar removes the only cue that there is more below it.
+
+     A mask, not a gradient overlay. An overlay is a coloured box sitting on top
+     of text: it changes the contrast of whatever is under it, and body copy at
+     a fraction of its own contrast is body copy that fails. A mask fades the
+     pixels themselves to transparent, so nothing ends up dimmed against the
+     wrong background — and it works on any canvas without being told which one
+     it is on.
+
+     Only when the panel actually overflows: `mask-image` on a short list would
+     fade the last question for no reason. There is no CSS test for overflow, so
+     the fade is unconditional and the stop is placed at 92% — far enough down
+     that a list which fits is untouched in practice.
+     -------------------------------------------------------------------- */
+  .faq-scroll {
+    mask-image: linear-gradient(to bottom, #000 92%, transparent 100%);
+    overscroll-behavior: contain;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-scroll {
+      scroll-behavior: auto;
+    }
+  }
+
   /* --- Showcase carousel ----------------------------------------------------
      Cards on a wheel. Each one is rotated about a hub far below the section, so
      turning it carries the card along the rim — a gentle tilt and a small drop
@@ -580,7 +607,7 @@
 
   .showcase-card {
     --card-w: min(80vw, 22rem);
-    --card-h: 21rem;
+    --card-h: 23rem;
 
     position: absolute;
     /* Not flush to the top. A rotated rectangle's bounding box reaches higher

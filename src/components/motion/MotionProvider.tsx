@@ -192,6 +192,22 @@ function start(motion: typeof import('@/lib/motion')) {
     console.error('[motion] setup failed, continuing without animation', error)
   }
 
+  // ScrollTrigger records each trigger's position as a scroll offset when it is
+  // created, and at that moment the page is not its final height: the webfonts
+  // have not landed, so every block of text is still measured in the fallback
+  // face. Near the top the error is too small to matter. Further down it
+  // accumulates, and a trigger can end up recorded past the point it should
+  // fire — the heading then stays at its `from` state for good, which is a
+  // masked line stuck below its own mask.
+  //
+  // It only shows on a jump. Scrolling down the page crosses the stale offset on
+  // the way, so the trigger fires anyway and the bug hides; landing on an anchor
+  // or restoring a scroll position does not. Recomputing once the fonts have
+  // settled fixes every trigger at once.
+  void document.fonts?.ready.then(() => {
+    ScrollTrigger.refresh()
+  })
+
   // --- Lenis -----------------------------------------------------------------
   let lenis: import('lenis').default | null = null
   let tick: ((time: number) => void) | null = null

@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import { CTABand } from '@/components/blocks/CTABand'
 import { CapabilityTabs } from '@/components/blocks/CapabilityTabs'
 import { CaseStudyRail } from '@/components/blocks/CaseStudyRail'
-import { FAQAccordion } from '@/components/blocks/FAQAccordion'
+import { FaqWithForm } from '@/components/blocks/FaqWithForm'
 import { HeroPrimary } from '@/components/blocks/HeroPrimary'
 import { IndustryTabs } from '@/components/blocks/IndustryTabs'
 import { LogoMarquee } from '@/components/blocks/LogoMarquee'
@@ -235,10 +235,15 @@ export default async function HomePage() {
       <TestimonialSlider testimonials={[]} />
 
       {/* 14 — bone. Eight questions, and the FAQPage JSON-LD comes from the same array. */}
-      <FAQAccordion
+      <FaqWithForm
         faqs={homeFaqs}
         eyebrow="Questions"
-        heading="What people ask before they get in touch"
+        heading="What people ask before
+they get in touch"
+        formEyebrow="Still not sure?"
+        formHeading="Ask the question
+that is not on the list."
+        formBody="Tell us what you are trying to change. We reply within one business day, and the first call is thirty minutes of questions rather than a pitch."
       />
 
       {/* 15 — amber. Once per page, near the end. */}
