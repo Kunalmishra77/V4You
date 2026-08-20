@@ -12,6 +12,7 @@ import { ParallaxCards } from '@/components/blocks/ParallaxCards'
 import { PinnedSequence } from '@/components/blocks/PinnedSequence'
 import { StackedSlider } from '@/components/blocks/StackedSlider'
 import { ProblemCards } from '@/components/blocks/ProblemCards'
+import { ShowcaseCarousel } from '@/components/blocks/ShowcaseCarousel'
 import { ServiceCardGrid } from '@/components/blocks/ServiceCardGrid'
 import { SolutionMatrix } from '@/components/blocks/SolutionMatrix'
 import { TestimonialSlider } from '@/components/blocks/TestimonialSlider'
@@ -27,6 +28,7 @@ import { homeHero, pillarSection } from '@/seed/home'
 import { sampleCaseStudies } from '@/seed/case-studies-sample'
 import { homeFaqs, processTimeline, trustPanels } from '@/seed/home-proof'
 import { homeServices } from '@/seed/home-services'
+import { homeShowcase } from '@/seed/home-showcase'
 
 /**
  * Home — T-058, docs/05 §1.
@@ -62,6 +64,7 @@ export const metadata: Metadata = buildMetadata({
 export default async function HomePage() {
   const settings = await getSiteSettings()
   const showSamples = sampleContentEnabled()
+  const showcaseStudies = showSamples ? sampleCaseStudies : []
   const { contact, socials } = settings
 
   return (
@@ -108,6 +111,27 @@ export default async function HomePage() {
         cards={homeServices.cards}
         cta={homeServices.cta}
       />
+
+      {/*
+        1c — the work showcase: a 3D stage of cards with the sector pills above
+        it, dragged or selected.
+
+        It renders only when there is something to put on it. Real studies come
+        from the CMS gated on `permissionStatus`; the sample set is design
+        scaffolding behind NEXT_PUBLIC_SAMPLE_CONTENT, which is never set in a
+        deployment. With neither, the section omits itself rather than standing
+        there empty — the explanatory empty state already lives at block 10,
+        and saying the same thing twice on one page reads as an excuse.
+      */}
+      {showcaseStudies.length > 0 && (
+        <ShowcaseCarousel
+          eyebrow={homeShowcase.eyebrow}
+          heading={homeShowcase.heading}
+          body={homeShowcase.body}
+          items={showcaseStudies}
+          isSample={showSamples}
+        />
+      )}
 
       {/* 2 — navy-800. Logo wall if any client permits it, capability strip otherwise. */}
       <TrustBar />

@@ -527,6 +527,62 @@
     animation-iteration-count: 4;
   }
 
+  /* --- Showcase carousel ----------------------------------------------------
+     The 3D stage. Every card is absolutely positioned in the same place; what
+     separates them is `--offset`, the signed distance from the selected card,
+     written by the component.
+
+     One rule does all of it. `--offset` drives the sideways travel, the tilt
+     and the depth together, so a card two along is automatically further, more
+     turned and further back than a card one along — there is no per-position
+     styling to keep in sync, and adding a sixth card needs no CSS at all.
+
+     `perspective` sits on the stage rather than the card so all of them turn
+     toward the same vanishing point. On the card it would give each one its
+     own, and the row would fan rather than recede.
+
+     Cards more than one step away are faded out and taken out of the pointer's
+     way. They are still in the DOM and still `inert`, so nothing about the
+     accessibility tree changes as the selection moves — only opacity does.
+     -------------------------------------------------------------------- */
+  .showcase-stage {
+    perspective: 90rem;
+  }
+
+  .showcase-card {
+    transform-style: preserve-3d;
+    transform: translateX(calc(var(--offset, 0) * 62%)) translateZ(calc(abs(var(--offset, 0)) * -14rem))
+      rotateY(calc(var(--offset, 0) * -18deg));
+    opacity: 1;
+    transition:
+      transform 620ms var(--ease-expo),
+      opacity 380ms var(--ease-reveal);
+    will-change: transform;
+  }
+
+  /* Two or more steps out: present, but neither seen nor clickable. `abs()` is
+     what keeps this symmetric without a second rule for the other side. */
+  .showcase-card:not([role='tabpanel']) {
+    z-index: 1;
+  }
+
+  .showcase-card[role='tabpanel'] {
+    /* The front card must sit above its neighbours, and above the ones behind
+       it in DOM order as well — without this the later siblings paint on top of
+       the selected one. */
+    z-index: 10;
+  }
+
+  .showcase-card[inert] {
+    pointer-events: none;
+  }
+
+  @supports (width: abs(-1px)) {
+    .showcase-card {
+      opacity: clamp(0, calc(2 - abs(var(--offset, 0))), 1);
+    }
+  }
+
   /* --- Stacked slider -------------------------------------------------------
      The 3D card stack. `perspective` sits on the container rather than the
      card, so every card tips toward the same vanishing point instead of each
@@ -936,6 +992,12 @@
     [role='tabpanel'],
     [role='tabpanel'].stack-card {
       animation: none;
+    }
+
+    /* The stage still rearranges — it has to, or selecting a card does nothing
+       visible — but it does so instantly rather than swinging through 3D. */
+    .showcase-card {
+      transition: none;
     }
 
     /* The line appears complete rather than typing, and the caret is removed
