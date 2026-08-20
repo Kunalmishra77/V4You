@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
+import { Typewriter } from '@/components/shared/Typewriter'
 import { technologyEcosystem } from '@/seed/home-proof'
 
 import { HeroMedia } from './HeroMedia'
@@ -60,8 +61,12 @@ export function HeroPrimary({
       <div className="mx-auto grid w-full max-w-content flex-1 grid-rows-[1fr_auto] gap-10 px-gutter py-14 lg:py-20 [@media(max-height:820px)]:gap-6 [@media(max-height:820px)]:py-8 lg:[@media(max-height:820px)]:py-10">
         {/* Copy — left, vertically centred */}
         <div className="flex max-w-2xl flex-col justify-center [text-shadow:0_1px_24px_color-mix(in_oklab,var(--color-navy-900)_70%,transparent)]">
+          {/* The one typed line on the site. It sits on the label rather than
+              the headline on purpose: typing withholds text from a reader who
+              is trying to read it, which is acceptable for four words of
+              category and not for the sentence they came for. */}
           <Eyebrow as="p" data-hero-item="" style={{ '--reveal-index': 0 } as CSSProperties}>
-            {eyebrow}
+            <Typewriter>{eyebrow}</Typewriter>
           </Eyebrow>
 
           {/*

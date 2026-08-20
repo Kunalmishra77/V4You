@@ -21,8 +21,10 @@ import { Eyebrow } from '@/components/shared/Eyebrow'
 import { JsonLd } from '@/components/shared/JsonLd'
 import { SectionShell } from '@/components/shared/SectionShell'
 import { getSiteSettings } from '@/lib/content'
+import { sampleContentEnabled } from '@/lib/sample-content'
 import { buildMetadata, faqSchema, organizationSchema, websiteSchema } from '@/lib/seo'
 import { homeHero, pillarSection } from '@/seed/home'
+import { sampleCaseStudies } from '@/seed/case-studies-sample'
 import { homeFaqs, processTimeline, trustPanels } from '@/seed/home-proof'
 
 /**
@@ -58,6 +60,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function HomePage() {
   const settings = await getSiteSettings()
+  const showSamples = sampleContentEnabled()
   const { contact, socials } = settings
 
   return (
@@ -168,7 +171,19 @@ export default async function HomePage() {
           </p>
         </div>
         <div className="mt-12">
-          <CaseStudyRail studies={[]} />
+          {/*
+            Real studies come from the CMS gated on `permissionStatus`. Until
+            one is cleared this is an empty array, and the rail renders its
+            explanatory empty state rather than pretending.
+
+            The sample set is design scaffolding — it renders only with
+            NEXT_PUBLIC_SAMPLE_CONTENT=1, which is never set in a deployment,
+            and every card it produces is labelled as a placeholder.
+          */}
+          <CaseStudyRail
+            studies={showSamples ? sampleCaseStudies : []}
+            isSample={showSamples}
+          />
         </div>
       </SectionShell>
 

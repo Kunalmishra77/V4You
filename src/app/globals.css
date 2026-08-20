@@ -424,6 +424,93 @@
     animation-delay: calc(120ms + var(--reveal-index, 0) * 110ms);
   }
 
+  /* --- Drag badge -----------------------------------------------------------
+     Rides beside the pointer over the case-study rail. Positioned from two
+     custom properties the component writes on pointer move, with the translate
+     doing the offset so the badge sits below-right of the cursor rather than
+     under it — under it and the badge covers the thing being pointed at.
+
+     `left`/`top` rather than a transform for the position itself, because the
+     translate is already carrying the offset and stacking both into one
+     transform makes the offset scale with nothing. The eased transition is on
+     the position, so the badge trails the pointer very slightly. That lag is
+     the whole effect: a badge that tracks exactly reads as part of the cursor,
+     one that trails reads as an object following it.
+     -------------------------------------------------------------------- */
+  .drag-badge {
+    left: var(--badge-x, 0px);
+    top: var(--badge-y, 0px);
+    transform: translate(16px, 16px);
+    transition:
+      left 220ms var(--ease-reveal),
+      top 220ms var(--ease-reveal);
+  }
+
+  /* --- Typewriter -----------------------------------------------------------
+     A line that types itself out, in CSS.
+
+     This only works honestly on monospace text, and the eyebrow already is:
+     `steps()` advances the reveal in equal slices, so the reveal edge lands
+     between characters only when every character is the same width. On a
+     proportional face the same animation exposes half a letterform at a time
+     and reads as a rendering fault rather than typing.
+
+     What animates is the *width* of a clipping box, so the text underneath is
+     ordinary text the entire time — present in the DOM from first paint, at
+     full contrast, and read normally by a screen reader, which does not consult
+     the width of its container. There is no character-by-character DOM churn
+     and no script.
+
+     The reveal is a `clip-path` wipe, not an animated width. Width was the
+     first attempt and it is subtly wrong: the end value has to be computed from
+     a character count in `ch` units, and `ch` is the width of a zero — close to
+     the average glyph in a mono face but not equal to it. The estimate came out
+     narrow, so the last characters were clipped permanently, on every page
+     load, in the first line of the hero. A clip-path needs no such arithmetic:
+     100% is exactly the element, whatever it turns out to measure.
+
+     `--type-chars` still drives the duration and the step count, so it must be
+     the real length of the string — but a wrong value now only makes the
+     typing faster or slower, never truncated.
+     -------------------------------------------------------------------- */
+  @keyframes typewriter {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+
+  @keyframes typewriter-caret {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .typewriter {
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: bottom;
+    animation: typewriter calc(var(--type-chars, 20) * 45ms) steps(var(--type-chars, 20)) both;
+    animation-delay: 260ms;
+  }
+
+  .typewriter::after {
+    content: '';
+    display: inline-block;
+    width: 0.55ch;
+    height: 1em;
+    margin-left: 0.15ch;
+    vertical-align: -0.12em;
+    background: currentColor;
+    animation: typewriter-caret 1s steps(1) infinite;
+    /* Stops blinking once the line is typed and the reader has had a moment.
+       A caret that blinks forever is a permanently moving element on the page,
+       which WCAG 2.2.2 treats as something a visitor must be able to stop. */
+    animation-iteration-count: 4;
+  }
+
   /* --- Stacked slider -------------------------------------------------------
      The 3D card stack. `perspective` sits on the container rather than the
      card, so every card tips toward the same vanishing point instead of each
@@ -833,6 +920,22 @@
     [role='tabpanel'],
     [role='tabpanel'].stack-card {
       animation: none;
+    }
+
+    /* The line appears complete rather than typing, and the caret is removed
+       entirely — a blinking block is exactly the kind of thing this preference
+       is set to avoid. */
+    .typewriter {
+      animation: none;
+      clip-path: none;
+    }
+
+    .typewriter::after {
+      display: none;
+    }
+
+    .drag-badge {
+      transition: none;
     }
 
     details::details-content {
