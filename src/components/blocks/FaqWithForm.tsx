@@ -1,4 +1,4 @@
-import { ConsultationForm } from '@/components/forms/ConsultationForm'
+import { CompactEnquiryForm } from '@/components/forms/CompactEnquiryForm'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { Headline } from '@/components/shared/Headline'
 import { JsonLd } from '@/components/shared/JsonLd'
@@ -8,8 +8,15 @@ import { faqSchema, type Faq } from '@/lib/seo'
 /**
  * FaqWithForm — the last section before the footer.
  *
- * Two panels side by side: the form on the left, every answer on the right in a
- * panel that scrolls inside itself. It replaces a full-width accordion that ran
+ * Two panels side by side and the same height: a short form on the left, every
+ * answer on the right in a panel that scrolls inside itself.
+ *
+ * The form is `CompactEnquiryForm`, not the full one. `ConsultationForm` has
+ * eleven fields, seven service checkboxes and a "what happens next" block — put
+ * here it ran three screens tall against a panel that ran one, which is not a
+ * section, it is a form with something small beside it. Five fields is what a
+ * reply actually needs, and both panels then stand the same height, which is
+ * the arrangement this section is for. It replaces a full-width accordion that ran
  * to eight questions down the page, and the swap earns its place — a visitor who
  * reached the bottom either found their answer or did not, and this puts the way
  * to ask directly beside the answers rather than one section further down.
@@ -56,9 +63,15 @@ export function FaqWithForm({
       {/* Only emitted where the answers are actually on the page. */}
       <JsonLd schemas={[faqSchema(faqs)]} />
 
-      <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-10">
+      {/*
+        No `items-start`. Grid items stretch by default, and stretching is what
+        makes the two panels the same height — the answer panel then flexes to
+        fill whatever the form comes to, rather than being given a height in rem
+        that is wrong at every breakpoint but one.
+      */}
+      <div className="grid gap-8 lg:grid-cols-2 lg:gap-10">
         {/* --- Left: the way to ask ---------------------------------------- */}
-        <div className="border border-navy-700 bg-navy-900 p-8 surface-navy lg:p-10">
+        <div className="flex flex-col border border-navy-700 bg-navy-900 p-8 surface-navy lg:p-10">
           <Eyebrow>{formEyebrow}</Eyebrow>
           <Headline size="h3" className="mt-5">
             {formHeading}
@@ -66,12 +79,12 @@ export function FaqWithForm({
           <p className="mt-4 max-w-measure text-body-sm">{formBody}</p>
 
           <div className="mt-8">
-            <ConsultationForm source="home-faq" />
+            <CompactEnquiryForm source="home-faq" />
           </div>
         </div>
 
         {/* --- Right: every answer, scrolling in place ---------------------- */}
-        <div className="border border-(--line) bg-white p-8 surface-white lg:p-10">
+        <div className="flex min-h-0 flex-col border border-(--line) bg-white p-8 surface-white lg:p-10">
           <Eyebrow>{eyebrow}</Eyebrow>
           <Headline size="h3" className="mt-5">
             {heading}
@@ -80,15 +93,30 @@ export function FaqWithForm({
           <div
             className={[
               'faq-scroll mt-8 overflow-y-auto pr-1',
-              // Tall enough to show three or four questions, so the panel reads
-              // as a list with more in it rather than as a cropped paragraph.
-              'max-h-[26rem] lg:max-h-[34rem]',
+              // Fills whatever height the row settles at rather than carrying a
+              // fixed one. `min-h-0` is the part that is easy to miss: a flex
+              // child will not shrink below its content without it, so the
+              // panel would grow to fit all eight questions and never scroll.
+              'min-h-0 flex-1',
+              // A floor for narrow screens, where the row is not stretched.
+              'max-h-[26rem] lg:max-h-none',
               '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
             ].join(' ')}
           >
             <div className="border-t border-(--line)">
-              {faqs.map((faq) => (
-                <details key={faq.question} className="group border-b border-(--line)">
+              {faqs.map((faq, index) => (
+                <details
+                  key={faq.question}
+                  // The first answer is open on arrival. Eight collapsed
+                  // questions fit the panel exactly, so nothing scrolls and the
+                  // fade at the bottom has nothing to signal — the panel reads
+                  // as a plain list that happens to be in a box. One answer open
+                  // makes it overflow, which is both the affordance and the more
+                  // useful state: a visitor sees an answer rather than eight
+                  // things to click.
+                  open={index === 0}
+                  className="group border-b border-(--line)"
+                >
                   <summary className="flex cursor-pointer list-none items-baseline gap-5 py-5 [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500">
                     <span className="flex-1 font-display text-body font-semibold text-(--ink)">
                       {faq.question}
