@@ -55,6 +55,22 @@ import { cn } from '@/lib/utils'
  */
 
 /**
+ * Wheel radius in px, matching `--wheel-radius` in globals.css. Needed here
+ * because flattening the path into an oval requires a cosine, and CSS has no
+ * trigonometry in `calc()`.
+ */
+const RADIUS_PX = 175 * 16
+
+/**
+ * How much of the circle's vertical drop to keep. A true circle drops the outer
+ * cards `radius × (1 − cos θ)` — 169px at 20° — and all of that empty space has
+ * to be reserved below the wheel, where it reads as a hole in the section.
+ * Keeping 40% flattens the path into a shallow oval: the cards still fall away
+ * as they travel, and the section is 170px shorter.
+ */
+const OVAL = 0.4
+
+/**
  * Degrees between one card and the next on the rim.
  *
  * Small, deliberately. The tilt of a card is its own step multiplied by how far
@@ -89,6 +105,7 @@ export function ShowcaseCarousel({
   heading,
   body,
   items,
+  cta,
   marqueeItems,
   marqueeLabel,
   isSample = false,
@@ -98,6 +115,8 @@ export function ShowcaseCarousel({
   heading: string
   body?: string
   items: CaseStudyCard[]
+  /** The band between the wheel and the rail. */
+  cta?: { heading: string; body: string; label: string; href: string }
   /** The rail below the wheel. Continuous, pauses on hover. */
   marqueeItems?: readonly string[]
   marqueeLabel?: string
@@ -107,6 +126,9 @@ export function ShowcaseCarousel({
   const [angle, setAngle] = useState(0)
   const [badge, setBadge] = useState<{ x: number; y: number } | null>(null)
   const [dragging, setDragging] = useState(false)
+  // The badge belongs to the draggable space, so it hides over a card — where
+  // the gesture is a click, not a turn.
+  const [overCard, setOverCard] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const drag = useRef({ active: false, lastX: 0, moved: 0, startAngle: 0 })
@@ -212,8 +234,12 @@ export function ShowcaseCarousel({
   if (!count) return null
 
   return (
-    <SectionShell canvas={canvas} className="overflow-hidden">
-      <div className="text-center">
+    // `bleed` drops SectionShell's centred container, so the wheel and the rail
+    // run edge to edge. The text blocks put the gutter back for themselves —
+    // full-bleed is about the moving parts, and a heading against the bezel is
+    // just hard to read.
+    <SectionShell canvas={canvas} bleed className="overflow-hidden">
+      <div className="px-gutter text-center">
         <Eyebrow className="justify-center">{eyebrow}</Eyebrow>
         <Headline className="mx-auto mt-5">{heading}</Headline>
         {body && <p className="mx-auto mt-5 max-w-measure text-body-lg">{body}</p>}
@@ -222,14 +248,14 @@ export function ShowcaseCarousel({
       {isSample && (
         <p
           role="note"
-          className="mx-auto mt-8 max-w-measure border-l-2 border-amber-500 bg-navy-800 px-5 py-4 text-left text-body-sm text-bone"
+          className="mx-gutter mt-8 max-w-measure border-l-2 border-amber-500 bg-navy-800 px-5 py-4 text-left text-body-sm text-bone"
         >
           <strong className="font-display font-semibold">Placeholder content.</strong> These are not
           real engagements and contain no measured results.
         </p>
       )}
 
-      <div className="mt-10 flex items-center justify-center gap-3">
+      <div className="mt-10 flex items-center justify-center gap-3 px-gutter">
         <ArrowButton label="Previous" direction="prev" onClick={() => goTo((active - 1 + count) % count)} />
 
         <div
@@ -271,9 +297,9 @@ export function ShowcaseCarousel({
 
       {/* `isolate` keeps the wheel from negotiating z-index with the page. */}
       <div // Tall enough for a whole card plus the drop of the outermost one. A card is
-          // ~457px and the 20° card sits ~184px lower, so anything under 44rem
+          // ~457px and the 20° card sits ~184px lower, so anything under 36rem once the path is flattened
           // clips the bottom off the cards at the edges.
-          className="showcase relative isolate mt-12 min-h-[44rem]">
+          className="showcase relative isolate mt-12 min-h-[36rem]">
         <div
           ref={stageRef}
           onPointerDown={onPointerDown}
@@ -305,6 +331,12 @@ export function ShowcaseCarousel({
             offsetDeg = (((offsetDeg + span / 2) % span) + span) % span
             offsetDeg -= span / 2
 
+            // Lift the card back up by the part of the circular drop we are
+            // not keeping. Applied in the parent's space, alongside the
+            // centring translate, so the rotation does not carry it round.
+            const drop = RADIUS_PX * (1 - Math.cos((offsetDeg * Math.PI) / 180))
+            const lift = -drop * (1 - OVAL)
+
             const isFront = index === active
 
             return (
@@ -316,21 +348,51 @@ export function ShowcaseCarousel({
                       id: `showcase-panel-${item.slug}`,
                       'aria-labelledby': `showcase-tab-${item.slug}`,
                     }
-                  : { 'aria-hidden': true as const, inert: true })}
+                  : // `aria-hidden` but **not** `inert`. Inert excludes an
+                    // element from hit-testing altogether, so an inert card
+                    // never receives the hover or the click — which is exactly
+                    // what stopped a side card being clickable. Dropping it
+                    // costs nothing here because a hidden card carries no
+                    // focusable content: the button below is rendered on the
+                    // front card only.
+                    { 'aria-hidden': true as const })}
+                // A card is for clicking; the space around it is for dragging.
+                // Stopping the pointer here keeps a press on a card from
+                // starting a turn, so a click always lands as a click.
+                onPointerDown={(event) => {
+                  event.stopPropagation()
+                  // Clear the distance from any previous gesture. Without this a
+                  // click on a card can be swallowed by the slop check below,
+                  // using a number left over from the last drag.
+                  drag.current.moved = 0
+                }}
+                onPointerEnter={() => setOverCard(true)}
+                onPointerLeave={() => setOverCard(false)}
                 onClick={() => {
-                  // A drag that happens to end over a card is not a click.
                   if (drag.current.moved > CLICK_SLOP) return
                   goTo(index)
                 }}
-                style={{ '--card-deg': `${offsetDeg}deg` } as CSSProperties}
+                style={
+                  {
+                    '--card-deg': `${offsetDeg}deg`,
+                    '--card-lift': `${lift}px`,
+                    // Stacking follows distance from the middle rather than the
+                    // selected/not-selected flag. Flipping a z-index the moment
+                    // `active` changes makes two cards swap depth in one frame,
+                    // which is the jump you see as the selection moves.
+                    zIndex: Math.max(1, 20 - Math.round(Math.abs(offsetDeg))),
+                  } as CSSProperties
+                }
                 className="showcase-card flex flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
               >
-                <div className="p-6">
+                <div className="flex min-h-0 flex-1 flex-col p-6">
                   <p className="font-mono text-label text-(--accent-text) uppercase">
                     {item.confidentialityLabel ?? item.clientDisplayName}
                   </p>
                   <h3 className="mt-3 font-display text-h4 text-(--ink)">{item.headline}</h3>
-                  <p className="mt-3 text-body-sm">{item.outcome}</p>
+                  {/* Clamped, because the card's height is fixed and a long
+                      outcome would otherwise push the button out of the box. */}
+                  <p className="mt-3 line-clamp-4 text-body-sm">{item.outcome}</p>
 
                   {isSample && (
                     <p className="mt-5 font-mono text-label text-(--ink-muted) uppercase">
@@ -338,18 +400,31 @@ export function ShowcaseCarousel({
                     </p>
                   )}
 
-                  <div className="mt-6">
-                    {/*
-                      Samples go to contact, not to a case-study page. Those are
-                      Phase 2 and do not exist, and `next/link` would prefetch a
-                      404 for every card in the set.
-                    */}
-                    <Button
-                      href={isSample ? '/contact' : `/case-studies/${item.slug}`}
-                      variant="ghost-dark"
-                    >
-                      {isSample ? 'Ask about work like this' : 'Read the case study'}
-                    </Button>
+                  {/*
+                    The button is on the front card only. Every other card is
+                    `aria-hidden`, and a focusable control inside a hidden
+                    subtree is reachable by Tab but invisible to a screen
+                    reader — the `aria-hidden-focus` failure. The side cards are
+                    previews: click one and it comes to the front, button and
+                    all.
+
+                    Samples go to contact rather than a case-study page. Those
+                    are Phase 2 and do not exist, and `next/link` would prefetch
+                    a 404 for every card in the set.
+                  */}
+                  {/* The slot is always here, whether or not it holds a button.
+                      Adding one only when a card reaches the front would reflow
+                      the card's insides at the exact moment it is moving, which
+                      is the other half of the jump. */}
+                  <div className="mt-auto min-h-[3.25rem] pt-6">
+                    {isFront && (
+                      <Button
+                        href={isSample ? '/contact' : `/case-studies/${item.slug}`}
+                        variant="ghost-dark"
+                      >
+                        {isSample ? 'Ask about work like this' : 'Read the case study'}
+                      </Button>
+                    )}
                   </div>
                 </div>
 
@@ -368,7 +443,7 @@ export function ShowcaseCarousel({
             context, so this badge is sealed within it and cannot paint over
             anything that comes after.
           */}
-          {badge && (
+          {badge && !overCard && (
             <span
               aria-hidden="true"
               style={{ '--badge-x': badge.x + 'px', '--badge-y': badge.y + 'px' } as CSSProperties}
@@ -379,6 +454,22 @@ export function ShowcaseCarousel({
           )}
         </div>
       </div>
+
+      {cta && (
+        <div className="px-gutter">
+          <div className="mx-auto mt-4 flex max-w-content flex-col gap-8 border border-navy-700 bg-navy-800 p-8 surface-navy-800 lg:flex-row lg:items-center lg:justify-between lg:p-12">
+            <div>
+              <Headline size="h3" className="whitespace-pre-line">
+                {cta.heading}
+              </Headline>
+              <p className="mt-4 max-w-measure text-body-sm">{cta.body}</p>
+            </div>
+            <div className="shrink-0">
+              <Button href={cta.href}>{cta.label}</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* The rail. Separate, continuous, pauses on hover. */}
       {marqueeItems && marqueeItems.length > 0 && (

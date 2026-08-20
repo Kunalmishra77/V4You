@@ -539,15 +539,25 @@
      opposite, and that is what went wrong before — at 20° a step, the outer
      cards ended up rotated 40°, with their text on a diagonal nobody could read.
 
-     24rem cards, 10° a step, 191rem radius: tilts of 10° and 20° that stay
-     legible, and about 80px of clear air between neighbours. Five cards across
-     a 1920 viewport, three of them whole and the outer pair running off the
-     edges.
+     22rem cards, 10° a step, 175rem radius: tilts of 10° and 20° that stay
+     legible, about 60px of clear air between neighbours, and the outer pair
+     reaching further into frame than they did at 191rem — a shorter radius
+     pulls the whole set inward.
 
-     The gap is measured between *bounding boxes*, not between cards. A 384×420
-     card turned 10° occupies 451px of horizontal space, so spacing the centres
-     by the card's own width leaves the neighbours overlapping — which is what
-     160rem did, by about 20px. The radius has to clear the rotated box.
+     The gap is measured between *bounding boxes*, not between cards. A 352×448
+     card turned 10° occupies 425px of horizontal space, so spacing the centres
+     by the card's own width leaves neighbours overlapping. The radius has to
+     clear the rotated box, which is why it cannot come down much further.
+
+     Every card is the same fixed height, not sized to its own copy. On a wheel
+     the difference shows immediately: cards at different heights read as cards
+     at different distances, and the rim stops looking like a rim.
+
+     The path is an oval, not a circle. A true circle drops the outer cards by
+     `radius × (1 − cos θ)` — 169px at 20° — and every one of those pixels has to
+     be reserved below the wheel, where it reads as a hole in the section. The
+     component lifts each card back by most of its own drop, which keeps the
+     fall-away without the dead space.
 
      The wheel clips, because cards swing well below their own box on the way
      round and would otherwise land on whatever follows the section.
@@ -565,16 +575,26 @@
   }
 
   .showcase-card {
-    --card-w: min(80vw, 24rem);
-    --wheel-radius: 191rem;
+    --card-w: min(80vw, 22rem);
+    --card-h: 28rem;
+    --wheel-radius: 175rem;
 
     position: absolute;
-    top: 0;
+    /* Not flush to the top. A rotated rectangle's bounding box reaches higher
+       than the card's own edge — its raised corner — and the wheel clips, so a
+       card at 10° lost 14px of that corner against the boundary. */
+    top: 1.5rem;
     left: 50%;
     width: var(--card-w);
+    height: var(--card-h);
     /* x at the card's own centre, y at the hub far below it. */
     transform-origin: calc(var(--card-w) / 2) var(--wheel-radius);
-    transform: translateX(calc(var(--card-w) / -2)) rotate(var(--card-deg, 0deg));
+    /* The lift is in the parent's space, applied with the centring translate
+       and before the rotation takes effect, so it pulls the card straight up
+       rather than along the rim. It is what turns the circle into an oval —
+       see `OVAL` in the component. */
+    transform: translate(calc(var(--card-w) / -2), var(--card-lift, 0px))
+      rotate(var(--card-deg, 0deg));
     transition: transform 620ms var(--ease-expo);
     will-change: transform;
   }
@@ -591,12 +611,11 @@
      it off the rim. Naming the animation off on the more specific selector
      keeps the wheel transform. */
   .showcase-card[role='tabpanel'] {
-    z-index: 2;
     animation: none;
   }
 
-  .showcase-card[inert] {
-    pointer-events: auto;
+  /* A side card is a preview you can click to bring forward. */
+  .showcase-card:not([role='tabpanel']) {
     cursor: pointer;
   }
 

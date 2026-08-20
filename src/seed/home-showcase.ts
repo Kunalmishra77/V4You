@@ -13,6 +13,21 @@ export const homeShowcase = {
   heading: 'What this looks like\nin practice.',
   body: 'Drag, or pick a sector.',
 
+  /**
+   * The band between the wheel and the rail.
+   *
+   * The reference's version here names three clients and quotes two figures.
+   * This one names nobody and quotes nothing, because there is nobody to name
+   * and nothing measured to quote — it asks for the problem instead, which is
+   * the thing V4You can actually offer at this stage.
+   */
+  cta: {
+    heading: 'Bring us the problem\nyou have not solved yet.',
+    body: 'Thirty minutes. We come with questions, not a pitch — and you leave with a suggested next step, even if it is not us.',
+    label: 'Book a transformation consultation',
+    href: '/book-consultation',
+  },
+
   marqueeLabel: 'Sectors we work in',
   /**
    * The rail below the arc.
