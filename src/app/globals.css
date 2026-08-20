@@ -94,7 +94,23 @@
   /* Reading measures (docs/01 §3) */
   --container-measure: 68ch; /* long-form body copy */
   --container-headline: 20ch; /* headings */
-  --container-content: 1320px; /* max content width, docs/01 §4 */
+  /* Full width, not the 1320px docs/01 §4 specifies.
+
+     Every container on the site — header, footer, mega menu, hero, sticky nav
+     and SectionShell — resolves through this one token, so the site goes
+     edge-to-edge from here rather than from nine separate edits. `--spacing-gutter`
+     still holds content off the screen edge, which is the part that has to stay:
+     text touching the bezel is unreadable, and full-bleed means no wasted
+     margin, not no margin at all.
+
+     Raised rather than decided quietly, because docs/01 §4 states a number and
+     this overrides it: on a very wide monitor a 1320px column is the reason a
+     site looks like a document, and the client asked for the opposite. Long-form
+     text is unaffected — paragraphs are still held to `max-w-measure` and
+     headings to `max-w-headline`, so the reading measure never widens. What
+     widens is the grids, rails and diagrams, which is where the space was
+     wanted. */
+  --container-content: 100%;
 
   /* --- Layout (docs/01 §4) ------------------------------------------------- */
   /* The 8px base is expressed through these named steps and through using even

@@ -39,17 +39,20 @@ import type { ServiceCard } from '@/seed/services'
  * before they rise. Without it they overlap whatever follows.
  */
 /**
- * Vertical gap between one card's starting position and the next.
+ * Vertical gap between one column's starting position and the next.
  *
- * 280px puts the fourth card 840px below the first at rest. At 150 the whole
- * effect was a 226px spread on entry — small enough that a reader scrolling at
- * normal speed never registers it as motion, only as cards that happened to be
- * slightly out of line. At 300 the fourth card started so far down that the
- * section clipped it entirely and it appeared from nowhere halfway through.
+ * It has to stay under the height of a column, because each column clips its
+ * own contents. At 280 the fourth column started 840px down inside a 432px
+ * cell — entirely outside it, so it was invisible for most of the sequence and
+ * then appeared from nowhere. 150 puts it 450px down, just past the bottom
+ * edge, so its top rule is showing almost from the start and the reader can
+ * watch all four arrive.
  *
- * The slowness comes from the staggered scrub below, not from the distance.
+ * Distance is not what sets the pace here. The pin does: the sequence is spread
+ * over a fixed amount of scroll regardless of how far anything travels, so
+ * shortening the distance makes the movement gentler, not quicker.
  */
-const OFFSET_STEP = 280
+const OFFSET_STEP = 150
 
 export function ParallaxCards({
   eyebrow,
@@ -88,69 +91,63 @@ export function ParallaxCards({
         mm.add('(min-width: 1024px)', () => {
           const items = gsap.utils.toArray<HTMLElement>('[data-parallax-card]')
 
+          // One pinned timeline rather than four independent scrubs.
+          //
+          // Independent tweens meant the reader could scroll straight past
+          // while the fourth column was still hundreds of pixels down — the
+          // section left the viewport before its own animation had finished,
+          // which is the one outcome that makes the whole effect pointless.
+          // Pinning holds the section still and spends scroll on the timeline
+          // instead of on moving the page, so the columns are guaranteed to
+          // land before anything else comes into view.
+          //
+          // `anticipatePin` starts the pin a fraction early; without it a fast
+          // scroll shows one frame of the section jumping as it becomes fixed.
+          // `invalidateOnRefresh` re-reads the offsets on resize, so the
+          // distances are recalculated rather than kept from the old width.
+          const tl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'center center',
+              end: '+=1600',
+              pin: true,
+              scrub: 1,
+              anticipatePin: 1,
+              invalidateOnRefresh: true,
+            },
+          })
+
           for (const [index, card] of items.entries()) {
-            // The first card is already where it belongs; the rest start a step
-            // lower each and rise to meet it.
+            // The first column is already where it belongs; the rest start a
+            // step lower each and rise to meet it.
             if (index === 0) continue
 
-            gsap.fromTo(
+            // Later columns are given longer to travel, so they finish in
+            // order rather than together. All three start at position 0 of the
+            // timeline; only their durations differ.
+            tl.fromTo(
               card,
               { y: index * OFFSET_STEP },
               {
                 y: 0,
                 // Linear, because the scroll position is the timing. An ease
-                // here would make the cards speed up and slow down under a
+                // here would make the columns speed up and slow down under a
                 // steady scroll, which reads as a stutter rather than a curve.
                 ease: 'none',
-                scrollTrigger: {
-                  trigger: sectionRef.current,
-                  // Begins the moment the section's top edge appears and ends
-                  // with its centre just above the middle of the screen. The
-                  // convergence therefore finishes exactly where the reader is
-                  // looking, and it has most of a viewport and a half to do it
-                  // in — a shorter window made the cards snap into line rather
-                  // than travel.
-                  //
-                  // Scrub is seconds of catch-up, and these values are high on
-                  // purpose. It is what makes the movement feel weighted rather
-                  // than welded to the wheel: the cards keep easing for a beat
-                  // after the scroll has stopped, and a fast flick does not snap
-                  // them into line. At 0.8 they tracked the scroll closely
-                  // enough to read as mechanical.
-                  start: 'top bottom',
-                  end: 'bottom 40%',
-                  // Scrub rises with the index, so each card trails the scroll
-                  // a little more than the one before it. A single value for all
-                  // three made them travel at the same rate and simply start
-                  // from different heights, which converges faster than it
-                  // looks like it should — the gap between them closes at a
-                  // constant rate and the last card arrives almost with the
-                  // second. Staggering the lag means the fourth card is still
-                  // easing after the second has settled.
-                  scrub: 1.5 + index * 0.6,
-                },
+                duration: 0.4 + index * 0.2,
               },
+              0,
             )
           }
 
-          // The CTA waits for the columns. Its window sits inside the last
-          // third of theirs and ends where they do, so it finishes arriving at
-          // the same moment the fourth column settles. Started earlier it was
-          // already at 86% opacity while the columns were still hundreds of
-          // pixels apart, which defeats the point of it being the step after
-          // reading them.
+          // The CTA arrives after the last column has landed — literally, at
+          // the point on the timeline where the longest tween ends.
           if (ctaRef.current) {
-            gsap.from(ctaRef.current, {
-              opacity: 0,
-              y: 40,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: sectionRef.current,
-                start: 'bottom 75%',
-                end: 'bottom 42%',
-                scrub: 1,
-              },
-            })
+            tl.from(
+              ctaRef.current,
+              { opacity: 0, y: 40, ease: 'none', duration: 0.25 },
+              '>-0.05',
+            )
           }
         })
       }, sectionRef)
