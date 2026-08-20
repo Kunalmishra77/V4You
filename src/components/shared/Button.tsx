@@ -32,7 +32,12 @@ import { cn } from '@/lib/utils'
 
 const button = cva(
   [
-    'group relative isolate inline-flex min-h-11 items-center justify-center gap-2',
+    // A **named** group. Tailwind's bare `group-hover:` matches any ancestor
+    // carrying `.group`, and CutCard is one — so hovering a card fired this
+    // button's fill change while the button's own `hover:` text colour did not,
+    // leaving a bone label on a bone fill. Naming the group scopes every
+    // `group-hover/button:` below to this element and nothing above it.
+    'group/button relative isolate inline-flex min-h-11 items-center justify-center gap-2',
     'px-6 py-3 text-center font-display text-body-sm font-semibold',
     'transition-[transform,color] duration-(--duration-button) ease-out',
     'hover:-translate-y-0.5 active:translate-y-0',
@@ -70,10 +75,10 @@ type Variant = NonNullable<VariantProps<typeof button>['variant']>
 
 /** The filled shape behind the label, one entry per variant. */
 const fills: Record<Variant, string> = {
-  primary: 'bg-amber-500 group-hover:bg-amber-600',
-  navy: 'bg-navy-900 group-hover:bg-navy-800',
-  'ghost-light': 'bg-(--ink-muted) group-hover:bg-(--ink)',
-  'ghost-dark': 'bg-(--ink-muted) group-hover:bg-(--ink)',
+  primary: 'bg-amber-500 group-hover/button:bg-amber-600',
+  navy: 'bg-navy-900 group-hover/button:bg-navy-800',
+  'ghost-light': 'bg-(--ink-muted) group-hover/button:bg-(--ink)',
+  'ghost-dark': 'bg-(--ink-muted) group-hover/button:bg-(--ink)',
 }
 
 const isGhost = (variant: Variant) => variant === 'ghost-light' || variant === 'ghost-dark'
@@ -110,7 +115,7 @@ function Shape({ variant }: { variant: Variant }) {
       )}
     >
       {isGhost(variant) && (
-        <span className="absolute inset-px bg-(--surface) transition-opacity duration-(--duration-button) ease-out cut-button group-hover:opacity-0" />
+        <span className="absolute inset-px bg-(--surface) transition-opacity duration-(--duration-button) ease-out cut-button group-hover/button:opacity-0" />
       )}
     </span>
   )

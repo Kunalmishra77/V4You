@@ -5,10 +5,10 @@ import { CapabilityTabs } from '@/components/blocks/CapabilityTabs'
 import { CaseStudyRail } from '@/components/blocks/CaseStudyRail'
 import { FAQAccordion } from '@/components/blocks/FAQAccordion'
 import { HeroPrimary } from '@/components/blocks/HeroPrimary'
-import { OrchestrationDiagram } from '@/components/blocks/OrchestrationDiagram'
 import { IndustryTabs } from '@/components/blocks/IndustryTabs'
 import { LogoMarquee } from '@/components/blocks/LogoMarquee'
 import { NumberedAccordion } from '@/components/blocks/NumberedAccordion'
+import { ParallaxCards } from '@/components/blocks/ParallaxCards'
 import { PinnedSequence } from '@/components/blocks/PinnedSequence'
 import { StackedSlider } from '@/components/blocks/StackedSlider'
 import { ProblemCards } from '@/components/blocks/ProblemCards'
@@ -26,6 +26,7 @@ import { buildMetadata, faqSchema, organizationSchema, websiteSchema } from '@/l
 import { homeHero, pillarSection } from '@/seed/home'
 import { sampleCaseStudies } from '@/seed/case-studies-sample'
 import { homeFaqs, processTimeline, trustPanels } from '@/seed/home-proof'
+import { homeServices } from '@/seed/home-services'
 
 /**
  * Home — T-058, docs/05 §1.
@@ -88,22 +89,25 @@ export default async function HomePage() {
       <HeroPrimary {...homeHero} />
 
       {/*
-        1b — the orchestration diagram, immediately below the fold.
-        It is the page's argument and needs room to be read, which it was not
-        getting while it shared the first screen with the headline.
+        1b — four disciplines, rising into line as the reader scrolls.
+
+        This replaces the orchestration diagram that used to sit here. The
+        diagram is a good drawing and the wrong thing directly under a hero: it
+        asks to be studied, and the second screen of a home page is where a
+        visitor is still deciding whether to keep going. Four cards answer "what
+        kind of company is this" at a glance, and the diagram's argument is
+        carried by the section's own copy.
+
+        OrchestrationDiagram stays in the library — it belongs on a page where
+        someone has already chosen to read.
       */}
-      <SectionShell canvas="navy-800" density="tight" reveal>
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-16">
-          <div>
-            <Eyebrow>How it fits together</Eyebrow>
-            <h2 className="mt-5 max-w-headline font-display text-h3 text-(--ink)">
-              Signals in from the business. Work back out to the people who do it.
-            </h2>
-            <p className="mt-4 max-w-measure text-body-sm">{homeHero.trustLine}</p>
-          </div>
-          <OrchestrationDiagram />
-        </div>
-      </SectionShell>
+      <ParallaxCards
+        eyebrow={homeServices.eyebrow}
+        heading={homeServices.heading}
+        body={homeServices.body}
+        cards={homeServices.cards}
+        cta={homeServices.cta}
+      />
 
       {/* 2 — navy-800. Logo wall if any client permits it, capability strip otherwise. */}
       <TrustBar />
