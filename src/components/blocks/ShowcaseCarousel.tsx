@@ -11,7 +11,6 @@ import {
 } from 'react'
 
 import type { CaseStudyCard } from '@/components/blocks/CaseStudyRail'
-import { BrandFigure, type FigureName } from '@/components/shared/BrandFigure'
 import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { Headline } from '@/components/shared/Headline'
@@ -55,11 +54,18 @@ import { cn } from '@/lib/utils'
  */
 
 /**
- * Wheel radius in px, matching `--wheel-radius` in globals.css. Needed here
- * because flattening the path into an oval requires a cosine, and CSS has no
- * trigonometry in `calc()`.
+ * Wheel radius as a multiple of the stage's own width.
+ *
+ * Fixed pixels were wrong. At 1920 the arc looked right and at 1280 two of the
+ * five cards sat entirely off-screen, because the spacing never changed while
+ * the frame did. Tying the radius to the width keeps the same proportions at
+ * every size: the neighbour lands about 28% of the way out, the far card about
+ * 55%.
  */
-const RADIUS_PX = 175 * 16
+const RADIUS_RATIO = 1.6
+
+/** Width assumed before the stage has been measured, so SSR renders sensibly. */
+const FALLBACK_STAGE_WIDTH = 1280
 
 /**
  * How much of the circle's vertical drop to keep. A true circle drops the outer
@@ -90,15 +96,16 @@ const DEG_PER_PX = 0.065
 /** Pointer travel, in px, past which a drag is a drag and not a click. */
 const CLICK_SLOP = 6
 
-/**
- * A figure per card.
+/*
+ * There is no figure strip on these cards any more.
  *
- * The reference fills each card with a product screenshot, which is most of why
- * theirs read as objects. There is none to use — nothing built for a real client
- * can be shown — so the cards carry the brand's own abstract figures. They
- * occupy the same space and claim nothing.
+ * The reference fills the lower half of each card with a product screenshot.
+ * Standing in for that with the brand's abstract drawings did not work: scaled
+ * into a 96px band they render as a few faint outlines and a stray diamond,
+ * which reads as something failing to load rather than as artwork. A card that
+ * is only its words is plainer and is not broken, and the day real screenshots
+ * exist they go here.
  */
-const FIGURES: FigureName[] = ['grid', 'flow', 'layers', 'signal', 'converge']
 
 export function ShowcaseCarousel({
   eyebrow,
@@ -126,6 +133,7 @@ export function ShowcaseCarousel({
   const [angle, setAngle] = useState(0)
   const [badge, setBadge] = useState<{ x: number; y: number } | null>(null)
   const [dragging, setDragging] = useState(false)
+  const [stageWidth, setStageWidth] = useState(FALLBACK_STAGE_WIDTH)
   // The badge belongs to the draggable space, so it hides over a card — where
   // the gesture is a click, not a turn.
   const [overCard, setOverCard] = useState(false)
@@ -217,6 +225,19 @@ export function ShowcaseCarousel({
     setDragging(false)
   }
 
+  // Measure the stage so the arc scales with it. A ResizeObserver rather than a
+  // window listener, because the stage is full-bleed here but need not be
+  // wherever this component is used next.
+  useEffect(() => {
+    const stage = stageRef.current
+    if (!stage || typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(([entry]) => {
+      setStageWidth(entry.contentRect.width)
+    })
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [])
+
   // Escape releases a drag stranded by a lost pointerup — a real case when the
   // pointer leaves the window mid-gesture.
   useEffect(() => {
@@ -297,9 +318,9 @@ export function ShowcaseCarousel({
 
       {/* `isolate` keeps the wheel from negotiating z-index with the page. */}
       <div // Tall enough for a whole card plus the drop of the outermost one. A card is
-          // ~457px and the 20° card sits ~184px lower, so anything under 36rem once the path is flattened
+          // ~457px and the 20° card sits ~184px lower, so anything under 27rem once the path is flattened
           // clips the bottom off the cards at the edges.
-          className="showcase relative isolate mt-12 min-h-[36rem]">
+          className="showcase relative isolate mt-12 min-h-[27rem]">
         <div
           ref={stageRef}
           onPointerDown={onPointerDown}
@@ -338,9 +359,10 @@ export function ShowcaseCarousel({
             // `transform-origin` was what put the ±10° cards *above* the middle
             // one — the rotation and the correction for it were fighting, and
             // the sequence came out scattered instead of descending.
+            const radius = stageWidth * RADIUS_RATIO
             const rad = (offsetDeg * Math.PI) / 180
-            const x = RADIUS_PX * Math.sin(rad)
-            const y = RADIUS_PX * (1 - Math.cos(rad)) * OVAL
+            const x = radius * Math.sin(rad)
+            const y = radius * (1 - Math.cos(rad)) * OVAL
 
             const isFront = index === active
 
@@ -434,12 +456,6 @@ export function ShowcaseCarousel({
                   </div>
                 </div>
 
-                <div className="relative h-24 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900">
-                  <BrandFigure
-                    name={FIGURES[index % FIGURES.length]}
-                    className="absolute top-1/2 left-1/2 w-[150%] -translate-x-1/2 -translate-y-1/2 opacity-60"
-                  />
-                </div>
               </div>
             )
           })}

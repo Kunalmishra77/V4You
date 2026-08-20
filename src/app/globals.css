@@ -539,15 +539,13 @@
      opposite, and that is what went wrong before — at 20° a step, the outer
      cards ended up rotated 40°, with their text on a diagonal nobody could read.
 
-     22rem cards, 10° a step, 175rem radius: tilts of 10° and 20° that stay
-     legible, about 60px of clear air between neighbours, and the outer pair
-     reaching further into frame than they did at 191rem — a shorter radius
-     pulls the whole set inward.
+     22rem cards and 10° a step, with the radius set from the stage's own width
+     in the component — fixed pixels looked right at 1920 and put two of the five
+     cards off-screen at 1280.
 
-     The gap is measured between *bounding boxes*, not between cards. A 352×448
-     card turned 10° occupies 425px of horizontal space, so spacing the centres
-     by the card's own width leaves neighbours overlapping. The radius has to
-     clear the rotated box, which is why it cannot come down much further.
+     The gap is measured between *bounding boxes*, not between cards. A rotated
+     card occupies more width than its own, so spacing the centres by the card
+     width alone leaves neighbours overlapping.
 
      Every card is the same fixed height, not sized to its own copy. On a wheel
      the difference shows immediately: cards at different heights read as cards
@@ -582,8 +580,7 @@
 
   .showcase-card {
     --card-w: min(80vw, 22rem);
-    --card-h: 28rem;
-    --wheel-radius: 175rem;
+    --card-h: 21rem;
 
     position: absolute;
     /* Not flush to the top. A rotated rectangle's bounding box reaches higher
