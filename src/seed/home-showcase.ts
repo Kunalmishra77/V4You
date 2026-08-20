@@ -12,4 +12,27 @@ export const homeShowcase = {
   eyebrow: 'Selected work',
   heading: 'What this looks like\nin practice.',
   body: 'Drag, or pick a sector.',
+
+  marqueeLabel: 'Sectors we work in',
+  /**
+   * The rail below the arc.
+   *
+   * The reference puts award counts, years in business and headcount here.
+   * These are the eleven sectors that already have a page on this site — real,
+   * checkable, and claiming nothing beyond "we work here", which the pages
+   * themselves back up.
+   */
+  sectors: [
+    'Healthcare',
+    'Manufacturing',
+    'Education',
+    'Real estate',
+    'Retail and ecommerce',
+    'Finance',
+    'Logistics',
+    'Hospitality',
+    'Government',
+    'Startups',
+    'Enterprise',
+  ] as const,
 }

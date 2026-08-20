@@ -13,59 +13,74 @@ import {
 
 import type { CaseStudyCard } from '@/components/blocks/CaseStudyRail'
 import { BrandFigure, type FigureName } from '@/components/shared/BrandFigure'
+import { Button } from '@/components/shared/Button'
 import { Eyebrow } from '@/components/shared/Eyebrow'
 import { Headline } from '@/components/shared/Headline'
+import { Marquee } from '@/components/shared/Marquee'
 import { SectionShell, type Canvas } from '@/components/shared/SectionShell'
 import { cn } from '@/lib/utils'
 
 /**
- * ShowcaseCarousel — the 3D card stage, modelled on the reference site's work
- * showcase.
+ * ShowcaseCarousel — three layers, deliberately separate.
  *
- * A row of name pills sits above a stage. The selected card faces the reader;
- * its neighbours sit back and to the side, tilted. Dragging sideways moves
- * through them, the pills follow, and a badge saying DRAG rides the pointer
- * whenever it is over the stage.
+ * The first version folded the centre card into the arc, and that one decision
+ * caused the bug it was reported for: the drag layer and its badge painted over
+ * the card in the middle, because they were siblings in the same container and
+ * the badge simply had a higher `z-index`. Nudging that number would have hidden
+ * the symptom until the next element arrived. The layers are now genuinely
+ * separate and the stacking is enforced by structure rather than by arithmetic.
  *
- * **The ARIA tab pattern, with a carousel drawn on top.** The pills are a real
- * `tablist`, the front card is its `tabpanel`, arrow keys move between them and
- * a roving tabindex means Tab reaches the content rather than walking every
- * pill first. Dragging and the two arrow buttons are additions to that, never a
- * replacement: everything reachable by dragging is reachable by keyboard.
- * The reference's own version is drag-and-click only, which is unusable without
- * a pointer.
+ *   1. **The arc** — every card on a ring, tilted by position, draggable,
+ *      clickable. `absolute inset-0 z-0`, which makes it a stacking context of
+ *      its own. Everything inside it, the drag badge included, is sealed into
+ *      that context and *cannot* paint above a later sibling however high its
+ *      own `z-index` climbs. That is the fix, and it holds for anything added
+ *      to the arc later.
  *
- * **Only the front card is in the accessibility tree.** The cards either side
- * are previews of content that is one keystroke away, so announcing all five at
- * once would read as five copies of the same section. They are `aria-hidden`
- * and inert; the front one is the panel.
+ *   2. **The centre card** — a sibling of the arc, never a child, at `z-20`.
+ *      Its wrapper is `pointer-events-none` so a drag beginning beside the card
+ *      still reaches the arc underneath; the card itself is
+ *      `pointer-events-auto`, so its own button stays clickable. You drag the
+ *      space around it, and the card is never obstructed.
  *
- * **No animation library.** Position, rotation and depth come from one custom
- * property per card and a single transition. The state driving them is React's
- * already, so a tween would only be duplicating it — and it means the whole
- * thing honours `prefers-reduced-motion` through the stylesheet rather than
- * through a check in here.
+ *   3. **The marquee** — a separate rail below, scrolling continuously and
+ *      pausing on hover. It shares no stacking context with either.
+ *
+ * `isolation: isolate` on the wrapper stops all of this negotiating with
+ * anything else on the page.
+ *
+ * **Controls.** The pills are a real `tablist` and the centre card its
+ * `tabpanel`, with arrow keys and a roving tabindex. Dragging, the two arrow
+ * buttons and clicking a card in the arc are pointer shortcuts on top of that —
+ * the arc cards are `aria-hidden` because selecting one does exactly what its
+ * pill does, and announcing both would read as two of every sector.
  */
 
 /**
  * A figure per position on the ring.
  *
- * The reference fills the lower half of every card with a product screenshot,
- * which is most of why theirs read as objects and a text-only card reads as a
- * slab. There is no screenshot to use — nothing has been built for a real
- * client that can be shown — so the cards carry the brand's own abstract
- * figures instead. They occupy the same space and claim nothing.
- *
- * Assigned by index rather than stored on the study, because it is decoration:
- * a case study's record should not have to know which drawing sits behind it.
+ * The reference fills each card with a product screenshot, which is most of why
+ * theirs read as objects. There is none to use — nothing built for a real client
+ * can be shown — so the cards carry the brand's own abstract figures. They
+ * occupy the same space and claim nothing. Assigned by index because it is
+ * decoration: a case study's record should not have to know which drawing sits
+ * behind it.
  */
 const FIGURES: FigureName[] = ['grid', 'flow', 'layers', 'signal', 'converge']
+
+/** Pointer travel, in px, past which a drag is a drag and not a click. */
+const CLICK_SLOP = 6
+
+/** Pointer travel, in px, that advances the arc by one card. */
+const STEP_DISTANCE = 140
 
 export function ShowcaseCarousel({
   eyebrow,
   heading,
   body,
   items,
+  marqueeItems,
+  marqueeLabel,
   isSample = false,
   canvas = 'navy',
 }: {
@@ -73,6 +88,9 @@ export function ShowcaseCarousel({
   heading: string
   body?: string
   items: CaseStudyCard[]
+  /** The rail below the arc. Continuous, pauses on hover. */
+  marqueeItems?: readonly string[]
+  marqueeLabel?: string
   isSample?: boolean
   canvas?: Canvas
 }) {
@@ -82,7 +100,7 @@ export function ShowcaseCarousel({
   const baseId = useId()
   const stageRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
-  const drag = useRef({ active: false, startX: 0 })
+  const drag = useRef({ active: false, startX: 0, moved: 0 })
 
   const count = items.length
 
@@ -117,14 +135,14 @@ export function ShowcaseCarousel({
     }
   }
 
-  // --- Drag -----------------------------------------------------------------
+  // --- Drag, on the arc layer only ------------------------------------------
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     // Touch already swipes the page; hijacking it makes the section a trap.
     if (event.pointerType !== 'mouse' || !stageRef.current) return
-    // Capture, or the gesture dies the moment the cursor crosses the stage edge
-    // — which on a stage you drag sideways is most of the time.
+    // Capture, or the gesture dies the moment the cursor crosses the arc's edge
+    // — which on something you drag sideways is most of the time.
     stageRef.current.setPointerCapture(event.pointerId)
-    drag.current = { active: true, startX: event.clientX }
+    drag.current = { active: true, startX: event.clientX, moved: 0 }
     setDragging(true)
   }
 
@@ -136,11 +154,11 @@ export function ShowcaseCarousel({
     if (!drag.current.active) return
 
     const delta = event.clientX - drag.current.startX
+    drag.current.moved = Math.max(drag.current.moved, Math.abs(delta))
 
-    // One card per 140px of travel, committed as the threshold is crossed
-    // rather than on release. Waiting for release makes a long drag feel like
-    // it did nothing until you let go.
-    if (Math.abs(delta) > 140) {
+    // Committed as the threshold is crossed rather than on release. Waiting for
+    // release makes a long drag feel like it did nothing until you let go.
+    if (Math.abs(delta) > STEP_DISTANCE) {
       go(active + (delta < 0 ? 1 : -1))
       drag.current.startX = event.clientX
     }
@@ -154,8 +172,8 @@ export function ShowcaseCarousel({
     setDragging(false)
   }
 
-  // Escape releases a drag left stranded by a lost pointerup — a real case when
-  // the pointer leaves the window mid-gesture.
+  // Escape releases a drag stranded by a lost pointerup — a real case when the
+  // pointer leaves the window mid-gesture.
   useEffect(() => {
     if (!dragging) return
     const onKey = (event: globalThis.KeyboardEvent) => {
@@ -168,6 +186,8 @@ export function ShowcaseCarousel({
   }, [dragging])
 
   if (!count) return null
+
+  const current = items[active]
 
   return (
     <SectionShell canvas={canvas} className="overflow-hidden">
@@ -190,11 +210,6 @@ export function ShowcaseCarousel({
       <div className="mt-10 flex items-center justify-center gap-3">
         <ArrowButton label="Previous" direction="prev" onClick={() => go(active - 1)} />
 
-        {/*
-          The pills are the real control. Scrollable rather than wrapping, so a
-          long set stays one row and the selected pill can be scrolled to rather
-          than the row growing taller as the section fills up.
-        */}
         <div
           role="tablist"
           aria-label={heading}
@@ -232,106 +247,152 @@ export function ShowcaseCarousel({
         <ArrowButton label="Next" direction="next" onClick={() => go(active + 1)} />
       </div>
 
-      <div
-        ref={stageRef}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerCancel={endDrag}
-        onPointerLeave={(event) => {
-          endDrag(event)
-          setBadge(null)
-        }}
-        // The cards carry no links, but a drag across text starts a selection
-        // and a drag across anything draggable starts the browser's own
-        // drag-and-drop — either one cancels the pointer stream mid-gesture.
-        onDragStart={(event) => event.preventDefault()}
-        className={cn(
-          'showcase-stage relative mt-12 min-h-[30rem] select-none lg:min-h-[34rem]',
-          dragging ? 'cursor-grabbing' : 'cursor-grab',
-        )}
-      >
-        {badge && (
-          <span
-            aria-hidden="true"
-            style={{ '--badge-x': badge.x + 'px', '--badge-y': badge.y + 'px' } as CSSProperties}
-            className="drag-badge pointer-events-none absolute z-30 hidden size-20 place-content-center rounded-full border border-amber-500 bg-navy-900/85 text-center font-mono text-label text-amber-500 uppercase backdrop-blur-sm [@media(pointer:fine)]:grid"
-          >
-            {dragging ? 'Dragging' : 'Drag'}
-          </span>
-        )}
+      {/*
+        The stacking context for layers 1 and 2. `isolate` keeps the whole
+        arrangement from negotiating z-index with anything else on the page.
+      */}
+      <div className="showcase relative isolate mt-12 min-h-[32rem] lg:min-h-[36rem]">
+        {/* --- LAYER 1: the arc. Background, draggable, z-0. ---------------- */}
+        <div
+          ref={stageRef}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerCancel={endDrag}
+          onPointerLeave={(event) => {
+            endDrag(event)
+            setBadge(null)
+          }}
+          // A drag across text starts a selection and a drag across anything
+          // draggable starts the browser's own drag-and-drop — either one
+          // cancels the pointer stream mid-gesture.
+          onDragStart={(event) => event.preventDefault()}
+          className={cn(
+            'showcase-stage absolute inset-0 z-0 select-none',
+            dragging ? 'cursor-grabbing' : 'cursor-grab',
+          )}
+        >
+          <div className="showcase-ring">
+            {items.map((item, index) => {
+              // The *shortest* signed distance round the ring, not
+              // `index - active`. Plain subtraction puts every card on one side
+              // when the first is selected, and the carousel visibly has an end.
+              let offset = index - active
+              if (offset > count / 2) offset -= count
+              if (offset < -count / 2) offset += count
 
-        {/*
-          A ring, not a row. The cards are laid out on a circle inside this
-          element and it is pushed back by the circle's radius, so the front
-          card lands on the plane the reader is looking at.
-        */}
-        <div className="showcase-ring">
-          {items.map((item, index) => {
-          // The *shortest* signed distance round the ring, not `index - active`.
-          //
-          // Plain subtraction puts every card on one side when the first is
-          // selected — offsets 0,1,2,3,4, nothing to the left, and the carousel
-          // visibly has an end. Wrapping past the halfway point turns that into
-          // 0,1,2,-2,-1: there is always something arriving from both
-          // directions, which is the whole reason theirs reads as endless.
-          let offset = index - active
-          if (offset > count / 2) offset -= count
-          if (offset < -count / 2) offset += count
+              return (
+                <div
+                  key={item.slug}
+                  // Decorative. Clicking one does exactly what its pill does, so
+                  // announcing both would read as two of every sector — and the
+                  // pill is the version that works without a pointer.
+                  aria-hidden="true"
+                  onClick={() => {
+                    // A drag that happens to end over a card is not a click.
+                    if (drag.current.moved > CLICK_SLOP) return
+                    go(index)
+                  }}
+                  style={{ '--offset': offset } as CSSProperties}
+                  className="showcase-card absolute inset-x-0 top-0 mx-auto flex w-[min(84vw,34rem)] flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
+                >
+                  <div className="p-7">
+                    <p className="font-mono text-label text-(--accent-text) uppercase">
+                      {item.confidentialityLabel ?? item.clientDisplayName}
+                    </p>
+                    <h3 className="mt-4 font-display text-h3 text-(--ink)">{item.headline}</h3>
+                    <p className="mt-3 text-body-sm">{item.outcome}</p>
+                  </div>
 
-          const isFront = offset === 0
-          const panelProps = isFront
-            ? {
-                role: 'tabpanel',
-                id: baseId + '-panel',
-                'aria-labelledby': baseId + '-tab-' + index,
-              }
-            : { 'aria-hidden': true as const, inert: true }
+                  <div className="relative h-40 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900">
+                    <BrandFigure
+                      name={FIGURES[index % FIGURES.length]}
+                      className="absolute top-1/2 left-1/2 w-[150%] -translate-x-1/2 -translate-y-1/2 opacity-60"
+                    />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
 
-          return (
-            // A `div`, not an `article`. `article` carries an implicit role
-            // that `tabpanel` is not allowed to override — axe flags it as
-            // `aria-allowed-role`, and a browser resolving the conflict its own
-            // way is exactly the ambiguity that rule exists to prevent.
-            <div
-              key={item.slug}
-              {...panelProps}
-              style={{ '--offset': offset } as CSSProperties}
-              className="showcase-card absolute inset-x-0 top-0 mx-auto flex w-[min(88vw,40rem)] flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800"
+          {/*
+            Inside the arc layer, not beside it. That is the fix: the arc is a
+            stacking context, so this badge is sealed within it and cannot paint
+            over the centre card whatever its own z-index says.
+          */}
+          {badge && (
+            <span
+              aria-hidden="true"
+              style={{ '--badge-x': badge.x + 'px', '--badge-y': badge.y + 'px' } as CSSProperties}
+              className="drag-badge pointer-events-none absolute hidden size-20 place-content-center rounded-full border border-amber-500 bg-navy-900/85 text-center font-mono text-label text-amber-500 uppercase backdrop-blur-sm [@media(pointer:fine)]:grid"
             >
-              <div className="p-8 lg:p-9">
-                <p className="font-mono text-label text-(--accent-text) uppercase">
-                  {item.confidentialityLabel ?? item.clientDisplayName}
-                </p>
-                <h3 className="mt-4 font-display text-h3 text-(--ink)">{item.headline}</h3>
-                <p className="mt-3 text-body-sm">{item.outcome}</p>
-                {isSample && (
-                  <p className="mt-5 font-mono text-label text-(--ink-muted) uppercase">
-                    Sample — not a real engagement
-                  </p>
-                )}
-              </div>
+              {dragging ? 'Dragging' : 'Drag'}
+            </span>
+          )}
+        </div>
 
-              {/* The lower half, where the reference puts a screenshot. */}
-              <div className="relative h-44 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900 lg:h-52">
+        {/* --- LAYER 2: the centre card. Foreground, z-20. ------------------ */}
+        <div className="pointer-events-none relative z-20 flex justify-center">
+          <div
+            role="tabpanel"
+            id={baseId + '-panel'}
+            aria-labelledby={baseId + '-tab-' + active}
+            tabIndex={0}
+            className="showcase-center pointer-events-auto flex w-[min(90vw,38rem)] flex-col overflow-hidden border border-navy-700 bg-navy-800 surface-navy-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-500"
+          >
+            <div className="p-8 lg:p-9">
+              <p className="font-mono text-label text-(--accent-text) uppercase">
+                {current.confidentialityLabel ?? current.clientDisplayName}
+              </p>
+              <h3 className="mt-4 font-display text-h3 text-(--ink)">{current.headline}</h3>
+              <p className="mt-3 text-body-sm">{current.outcome}</p>
+
+              {isSample && (
+                <p className="mt-5 font-mono text-label text-(--ink-muted) uppercase">
+                  Sample — not a real engagement
+                </p>
+              )}
+
+              <div className="mt-7">
                 {/*
-                  Oversized and centred rather than fitted. An SVG with a
-                  viewBox letterboxes inside a box of a different ratio, so
-                  `inset-0` left the drawing marooned in the middle of a mostly
-                  empty panel. Scaling it past the edges and letting the panel
-                  clip is the equivalent of `object-fit: cover` for inline SVG,
-                  which has no such property.
+                  A sample goes to contact, not to a case-study page. Those are
+                  Phase 2 and do not exist, and `next/link` would prefetch a 404
+                  for every card in the set.
                 */}
-                <BrandFigure
-                  name={FIGURES[index % FIGURES.length]}
-                  className="absolute top-1/2 left-1/2 w-[150%] -translate-x-1/2 -translate-y-1/2 opacity-60"
-                />
+                <Button
+                  href={isSample ? '/contact' : `/case-studies/${current.slug}`}
+                  variant="ghost-dark"
+                >
+                  {isSample ? 'Ask about work like this' : 'Read the case study'}
+                </Button>
               </div>
             </div>
-          )
-          })}
+
+            <div className="relative h-44 shrink-0 overflow-hidden border-t border-navy-700 bg-navy-900 lg:h-52">
+              <BrandFigure
+                name={FIGURES[active % FIGURES.length]}
+                className="absolute top-1/2 left-1/2 w-[150%] -translate-x-1/2 -translate-y-1/2 opacity-60"
+              />
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* --- LAYER 3: the rail. Separate, continuous, pauses on hover. ------ */}
+      {marqueeItems && marqueeItems.length > 0 && (
+        <div className="mt-16 border-y border-navy-700">
+          {marqueeLabel && (
+            <p className="pt-6 font-mono text-label text-(--ink-muted) uppercase">{marqueeLabel}</p>
+          )}
+          <Marquee
+            items={marqueeItems}
+            duration={54}
+            className="py-6"
+            gap="gap-4"
+            itemClassName="border border-navy-700 px-7 py-5 font-display text-h3 text-(--ink-muted)"
+          />
+        </div>
+      )}
     </SectionShell>
   )
 }

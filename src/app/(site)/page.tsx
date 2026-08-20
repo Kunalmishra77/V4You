@@ -129,6 +129,8 @@ export default async function HomePage() {
           heading={homeShowcase.heading}
           body={homeShowcase.body}
           items={showcaseStudies}
+          marqueeItems={homeShowcase.sectors}
+          marqueeLabel={homeShowcase.marqueeLabel}
           isSample={showSamples}
         />
       )}

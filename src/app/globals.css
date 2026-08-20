@@ -597,22 +597,18 @@
     will-change: transform;
   }
 
-  /* The front card paints over its neighbours whatever their DOM order.
-     Qualified with the role, and that qualification is load-bearing for a
-     second reason: the tabs block below animates every `[role='tabpanel']`
-     with `tab-panel-in`, whose final keyframe is `transform: none`. The front
-     card here *is* a tabpanel, so that animation was overriding its place on
-     the ring and pinning it flat at the ring's own depth — offsets ±1 and ±2
-     had correct 3D matrices and offset 0 alone came out a 2D identity. Naming
-     the animation off is more specific than the bare attribute selector, so
-     the ring transform wins. */
-  .showcase-card[role='tabpanel'] {
-    z-index: 10;
-    animation: none;
-  }
+  /* The centre card is a sibling of the arc, not a card on it — see the
+     component. It is the `tabpanel`, so it picks up `tab-panel-in` from the tabs
+     block, which is wanted here: it fades in each time the selection changes.
 
-  .showcase-card[inert] {
-    pointer-events: none;
+     That animation is also why the centre card can no longer live *on* the
+     ring. `tab-panel-in` ends at `transform: none`, so while it was the front
+     card of the arc the animation overrode its place on the circle and pinned
+     it flat at the ring's own depth — every other offset had a correct 3D
+     matrix and offset 0 alone came out a 2D identity. Separating the layers
+     removes the conflict rather than working around it. */
+  .showcase-center {
+    position: relative;
   }
 
   /* --- Stacked slider -------------------------------------------------------
