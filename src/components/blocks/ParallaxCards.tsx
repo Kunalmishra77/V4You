@@ -41,7 +41,7 @@ import type { ServiceCard } from '@/seed/services'
 /**
  * Vertical gap between one card's starting position and the next.
  *
- * 240px puts the fourth card 720px below the first at rest. At 150 the whole
+ * 280px puts the fourth card 840px below the first at rest. At 150 the whole
  * effect was a 226px spread on entry — small enough that a reader scrolling at
  * normal speed never registers it as motion, only as cards that happened to be
  * slightly out of line. At 300 the fourth card started so far down that the
@@ -49,7 +49,7 @@ import type { ServiceCard } from '@/seed/services'
  *
  * The slowness comes from the staggered scrub below, not from the distance.
  */
-const OFFSET_STEP = 240
+const OFFSET_STEP = 280
 
 export function ParallaxCards({
   eyebrow,
@@ -67,6 +67,7 @@ export function ParallaxCards({
   canvas?: Canvas
 }) {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const ctaRef = useRef<HTMLDivElement>(null)
   const isDark = canvas === 'navy' || canvas === 'navy-800'
 
   useEffect(() => {
@@ -117,7 +118,7 @@ export function ParallaxCards({
                   // them into line. At 0.8 they tracked the scroll closely
                   // enough to read as mechanical.
                   start: 'top bottom',
-                  end: 'center 30%',
+                  end: 'bottom 40%',
                   // Scrub rises with the index, so each card trails the scroll
                   // a little more than the one before it. A single value for all
                   // three made them travel at the same rate and simply start
@@ -126,10 +127,30 @@ export function ParallaxCards({
                   // constant rate and the last card arrives almost with the
                   // second. Staggering the lag means the fourth card is still
                   // easing after the second has settled.
-                  scrub: 1.2 + index * 0.5,
+                  scrub: 1.5 + index * 0.6,
                 },
               },
             )
+          }
+
+          // The CTA waits for the columns. Its window sits inside the last
+          // third of theirs and ends where they do, so it finishes arriving at
+          // the same moment the fourth column settles. Started earlier it was
+          // already at 86% opacity while the columns were still hundreds of
+          // pixels apart, which defeats the point of it being the step after
+          // reading them.
+          if (ctaRef.current) {
+            gsap.from(ctaRef.current, {
+              opacity: 0,
+              y: 40,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: sectionRef.current,
+                start: 'bottom 75%',
+                end: 'bottom 42%',
+                scrub: 1,
+              },
+            })
           }
         })
       }, sectionRef)
@@ -156,18 +177,10 @@ export function ParallaxCards({
           few hundred pixels of hole once they settle. Up here there is nothing
           below them to hit.
         */}
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
-          <div className="max-w-measure">
-            <Eyebrow>{eyebrow}</Eyebrow>
-            <Headline className="mt-5">{heading}</Headline>
-            <p className="mt-5 text-body-lg">{body}</p>
-          </div>
-
-          <div className="shrink-0">
-            <Button href={cta.href} variant={isDark ? 'ghost-dark' : 'ghost-light'}>
-              {cta.label}
-            </Button>
-          </div>
+        <div className="max-w-measure">
+          <Eyebrow>{eyebrow}</Eyebrow>
+          <Headline className="mt-5">{heading}</Headline>
+          <p className="mt-5 text-body-lg">{body}</p>
         </div>
 
         {/*
@@ -191,22 +204,22 @@ export function ParallaxCards({
           of why theirs reads as one object and ours read as four. The fill
           arrives on hover instead, which gives the column something to do.
         */}
-        <ul className="mt-14 grid border-y border-(--line) md:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-14 grid md:grid-cols-2 lg:grid-cols-4">
           {cards.map((card, index) => (
             <li
               key={card.slug}
               className={cn(
                 'group/card relative overflow-hidden border-(--line)',
                 'transition-colors duration-(--duration-card) ease-out',
-                // Stacked: a rule between each, none above the first. Two
-                // columns: no rule above the second either, and a divider down
-                // the middle. Four columns: no horizontal rules at all, a
-                // divider to the left of every column but the first. The outer
-                // top and bottom rules belong to the list, not to a cell, so
-                // they stay put whatever the breakpoint does.
-                'border-t first:border-t-0',
-                'md:[&:nth-child(2)]:border-t-0 md:[&:nth-child(even)]:border-l',
-                'lg:border-t-0 lg:border-l lg:first:border-l-0',
+                // The cell owns only the vertical divider, and the cell never
+                // moves — so the verticals run unbroken down the whole section
+                // however far apart the columns are. The horizontal rules are
+                // on the block inside, which does move, so each column arrives
+                // carrying its own top and bottom edge. That split is the whole
+                // look: one fixed rule across the top of all four made them a
+                // table with shifting contents rather than four cards rising.
+                'md:[&:nth-child(even)]:border-l',
+                'lg:border-l lg:first:border-l-0',
                 isDark
                   ? 'hover:bg-navy-800 focus-within:bg-navy-800'
                   : 'hover:bg-white focus-within:bg-white',
@@ -215,7 +228,7 @@ export function ParallaxCards({
               <div
                 data-parallax-card=""
                 style={{ '--reveal-index': index } as CSSProperties}
-                className="flex min-h-[24rem] flex-col p-7 lg:min-h-[27rem] lg:p-8"
+                className="flex min-h-[24rem] flex-col border-y border-(--line) p-7 lg:min-h-[27rem] lg:p-8"
               >
                 <span
                   aria-hidden="true"
@@ -256,6 +269,25 @@ export function ParallaxCards({
             </li>
           ))}
         </ul>
+
+        {/*
+          Below the grid, and last to arrive.
+
+          It sat beside the heading for a while because the moving cards used to
+          cover it. They no longer do — the cells are fixed and clip their own
+          contents, so nothing overlaps what follows — and below the four
+          columns is where it belongs: it is the step after reading them, not
+          an alternative to it.
+
+          `gsap.from` rather than `to`, so the button is visible in the markup
+          and only hidden once the animation is actually running. The other way
+          round, a chunk that fails to load leaves it invisible for good.
+        */}
+        <div ref={ctaRef} className="mt-14 flex justify-center">
+          <Button href={cta.href} variant={isDark ? 'ghost-dark' : 'ghost-light'}>
+            {cta.label}
+          </Button>
+        </div>
       </div>
     </SectionShell>
   )
