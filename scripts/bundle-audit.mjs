@@ -22,30 +22,41 @@
  *
  *   2. **A ceiling on initial JavaScript per route**, so the next thing added
  *      to the layout has to be a deliberate decision rather than a drift.
+ *
+ * `nomodule` scripts are excluded from both. Next emits a 110KB core-js
+ * polyfill bundle that way, and every browser with ES module support — which is
+ * every browser this site targets — skips it without fetching it. Counting it
+ * inflated every route by 110KB and, worse, left that much room under the
+ * ceiling for a real regression to hide in.
  */
 
 import { readFile, readdir, stat } from 'node:fs/promises'
+import { gzipSync } from 'node:zlib'
 import { join } from 'node:path'
 
 const BASE = process.env.SCAN_BASE_URL ?? 'http://localhost:3000'
 const CHUNK_DIR = '.next/static/chunks'
 
 /**
- * Raw KB of initial JS a route may ship.
+ * Raw KB of executed initial JS a route may ship.
  *
- * **These are ratchets, not targets.** They sit at what the routes ship today
- * plus a little headroom, so the next thing added to the layout has to be a
- * deliberate decision rather than a drift. They are not an endorsement of the
- * number: 630KB raw on a page of static text is a long way from CLAUDE.md's
- * "marketing pages should ship almost no JS", and nearly all of it is the React
- * 19 + App Router baseline rather than anything this project wrote. Bringing it
- * down is real work that has not been done. Lower these when it is; never raise
- * one without saying in the commit what bought the increase.
+ * **These are ratchets, not targets.** They sit a little above what the routes
+ * ship today, so the next thing added to the layout has to be a deliberate
+ * decision rather than a drift. Never raise one without saying in the commit
+ * what bought the increase.
+ *
+ * For scale: a content route is 520KB raw, 155KB gzipped, and the three largest
+ * chunks — 487KB of it — are React, React DOM and the App Router. Attributing
+ * the rest by marker finds no Payload, no zod and no Turnstile on a content
+ * route, so the project's own client components are a small remainder. That
+ * bounds what is available here: this is a framework baseline, and moving it
+ * means changing how much of the site is a client component at all, not finding
+ * a stray import.
  */
-const MAX_INITIAL_KB = 680
+const MAX_INITIAL_KB = 560
 
 /** The two routes with a form also carry validation and the bot check. */
-const MAX_INITIAL_KB_FORM = 960
+const MAX_INITIAL_KB_FORM = 850
 const FORM_ROUTES = new Set(['/contact', '/book-consultation'])
 
 /**
@@ -86,9 +97,11 @@ const chunks = new Map()
 for (const file of await readdir(CHUNK_DIR)) {
   if (!file.endsWith('.js')) continue
   const path = join(CHUNK_DIR, file)
+  const text = await readFile(path, 'utf8')
   chunks.set(file, {
     kb: Math.round((await stat(path)).size / 1024),
-    text: await readFile(path, 'utf8'),
+    gzipKb: Math.round(gzipSync(text).length / 1024),
+    text,
   })
 }
 
@@ -98,14 +111,18 @@ const problems = []
 for (const route of ROUTES) {
   const html = await fetch(`${BASE}${route}`).then((r) => r.text())
 
-  // Only <script src> counts. A chunk named in a flight payload or a preload
-  // hint is not necessarily executed before the page is interactive.
-  const referenced = [...html.matchAll(/<script[^>]+src="([^"]+\.js)"/g)]
-    .map((m) => m[1].split('/').pop())
+  // Only <script src> counts, and only if the browser will run it. A chunk
+  // named in a flight payload or a preload hint is not necessarily executed
+  // before the page is interactive, and a `nomodule` script is not executed at
+  // all by anything with ES module support.
+  const referenced = [...html.matchAll(/<script([^>]+)src="([^"]+\.js)"([^>]*)>/g)]
+    .filter((m) => !/nomodule/i.test(m[1] + m[3]))
+    .map((m) => m[2].split('/').pop())
     .filter((f, i, all) => all.indexOf(f) === i)
     .filter((f) => chunks.has(f))
 
   const kb = referenced.reduce((sum, f) => sum + chunks.get(f).kb, 0)
+  const gzipKb = referenced.reduce((sum, f) => sum + chunks.get(f).gzipKb, 0)
 
   const carried = DEFERRED_ONLY.filter(({ marker, minHits }) =>
     referenced.some((f) => chunks.get(f).text.split(marker).length - 1 >= minHits),
@@ -125,6 +142,10 @@ for (const route of ROUTES) {
     route,
     scripts: referenced.length,
     initialJsKb: kb,
+    // What is actually transferred. Reported rather than asserted on: the
+    // budget is on raw bytes because that is what the browser has to parse,
+    // and parse time is the part that shows up as blocking.
+    gzipKb,
     deferredLeaks: carried.join(',') || '—',
   })
 }
