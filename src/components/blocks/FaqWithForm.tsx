@@ -90,21 +90,30 @@ export function FaqWithForm({
             {heading}
           </Headline>
 
-          <div
-            className={[
-              'faq-scroll mt-8 overflow-y-auto pr-1',
-              // Fills whatever height the row settles at rather than carrying a
-              // fixed one. `min-h-0` is the part that is easy to miss: a flex
-              // child will not shrink below its content without it, so the
-              // panel would grow to fit all eight questions and never scroll.
-              'min-h-0 flex-1',
-              // A floor for narrow screens, where the row is not stretched.
-              'max-h-[26rem] lg:max-h-none',
-              '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-            ].join(' ')}
-          >
-            <div className="border-t border-(--line)">
-              {faqs.map((faq, index) => (
+          {/*
+            The list is positioned out of flow, and that is what keeps both
+            panels a fixed height.
+
+            Left in normal flow it still contributes its height to the panel,
+            and the panel to the grid row — so opening an answer grew the right
+            panel, and stretch grew the left one with it. `min-h-0` and `flex-1`
+            let it *shrink*, which is not the same as stopping it *pushing*.
+
+            Absolute means its height cannot reach the row at all. The row is
+            then sized by the form alone, this wrapper takes whatever is left,
+            and opening every answer at once changes nothing outside the scroll
+            box. On narrow screens the panels stack and there is no row to match,
+            so the wrapper carries its own floor instead.
+          */}
+          <div className="relative mt-8 min-h-[24rem] flex-1 lg:min-h-0">
+            <div
+              className={[
+                'faq-scroll absolute inset-0 overflow-y-auto pr-1',
+                '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
+              ].join(' ')}
+            >
+              <div className="border-t border-(--line)">
+                {faqs.map((faq, index) => (
                 <details
                   key={faq.question}
                   // The first answer is open on arrival. Eight collapsed
@@ -128,7 +137,8 @@ export function FaqWithForm({
                   </summary>
                   <p className="pb-6 text-body-sm">{faq.answer}</p>
                 </details>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
