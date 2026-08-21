@@ -527,6 +527,64 @@
     animation-iteration-count: 4;
   }
 
+  /* --- Outcome matrix hover -------------------------------------------------
+     Three things happen when a row is pointed at or focused: a mark appears in
+     the margin, the row's supporting copy comes up to full strength, and a small
+     card settles in at the right-hand edge.
+
+     Every one of them is reversible and none of them moves anything. The glyph
+     lives in padding the row always carries; the card is absolutely positioned,
+     so it costs the row no height. A hover state that reflows the thing being
+     hovered is a hover state that makes the row jump out from under the cursor.
+
+     `focus-within` alongside `:hover` throughout — each row ends in a link, so a
+     keyboard user reaches it and gets the same treatment. Without that pairing
+     the whole effect is mouse-only, which is the usual way a nice hover quietly
+     excludes people.
+     -------------------------------------------------------------------- */
+  .matrix-glyph {
+    opacity: 0;
+    transform: translateX(-6px);
+    transition:
+      opacity var(--duration-card) var(--ease-reveal),
+      transform var(--duration-card) var(--ease-expo);
+  }
+
+  .matrix-row:hover .matrix-glyph,
+  .matrix-row:focus-within .matrix-glyph {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The middle column is deliberately quieter than the outcome beside it, and
+     comes up to full contrast on hover — so the row being read is the row that
+     reads most clearly. It never goes *below* the 4.5:1 the token guarantees;
+     this only raises it. */
+  .matrix-row td {
+    transition: color var(--duration-card) var(--ease-reveal);
+  }
+
+  .matrix-row:hover td,
+  .matrix-row:focus-within td {
+    color: var(--ink);
+  }
+
+  .matrix-card {
+    opacity: 0;
+    /* Rotated a little and lifted, so it reads as a card set down on the row
+       rather than a panel that switched on. */
+    transform: translateY(-50%) translateX(10px) rotate(-6deg);
+    transition:
+      opacity var(--duration-card) var(--ease-reveal),
+      transform 420ms var(--ease-expo);
+  }
+
+  .matrix-row:hover .matrix-card,
+  .matrix-row:focus-within .matrix-card {
+    opacity: 1;
+    transform: translateY(-50%) rotate(-3deg);
+  }
+
   /* --- FAQ panel ------------------------------------------------------------
      The scrolling answer panel fades out at its bottom edge, because hiding the
      scrollbar removes the only cue that there is more below it.
